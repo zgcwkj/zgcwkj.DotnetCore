@@ -1,0 +1,42 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
+    <Company>zgcwkj</Company>
+    <Copyright>zgcwkj</Copyright>
+    <PackageProjectUrl>https://github.com/zgcwkj</PackageProjectUrl>
+    <PackageIcon></PackageIcon>
+    <PackageTags>Util</PackageTags>
+    <PackageReleaseNotes>提供一套 Core 数据相关的服务</PackageReleaseNotes>
+    <NeutralLanguage>zh</NeutralLanguage>
+    <Version>1.0.5</Version>
+    <Description></Description>
+    <AssemblyVersion>1.0.5.0</AssemblyVersion>
+    <FileVersion>1.0.5.0</FileVersion>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+    <WarningsAsErrors></WarningsAsErrors>
+    <DocumentationFile>bin\$(Configuration)\zgcwkj.Util.xml</DocumentationFile>
+    <WarningLevel>5</WarningLevel>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Content Remove="C:\Users\zgcwkj\.nuget\packages\dotnetcore.npoi\1.2.3\contentFiles\any\netstandard2.0\NOTICE.TXT" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <FrameworkReference Include="Microsoft.AspNetCore.App" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="5.0.6" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="5.0.6" />
+    <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="5.0.6" />
+    <PackageReference Include="Pomelo.EntityFrameworkCore.MySql" Version="5.0.0" />
+    <PackageReference Include="Swashbuckle.AspNetCore" Version="6.1.4" />
+    <PackageReference Include="System.Drawing.Common" Version="5.0.2" />
+    <PackageReference Include="CSRedisCore" Version="3.6.6" />
+    <PackageReference Include="DotNetCore.NPOI" Version="1.2.3" />
+  </ItemGroup>
+
+</Project>

@@ -1,0 +1,14 @@
+﻿################################################################################
+# 此 .gitignore 文件已由 Microsoft(R) Visual Studio 自动创建。
+################################################################################
+
+/.vs
+/zgcwkj.Demo/obj
+/zgcwkj.Demo/bin
+/zgcwkj.Model/obj
+/zgcwkj.Model/bin
+/zgcwkj.Web/obj
+/zgcwkj.Web/bin
+/zgcwkj.Util/obj
+/zgcwkj.Util/bin
+/zgcwkj.Web/Protection
