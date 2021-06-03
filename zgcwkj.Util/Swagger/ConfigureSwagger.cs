@@ -37,16 +37,13 @@ namespace zgcwkj.Util.Swagger
                 });
                 options.OrderActionsBy(o => o.RelativePath);
                 //Set the comments path for the swagger json and ui
-                string basePath = Directory.GetCurrentDirectory();
-                DirectoryInfo root = new DirectoryInfo(basePath);
-                FileInfo[] files = root.GetFiles();
-                foreach (var file in files)
+                var basePath = Directory.GetCurrentDirectory();
+                var root = new DirectoryInfo(basePath);
+                var files = root.GetFiles("*.xml");
+                var linqXmlPaths = files.Select(f => Path.Combine(basePath, f.FullName));
+                foreach (var xmlPath in linqXmlPaths.ToList())
                 {
-                    if (file.Extension == ".xml")
-                    {
-                        //var xmlPath = Path.Combine(basePath, "Util.xml");
-                        options.IncludeXmlComments(file.FullName);
-                    }
+                    options.IncludeXmlComments(xmlPath);
                 }
             });
         }

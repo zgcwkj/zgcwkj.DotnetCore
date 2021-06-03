@@ -24,8 +24,13 @@ namespace zgcwkj.Demo
             var icBuilder = cBuilder.SetBasePath(Directory.GetCurrentDirectory());
             var builder = icBuilder.AddJsonFile("appsettings.json");
             var config = builder.Build();
+            GlobalContext.Configuration = config;
 
             string userID = MD5Tool.GetMd5("zgcwkj");
+
+            //Cache
+            DataFactory.Cache.Set("zgcwkj", userID);
+            Console.WriteLine(DataFactory.Cache.Get<string>("zgcwkj"));
 
             //Query
             using MyDbContext myDbContext = new MyDbContext();
