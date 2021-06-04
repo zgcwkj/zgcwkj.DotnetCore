@@ -16,14 +16,14 @@ namespace zgcwkj.Util.Enum
         /// <summary>
         /// 调试
         /// </summary>
-        Debug = 0,
+        Debug = 1,
         /// <summary>
         /// 错误
         /// </summary>
-        Error = 0,
+        Error = 2,
         /// <summary>
         /// 致命
         /// </summary>
-        Fatal = 0,
+        Fatal = 3,
     }
 }

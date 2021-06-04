@@ -58,10 +58,7 @@ namespace zgcwkj.Util.CacheUtil.Redis
                 {
                     return RedisHelper.Set(key, value);
                 }
-                else
-                {
-                    return RedisHelper.Set(key, value, timeSpan.TotalSeconds.ToInt());
-                }
+                return RedisHelper.Set(key, value, timeSpan.TotalSeconds.ToInt());
             }
             catch (Exception ex)
             {

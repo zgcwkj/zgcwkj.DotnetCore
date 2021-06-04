@@ -2,18 +2,22 @@
 
   <PropertyGroup>
     <TargetFramework>netcoreapp3.1</TargetFramework>
-    <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
+    <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
     <Company>zgcwkj</Company>
     <Copyright>zgcwkj</Copyright>
-    <PackageProjectUrl>https://github.com/zgcwkj</PackageProjectUrl>
+    <PackageProjectUrl>https://github.com/zgcwkj/zgcwkj.DotnetCore</PackageProjectUrl>
     <PackageIcon></PackageIcon>
-    <PackageTags>Util</PackageTags>
-    <PackageReleaseNotes>提供一套 Core 数据相关的服务</PackageReleaseNotes>
-    <NeutralLanguage>zh</NeutralLanguage>
-    <Version>1.0.6</Version>
+    <PackageTags>Core,Util,Data,Cache</PackageTags>
+    <PackageReleaseNotes></PackageReleaseNotes>
+    <NeutralLanguage>zh-Hant</NeutralLanguage>
+    <Version>1.0.5</Version>
     <Description>提供一套 Core 数据相关的服务，Data or Cache</Description>
-    <AssemblyVersion>1.0.6.0</AssemblyVersion>
+    <AssemblyVersion>1.0.5.0</AssemblyVersion>
     <FileVersion>1.0.5.0</FileVersion>
+    <RepositoryUrl>https://www.nuget.org/packages/zgcwkj.Util</RepositoryUrl>
+    <PackageLicenseFile>LICENSE</PackageLicenseFile>
+    <RepositoryType>Util</RepositoryType>
+    <SignAssembly>false</SignAssembly>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
@@ -38,6 +42,13 @@
     <PackageReference Include="System.Drawing.Common" Version="5.0.2" />
     <PackageReference Include="CSRedisCore" Version="3.6.6" />
     <PackageReference Include="DotNetCore.NPOI" Version="1.2.3" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="..\LICENSE">
+      <Pack>True</Pack>
+      <PackagePath></PackagePath>
+    </None>
   </ItemGroup>
 
 </Project>

@@ -13,6 +13,21 @@ namespace zgcwkj.Util.Log
     internal class LogOutput
     {
         /// <summary>
+        /// 输出日志目录
+        /// </summary>
+        /// <returns></returns>
+        internal static string OutputLogDirectory()
+        {
+            //文件夹路径
+            string filePath = Directory.GetCurrentDirectory();
+            filePath = $"{filePath}/Log/";
+            //创建文件夹，防止文件夹没有
+            if (!Directory.Exists(filePath)) Directory.CreateDirectory(filePath);
+            //文件路径
+            return filePath;
+        }
+
+        /// <summary>
         /// 输出日志文件
         /// </summary>
         /// <param name="message">消息</param>
@@ -22,10 +37,7 @@ namespace zgcwkj.Util.Log
         {
             int index = 0;
             //文件夹路径
-            string filePath = Directory.GetCurrentDirectory();
-            filePath = $"{filePath}/Log/";
-            //创建文件夹，防止文件夹没有
-            if (!Directory.Exists(filePath)) Directory.CreateDirectory(filePath);
+            string filePath = OutputLogDirectory();
             //文件名称
             string fileName = $"{DateTime.Now:yyyyMMdd}_{type}.txt";
             //输出错误状态
@@ -61,10 +73,7 @@ namespace zgcwkj.Util.Log
             int index = 0;
             string type = logType.ToString();
             //文件夹路径
-            string filePath = Directory.GetCurrentDirectory();
-            filePath = $"{filePath}/{type}/";
-            //创建文件夹，防止文件夹没有
-            if (!Directory.Exists(filePath)) Directory.CreateDirectory(filePath);
+            string filePath = OutputLogDirectory();
             //文件名称
             string fileName = $"{DateTime.Now:yyyyMMdd}_{type}.txt";
             //输出错误状态
