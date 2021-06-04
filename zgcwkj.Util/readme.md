@@ -9,8 +9,7 @@
   "MysqlConnect": "server=127.0.0.1;port=3306;username=root;password=root;database=dbname;charset=utf8;Pooling=true;", //MySql
   "PgsqlConnect": "server=127.0.0.1;port=5432;username=postgres;password=root;database=dbname;", //PostgreSql integrated security=false;
   "CacheType": "Redis", //Redis Memory
-  "RedisConnect": "127.0.0.1", //Redis
-  "MemoryConnect": "127.0.0.1" //Memory
+  "RedisConnect": "127.0.0.1" //Redis
 }
 
 ```
@@ -22,6 +21,7 @@ var cBuilder = new ConfigurationBuilder();
 var icBuilder = cBuilder.SetBasePath(Directory.GetCurrentDirectory());
 var builder = icBuilder.AddJsonFile("appsettings.json");
 var config = builder.Build();
+GlobalContext.Configuration = config;
 
 //Insert
 TableModel table = new TableModel();

@@ -29,7 +29,7 @@ namespace zgcwkj.Demo
             string userID = MD5Tool.GetMd5("zgcwkj");
 
             //Cache
-            DataFactory.Cache.Set("zgcwkj", userID);
+            //DataFactory.Cache.Set("zgcwkj", userID);
             Console.WriteLine(DataFactory.Cache.Get<string>("zgcwkj"));
 
             //Query

@@ -51,7 +51,19 @@ namespace zgcwkj.Util.CacheUtil.Memory
         /// <returns></returns>
         public bool Set<T>(string key, T value, TimeSpan timeSpan = default)
         {
-            return memoryCache.Set(key, value, timeSpan) != null;
+            try
+            {
+                if (timeSpan == default)
+                {
+                    return memoryCache.Set(key, value) != null;
+                }
+                return memoryCache.Set(key, value, timeSpan) != null;
+            }
+            catch (Exception ex)
+            {
+                Logger.Error(ex.ToString());
+            }
+            return false;
         }
 
         /// <summary>
@@ -84,7 +96,7 @@ namespace zgcwkj.Util.CacheUtil.Memory
         /// <returns>存在</returns>
         public bool HashExists(string key, string hashKey)
         {
-            throw new NotImplementedException();
+            return ExistsHashFieldCache(key, hashKey);
         }
 
         /// <summary>
@@ -125,21 +137,18 @@ namespace zgcwkj.Util.CacheUtil.Memory
             return remove ? 1 : 0;
         }
 
+        #region Hash
+
         /// <summary>
-        /// 获取缓存(哈希)
+        /// 是否存在(哈希)
         /// </summary>
-        /// <typeparam name="T">类型</typeparam>
         /// <param name="key">键</param>
-        /// <param name="dict">字典</param>
+        /// <param name="hashKey">哈希键</param>
         /// <returns></returns>
-        public Dictionary<string, T> GetHashFieldCache<T>(string key, Dictionary<string, T> dict)
+        private bool ExistsHashFieldCache(string key, string hashKey)
         {
-            var hashFields = memoryCache.Get<Dictionary<string, T>>(key);
-            foreach (KeyValuePair<string, T> keyValuePair in hashFields.Where(p => dict.Keys.Contains(p.Key)))
-            {
-                dict[keyValuePair.Key] = keyValuePair.Value;
-            }
-            return dict;
+            var hashFields = memoryCache.Get<Dictionary<string, object>>(key);
+            return hashFields.ContainsKey(hashKey);
         }
 
         /// <summary>
@@ -149,7 +158,7 @@ namespace zgcwkj.Util.CacheUtil.Memory
         /// <param name="key">键</param>
         /// <param name="dict">字典</param>
         /// <returns></returns>
-        public int SetHashFieldCache<T>(string key, Dictionary<string, T> dict)
+        private int SetHashFieldCache<T>(string key, Dictionary<string, T> dict)
         {
             int count = 0;
             foreach (string fieldKey in dict.Keys)
@@ -160,12 +169,29 @@ namespace zgcwkj.Util.CacheUtil.Memory
         }
 
         /// <summary>
+        /// 获取缓存(哈希)
+        /// </summary>
+        /// <typeparam name="T">类型</typeparam>
+        /// <param name="key">键</param>
+        /// <param name="dict">字典</param>
+        /// <returns></returns>
+        private Dictionary<string, T> GetHashFieldCache<T>(string key, Dictionary<string, T> dict)
+        {
+            var hashFields = memoryCache.Get<Dictionary<string, T>>(key);
+            foreach (KeyValuePair<string, T> keyValuePair in hashFields.Where(p => dict.Keys.Contains(p.Key)))
+            {
+                dict[keyValuePair.Key] = keyValuePair.Value;
+            }
+            return dict;
+        }
+
+        /// <summary>
         /// 删除缓存(哈希)
         /// </summary>
         /// <param name="key">键</param>
         /// <param name="hashKey">哈希键</param>
         /// <returns></returns>
-        public bool RemoveHashFieldCache(string key, string hashKey)
+        private bool RemoveHashFieldCache(string key, string hashKey)
         {
             Dictionary<string, bool> dict = new Dictionary<string, bool> { { hashKey, false } };
             var hashFields = memoryCache.Get<Dictionary<string, object>>(key);
@@ -175,5 +201,7 @@ namespace zgcwkj.Util.CacheUtil.Memory
             }
             return dict[hashKey];
         }
+
+        #endregion
     }
 }
