@@ -32,7 +32,7 @@ namespace zgcwkj.Util.DbUtil
                 sql.Append($" {columns[i]} = '{values[i]}' ");
                 if (i != columns.Length - 1) sql.Append($" and ");
             }
-            var cmd = DbProvider.CreateCommand();
+            var cmd = DbProvider.Create();
             cmd.SetCommandText(sql.ToString());
             var dataRow = DbAccess.QueryDataRow(cmd);
             if (dataRow.IsNull()) return false;
@@ -72,7 +72,7 @@ namespace zgcwkj.Util.DbUtil
             object[] keyValues = data.keyValues.ToArray();
             StringBuilder sql = new StringBuilder();
             //主键赋值状态
-            var cmd = DbProvider.CreateCommand();
+            var cmd = DbProvider.Create();
             if (!keyColumns.IsNull())
             {
                 object[] kvValues = new object[keyValues.Length + values.Length];
@@ -118,7 +118,7 @@ namespace zgcwkj.Util.DbUtil
                 sql.Append($" {keyColumns[i]} = @{keyColumns[i]} ");
                 if (i != keyColumns.Length - 1) sql.Append($" and ");
             }
-            var cmd = DbProvider.CreateCommand();
+            var cmd = DbProvider.Create();
             cmd.SetCommandText(sql.ToString(), values.Concat(keyValues).ToArray());
             int count = DbAccess.UpdateData(cmd);
             return count > 0;
@@ -142,7 +142,7 @@ namespace zgcwkj.Util.DbUtil
                 sql.Append($" {columns[i]} = @{columns[i]} ");
                 if (i != columns.Length - 1) sql.Append($" and ");
             }
-            var cmd = DbProvider.CreateCommand();
+            var cmd = DbProvider.Create();
             cmd.SetCommandText(sql.ToString(), values);
             int count = DbAccess.UpdateData(cmd);
             return count > 0;

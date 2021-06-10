@@ -15,7 +15,7 @@ namespace zgcwkj.Util
         /// 创建数据库命令
         /// </summary>
         /// <returns></returns>
-        public static DbAccess CreateCommand()
+        public static DbAccess Create()
         {
             return new DbAccess();
         }

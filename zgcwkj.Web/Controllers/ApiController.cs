@@ -18,7 +18,7 @@ namespace zgcwkj.Web.Controllers
         [HttpPost]
         public async Task<IActionResult> GetData()
         {
-            var cmd = DbProvider.CreateCommand();
+            var cmd = DbProvider.Create();
             cmd.Clear();
             cmd.SetCommandText("select * from sys_user");
             var dataTable = await DbAccess.QueryDataTableAsync(cmd);

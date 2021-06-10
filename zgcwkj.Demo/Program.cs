@@ -38,7 +38,7 @@ namespace zgcwkj.Demo
             Console.WriteLine(sysUser.ToJson());
 
             //Query
-            var cmd = DbProvider.CreateCommand();
+            var cmd = DbProvider.Create();
             cmd.Clear();
             cmd.SetCommandText("select * from sys_user");
             var dataTable = DbAccess.QueryDataTable(cmd);
