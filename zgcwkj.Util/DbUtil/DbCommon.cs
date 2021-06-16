@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Console;
 using Microsoft.Extensions.Logging.Debug;
@@ -6,6 +7,7 @@ using Npgsql;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using zgcwkj.Util.Common;
 using zgcwkj.Util.DbUtil.DbHelp;
 using zgcwkj.Util.Enum;
 
@@ -28,46 +30,34 @@ namespace zgcwkj.Util.DbUtil
             string dbConnect = DbFactory.Connect;
             //连接命令超时
             int dbTimeout = DbFactory.Timeout;
-            //MySql
-            if (dbType == DbType.MySql)
+            //SQLite
+            if (dbType == DbType.SQLite)
             {
-                //ServerVersion serverVersion;
-                //ServerVersion.TryParse(dbConnect, out serverVersion);
-                //optionsBuilder.UseMySql(serverVersion, p => p.CommandTimeout(dbTimeout));
-                optionsBuilder.UseMySql(dbConnect, ServerVersion.AutoDetect(dbConnect), p => p.CommandTimeout(dbTimeout));
+                optionsBuilder.UseSqlite(dbConnect, p => p.CommandTimeout(dbTimeout));
+            }
+            //PostgreSql
+            else if (dbType == DbType.PostgreSql)
+            {
+                optionsBuilder.UseNpgsql(dbConnect, p => p.CommandTimeout(dbTimeout));
             }
             //SqlServer
             else if (dbType == DbType.SqlServer)
             {
                 optionsBuilder.UseSqlServer(dbConnect, p => p.CommandTimeout(dbTimeout));
             }
-            //PostgreSql
-            else if (dbType == DbType.PostgreSql)
+            //MySql
+            else if (dbType == DbType.MySql)
             {
-                optionsBuilder.UseNpgsql(dbConnect, p => p.CommandTimeout(dbTimeout));
-                ////初始化Postgres Uuid扩展 
-                //using var npgsqlConnection = new NpgsqlConnection(dbConnect);
-                //npgsqlConnection.Open();
-                //using var npgsqlCommand = npgsqlConnection.CreateCommand();
-                //npgsqlCommand.CommandText = "CREATE EXTENSION IF NOT EXISTS \"uuid-ossp\";";
-                //npgsqlCommand.ExecuteNonQuery();
+                //ServerVersion.TryParse(dbConnect, out ServerVersion serverVersion);
+                //optionsBuilder.UseMySql(serverVersion, p => p.CommandTimeout(dbTimeout));
+                optionsBuilder.UseMySql(dbConnect, ServerVersion.AutoDetect(dbConnect), p => p.CommandTimeout(dbTimeout));
             }
             //数据库拦截器
             optionsBuilder.AddInterceptors(new DbInterceptor());
             //输出日志
-            //optionsBuilder.UseLoggerFactory(loggerFactory);
+            LogFactory.Add(optionsBuilder);
             //
             base.OnConfiguring(optionsBuilder);
         }
-
-        /// <summary>
-        /// 输出到 DeBug
-        /// </summary>
-        public static readonly LoggerFactory LoggerFactoryDeBug = new LoggerFactory(new[] { new DebugLoggerProvider() });
-
-        /// <summary>
-        /// 输出到Console
-        /// </summary>
-        public static readonly ILoggerFactory loggerFactory = LoggerFactory.Create(builder => { builder.AddConsole(); });
     }
 }

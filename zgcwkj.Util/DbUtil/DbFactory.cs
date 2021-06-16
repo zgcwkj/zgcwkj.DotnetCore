@@ -6,6 +6,7 @@ using zgcwkj.Util.Enum;
 using zgcwkj.Util.DbUtil.MySql;
 using zgcwkj.Util.DbUtil.SqlServer;
 using zgcwkj.Util.DbUtil.PostgreSql;
+using zgcwkj.Util.DbUtil.SQLite;
 
 namespace zgcwkj.Util.DbUtil
 {
@@ -25,14 +26,17 @@ namespace zgcwkj.Util.DbUtil
                 string dbTypeStr = ConfigHelp.Get("DbType");
                 switch (dbTypeStr.ToLower())
                 {
-                    case "mysql":
-                        dbType = DbType.MySql;
+                    case "sqlite":
+                        dbType = DbType.SQLite;
+                        break;
+                    case "postgresql":
+                        dbType = DbType.PostgreSql;
                         break;
                     case "sqlserver":
                         dbType = DbType.SqlServer;
                         break;
-                    case "postgresql":
-                        dbType = DbType.PostgreSql;
+                    case "mysql":
+                        dbType = DbType.MySql;
                         break;
                     default:
                         throw new Exception("未找到数据库配置");
@@ -52,14 +56,17 @@ namespace zgcwkj.Util.DbUtil
                 string dbConnect;
                 switch (Type)
                 {
-                    case DbType.MySql:
-                        dbConnect = ConfigHelp.Get("MysqlConnect");
+                    case DbType.SQLite:
+                        dbConnect = ConfigHelp.Get("SQLiteConnect");
+                        break;
+                    case DbType.PostgreSql:
+                        dbConnect = ConfigHelp.Get("PgsqlConnect");
                         break;
                     case DbType.SqlServer:
                         dbConnect = ConfigHelp.Get("MssqlConnect");
                         break;
-                    case DbType.PostgreSql:
-                        dbConnect = ConfigHelp.Get("PgsqlConnect");
+                    case DbType.MySql:
+                        dbConnect = ConfigHelp.Get("MysqlConnect");
                         break;
                     default:
                         throw new Exception("未找到数据库配置");
@@ -90,14 +97,17 @@ namespace zgcwkj.Util.DbUtil
                 IDatabase dataBase;
                 switch (Type)
                 {
-                    case DbType.MySql:
-                        dataBase = new MySqlDatabase();
+                    case DbType.SQLite:
+                        dataBase = new SQLiteDatabase();
+                        break;
+                    case DbType.PostgreSql:
+                        dataBase = new PgSqlDatabase();
                         break;
                     case DbType.SqlServer:
                         dataBase = new SqlServerDatabase();
                         break;
-                    case DbType.PostgreSql:
-                        dataBase = new PgSqlDatabase();
+                    case DbType.MySql:
+                        dataBase = new MySqlDatabase();
                         break;
                     default:
                         throw new Exception("未找到数据库配置");

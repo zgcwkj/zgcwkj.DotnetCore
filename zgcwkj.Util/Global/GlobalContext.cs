@@ -6,7 +6,6 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.AspNetCore.StaticFiles;
 using Microsoft.Extensions.Hosting;
-using Microsoft.AspNetCore.Http;
 
 namespace zgcwkj.Util
 {
@@ -28,7 +27,7 @@ namespace zgcwkj.Util
         public static IServiceProvider ServiceProvider { get; set; }
 
         /// <summary>
-        /// 配置
+        /// 配置对象
         /// </summary>
         public static IConfiguration Configuration { get; set; }
 
@@ -44,7 +43,7 @@ namespace zgcwkj.Util
         public static string GetVersion()
         {
             Version version = Assembly.GetEntryAssembly().GetName().Version;
-            return version.Major + "." + version.Minor;
+            return $"{version.Major}.{version.Minor}";
         }
 
         /// <summary>
@@ -54,17 +53,23 @@ namespace zgcwkj.Util
         public static void LogWhenStart(IWebHostEnvironment env)
         {
             StringBuilder sb = new StringBuilder();
-            sb.Append("程序启动");
-            sb.Append(" |ContentRootPath:" + env.ContentRootPath);
-            sb.Append(" |WebRootPath:" + env.WebRootPath);
-            sb.Append(" |IsDevelopment:" + env.IsDevelopment());
-            //LogHelper.Debug(sb.ToString());
+            sb.Append("程序启动完成");
+            sb.Append("\r\n");
+            sb.Append($"Version：{GetVersion()}");
+            sb.Append("\r\n");
+            sb.Append($"IsDevelopment：{env.IsDevelopment()}");
+            sb.Append("\r\n");
+            sb.Append($"ContentRootPath：{env.ContentRootPath}");
+            sb.Append("\r\n");
+            sb.Append($"WebRootPath：{env.WebRootPath}");
+            sb.Append("\r\n");
+            Console.WriteLine(sb.ToString());
         }
 
         /// <summary>
-        /// 设置cache control
+        /// 设置 Cache 控制
         /// </summary>
-        /// <param name="context"></param>
+        /// <param name="context">静态文件响应上下文</param>
         public static void SetCacheControl(StaticFileResponseContext context)
         {
             int second = 365 * 24 * 60 * 60;

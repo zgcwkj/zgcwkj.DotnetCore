@@ -66,12 +66,16 @@ namespace zgcwkj.Web
             });
             //启用缓存功能
             services.AddMemoryCache();
+            //启动数据保护服务
+            services.AddFileDataProtection();
             //启动 Session
-            services.AddSession();
-            //启动数据保护
-            string protection = Path.Combine(Directory.GetCurrentDirectory(), "Protection");
-            if (!Directory.Exists(protection)) Directory.CreateDirectory(protection);
-            services.AddDataProtection().PersistKeysToFileSystem(new DirectoryInfo(protection));
+            services.AddSession(options =>
+            {
+                options.Cookie.Name = System.Reflection.Assembly.GetExecutingAssembly().FullName;
+                options.IdleTimeout = TimeSpan.FromMinutes(20);//设置Session的过期时间
+                options.Cookie.HttpOnly = true;//设置在浏览器不能通过js获得该Cookie的值
+                options.Cookie.IsEssential = true;
+            });
             //添加 Options 模式
             services.AddOptions();
             //添加 MVC
@@ -150,8 +154,8 @@ namespace zgcwkj.Web
             app.UseSession();
             //用户路由
             app.UseRouting();
-            //用户授权
-            app.UseAuthorization();
+            ////用户授权
+            //app.UseAuthorization();
             //用户访问地址重写
             app.UseRewriter(new RewriteOptions()
                 .AddRedirect(@"(.*?)[/]{2,}$", "/"));

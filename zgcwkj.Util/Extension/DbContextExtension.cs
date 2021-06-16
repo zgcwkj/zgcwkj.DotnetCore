@@ -163,7 +163,7 @@ namespace zgcwkj.Util.Extension
                     }
                     else if (value.ToString() == DateTime.MinValue.ToString())
                     {
-                        // sql server datetime类型的的范围不到0001-01-01，所以转成1970-01-01
+                        //SqlServer datetime 类型的的范围不到0001-01-01，所以转成1970-01-01
                         prop.SetValue(entry.Entity, GlobalConstant.DefaultTime);
                     }
                 }

@@ -1,0 +1,28 @@
+﻿using Microsoft.AspNetCore.DataProtection;
+using Microsoft.Extensions.DependencyInjection;
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Text;
+
+namespace zgcwkj.Util
+{
+    /// <summary>
+    /// 全局网站配置
+    /// </summary>
+    public static class GlobalWebConfig
+    {
+
+        /// <summary>
+        /// 添加本地文件的数据保护
+        /// </summary>
+        /// <param name="services"></param>
+        public static void AddFileDataProtection(this IServiceCollection services)
+        {
+            string protection = Path.Combine(Directory.GetCurrentDirectory(), "Protection");
+            if (!Directory.Exists(protection)) Directory.CreateDirectory(protection);
+            services.AddDataProtection().PersistKeysToFileSystem(new DirectoryInfo(protection));
+        }
+
+    }
+}

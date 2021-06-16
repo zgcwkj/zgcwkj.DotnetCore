@@ -10,18 +10,23 @@ namespace zgcwkj.Util.Enum
     public enum DbType
     {
         /// <summary>
-        /// MySql
+        /// Sqlite
         /// </summary>
-        MySql = 0,
-
-        /// <summary>
-        /// SqlServer
-        /// </summary>
-        SqlServer = 1,
+        SQLite = 0,
 
         /// <summary>
         /// PostgreSql
         /// </summary>
-        PostgreSql = 2,
+        PostgreSql = 1,
+
+        /// <summary>
+        /// SqlServer
+        /// </summary>
+        SqlServer = 2,
+
+        /// <summary>
+        /// MySql
+        /// </summary>
+        MySql = 3,
     }
 }
