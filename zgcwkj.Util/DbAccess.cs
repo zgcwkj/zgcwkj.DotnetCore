@@ -282,6 +282,13 @@ namespace zgcwkj.Util
                 {
                     sql = sql.Replace("getdate()", "now()");
                 }
+                //空字符函数
+                string ifnullStr = Regex.Match(sql, @"coalesce\(.+?\)").Value;
+                if (!ifnullStr.IsNull())
+                {
+                    string ifnullStrB = Regex.Match(sql, @"(?<=coalesce\().+?(?=\))").Value;
+                    sql = sql.Replace(ifnullStr, $"ifnull({ifnullStrB})");
+                }
                 //分页函数
                 int pageSql = sql.IndexOf("offset");
                 if (pageSql != -1 && sql.LastIndexOf("only") > pageSql)
@@ -332,6 +339,13 @@ namespace zgcwkj.Util
                 {
                     string isnullStrB = Regex.Match(sql, @"(?<=isnull\().+?(?=\))").Value;
                     sql = sql.Replace(isnullStr, $"{isnullStrB} is null");
+                }
+                //空字符函数
+                string ifnullStr = Regex.Match(sql, @"ifnull\(.+?\)").Value;
+                if (!ifnullStr.IsNull())
+                {
+                    string ifnullStrB = Regex.Match(sql, @"(?<=ifnull\().+?(?=\))").Value;
+                    sql = sql.Replace(ifnullStr, $"coalesce({ifnullStrB})");
                 }
                 //分页函数
                 int pageSql = sql.IndexOf("limit");
