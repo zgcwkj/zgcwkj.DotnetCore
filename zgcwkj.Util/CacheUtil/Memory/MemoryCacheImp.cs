@@ -1,11 +1,9 @@
-﻿using System;
-using System.Text;
-using System.Linq;
+﻿using Microsoft.Extensions.Caching.Memory;
+using System;
 using System.Collections.Generic;
-using Microsoft.Extensions.Caching.Memory;
-using Microsoft.Extensions.DependencyInjection;
-using zgcwkj.Util.Log;
+using System.Linq;
 using zgcwkj.Util.Common;
+using zgcwkj.Util.Log;
 
 namespace zgcwkj.Util.CacheUtil.Memory
 {

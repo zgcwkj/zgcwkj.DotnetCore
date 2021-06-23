@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace zgcwkj.Util.Enum
+﻿namespace zgcwkj.Util.Enum
 {
     /// <summary>
     /// 缓存类型

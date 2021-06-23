@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
-namespace zgcwkj.Util.Models
+﻿namespace zgcwkj.Util.Models
 {
     /// <summary>
     /// SQL实体

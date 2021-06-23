@@ -1,9 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 using zgcwkj.Util.CacheUtil.Memory;
 using zgcwkj.Util.CacheUtil.Redis;
-using zgcwkj.Util.Common;
 using zgcwkj.Util.Enum;
 using zgcwkj.Util.Web;
 
@@ -21,19 +18,13 @@ namespace zgcwkj.Util.CacheUtil
         {
             get
             {
-                CacheType cacheType;
-                string dbTypeStr = ConfigHelp.Get("CacheType");
-                switch (dbTypeStr.ToLower())
+                string dbTypeStr = ConfigHelp.Get("CacheType") ?? "memory";
+                var cacheType = dbTypeStr.ToLower() switch
                 {
-                    case "redis":
-                        cacheType = CacheType.Redis;
-                        break;
-                    case "memory":
-                        cacheType = CacheType.Memory;
-                        break;
-                    default:
-                        throw new Exception("未找到缓存配置");
-                }
+                    "memory" => CacheType.Memory,
+                    "redis" => CacheType.Redis,
+                    _ => throw new Exception("未找到缓存配置"),
+                };
                 return cacheType;
             }
         }
@@ -45,19 +36,12 @@ namespace zgcwkj.Util.CacheUtil
         {
             get
             {
-                //数据库连接字符
-                string dbConnect;
-                switch (Type)
+                string dbConnect = Type switch
                 {
-                    case CacheType.Redis:
-                        dbConnect = ConfigHelp.Get("RedisConnect");
-                        break;
-                    case CacheType.Memory:
-                        dbConnect = ConfigHelp.Get("MemoryConnect");
-                        break;
-                    default:
-                        throw new Exception("未找到缓存配置");
-                }
+                    CacheType.Memory => ConfigHelp.Get("MemoryConnect"),
+                    CacheType.Redis => ConfigHelp.Get("RedisConnect"),
+                    _ => throw new Exception("未找到缓存配置"),
+                };
                 return dbConnect;
             }
         }
@@ -69,18 +53,12 @@ namespace zgcwkj.Util.CacheUtil
         {
             get
             {
-                ICache cache;
-                switch (Type)
+                ICache cache = Type switch
                 {
-                    case CacheType.Redis:
-                        cache = new RedisCacheImp();
-                        break;
-                    case CacheType.Memory:
-                        cache = new MemoryCacheImp();
-                        break;
-                    default:
-                        throw new Exception("未找到缓存配置");
-                }
+                    CacheType.Memory => new MemoryCacheImp(),
+                    CacheType.Redis => new RedisCacheImp(),
+                    _ => throw new Exception("未找到缓存配置"),
+                };
                 return cache;
             }
         }

@@ -1,6 +1,6 @@
-﻿using System;
+﻿using Microsoft.EntityFrameworkCore;
+using System;
 using System.Text;
-using Microsoft.EntityFrameworkCore;
 
 namespace zgcwkj.Util.DbUtil.DbHelp
 {

@@ -1,8 +1,9 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Data;
 using System.Text;
-using System.Collections.Generic;
 using System.Text.Json;
+using zgcwkj.Util.Log;
 
 namespace zgcwkj.Util.Common
 {
@@ -28,6 +29,7 @@ namespace zgcwkj.Util.Common
                 catch (Exception ex)
                 {
                     string meg = ex.Message;
+                    if (GlobalConstant.IsDevelopment) Logger.Error(meg);
                 }
             }
             return def;
@@ -50,6 +52,7 @@ namespace zgcwkj.Util.Common
                 catch (Exception ex)
                 {
                     string meg = ex.Message;
+                    if (GlobalConstant.IsDevelopment) Logger.Error(meg);
                 }
             }
             return def;
@@ -96,6 +99,7 @@ namespace zgcwkj.Util.Common
                 catch (Exception ex)
                 {
                     string meg = ex.Message;
+                    if (GlobalConstant.IsDevelopment) Logger.Error(meg);
                 }
             }
             return def;
@@ -119,6 +123,7 @@ namespace zgcwkj.Util.Common
                 catch (Exception ex)
                 {
                     string meg = ex.Message;
+                    if (GlobalConstant.IsDevelopment) Logger.Error(meg);
                 }
             }
             return def;
@@ -142,6 +147,7 @@ namespace zgcwkj.Util.Common
                 catch (Exception ex)
                 {
                     string meg = ex.Message;
+                    if (GlobalConstant.IsDevelopment) Logger.Error(meg);
                 }
             }
             return def;
@@ -165,6 +171,7 @@ namespace zgcwkj.Util.Common
                 catch (Exception ex)
                 {
                     string meg = ex.Message;
+                    if (GlobalConstant.IsDevelopment) Logger.Error(meg);
                 }
             }
             return def;
@@ -187,6 +194,7 @@ namespace zgcwkj.Util.Common
                 catch (Exception ex)
                 {
                     string meg = ex.Message;
+                    if (GlobalConstant.IsDevelopment) Logger.Error(meg);
                 }
             }
             return def;
@@ -207,8 +215,9 @@ namespace zgcwkj.Util.Common
             catch (Exception ex)
             {
                 string meg = ex.Message;
-                return def;
+                if (GlobalConstant.IsDevelopment) Logger.Error(meg);
             }
+            return def;
         }
 
         /// <summary>
@@ -228,8 +237,9 @@ namespace zgcwkj.Util.Common
             catch (Exception ex)
             {
                 string meg = ex.Message;
-                return def;
+                if (GlobalConstant.IsDevelopment) Logger.Error(meg);
             }
+            return def;
         }
 
         /// <summary>
@@ -281,31 +291,20 @@ namespace zgcwkj.Util.Common
         /// <returns>时间字符</returns>
         public static string ToStr(this DateTime dateTime, string dateMode)
         {
-            switch (dateMode)
+            return dateMode switch
             {
-                case "0":
-                    return dateTime.ToString("yyyy-MM-dd");
-                case "1":
-                    return dateTime.ToString("yyyy-MM-dd HH:mm:ss");
-                case "2":
-                    return dateTime.ToString("yyyy/MM/dd");
-                case "3":
-                    return dateTime.ToString("yyyy年MM月dd日");
-                case "4":
-                    return dateTime.ToString("MM-dd");
-                case "5":
-                    return dateTime.ToString("MM/dd");
-                case "6":
-                    return dateTime.ToString("MM月dd日");
-                case "7":
-                    return dateTime.ToString("yyyy-MM");
-                case "8":
-                    return dateTime.ToString("yyyy/MM");
-                case "9":
-                    return dateTime.ToString("yyyy年MM月");
-                default:
-                    return dateTime.ToString(dateMode);
-            }
+                "0" => dateTime.ToString("yyyy-MM-dd"),
+                "1" => dateTime.ToString("yyyy-MM-dd HH:mm:ss"),
+                "2" => dateTime.ToString("yyyy/MM/dd"),
+                "3" => dateTime.ToString("yyyy年MM月dd日"),
+                "4" => dateTime.ToString("MM-dd"),
+                "5" => dateTime.ToString("MM/dd"),
+                "6" => dateTime.ToString("MM月dd日"),
+                "7" => dateTime.ToString("yyyy-MM"),
+                "8" => dateTime.ToString("yyyy/MM"),
+                "9" => dateTime.ToString("yyyy年MM月"),
+                _ => dateTime.ToString(dateMode),
+            };
         }
 
         /// <summary>
@@ -344,7 +343,8 @@ namespace zgcwkj.Util.Common
             }
             catch (Exception ex)
             {
-                string msg = ex.Message;
+                string meg = ex.Message;
+                if (GlobalConstant.IsDevelopment) Logger.Error(meg);
                 return "";
             }
         }
@@ -362,7 +362,8 @@ namespace zgcwkj.Util.Common
             }
             catch (Exception ex)
             {
-                string msg = ex.Message;
+                string meg = ex.Message;
+                if (GlobalConstant.IsDevelopment) Logger.Error(meg);
                 return "";
             }
         }
@@ -380,7 +381,8 @@ namespace zgcwkj.Util.Common
             }
             catch (Exception ex)
             {
-                string msg = ex.Message;
+                string meg = ex.Message;
+                if (GlobalConstant.IsDevelopment) Logger.Error(meg);
                 return "";
             }
         }
@@ -481,6 +483,7 @@ namespace zgcwkj.Util.Common
             catch (Exception ex)
             {
                 string meg = ex.Message;
+                if (GlobalConstant.IsDevelopment) Logger.Error(meg);
             }
             return true;
         }

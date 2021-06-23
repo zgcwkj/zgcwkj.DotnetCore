@@ -1,9 +1,6 @@
-﻿using Microsoft.Extensions.Hosting;
-using System;
+﻿using System;
 using System.Data;
-using System.Text.RegularExpressions;
 using System.Threading.Tasks;
-using zgcwkj.Util.Common;
 using zgcwkj.Util.DbUtil;
 using zgcwkj.Util.Models;
 
@@ -40,7 +37,7 @@ namespace zgcwkj.Util
         /// <returns>数据</returns>
         public static DataTable QueryDataTable(DbAccess cmdAccess)
         {
-            string sqlStr = GetSql(cmdAccess);
+            string sqlStr = cmdAccess.GetSql();
             return GetData(cmdAccess, sqlStr);
         }
 
@@ -51,7 +48,7 @@ namespace zgcwkj.Util
         /// <returns>数据</returns>
         public static async Task<DataTable> QueryDataTableAsync(DbAccess cmdAccess)
         {
-            string sqlStr = GetSql(cmdAccess);
+            string sqlStr = cmdAccess.GetSql();
             return await GetDataAsync(cmdAccess, sqlStr);
         }
 
@@ -66,7 +63,7 @@ namespace zgcwkj.Util
             {
                 cmdAccess.dbModel.EndSql = "limit 1";
             }
-            string sqlStr = GetSql(cmdAccess);
+            string sqlStr = cmdAccess.GetSql();
             DataTable dataTable = GetData(cmdAccess, sqlStr);
             if (dataTable.Rows.Count > 0)
             {
@@ -86,7 +83,7 @@ namespace zgcwkj.Util
             {
                 cmdAccess.dbModel.EndSql = "limit 1";
             }
-            string sqlStr = GetSql(cmdAccess);
+            string sqlStr = cmdAccess.GetSql();
             DataTable dataTable = await GetDataAsync(cmdAccess, sqlStr);
             if (dataTable.Rows.Count > 0)
             {
@@ -106,7 +103,7 @@ namespace zgcwkj.Util
             {
                 cmdAccess.dbModel.EndSql = "limit 1";
             }
-            string sqlStr = GetSql(cmdAccess);
+            string sqlStr = cmdAccess.GetSql();
             DataTable dataTable = GetData(cmdAccess, sqlStr);
             if (dataTable.Rows.Count > 0)
             {
@@ -126,7 +123,7 @@ namespace zgcwkj.Util
             {
                 cmdAccess.dbModel.EndSql = "limit 1";
             }
-            string sqlStr = GetSql(cmdAccess);
+            string sqlStr = cmdAccess.GetSql();
             DataTable dataTable = await GetDataAsync(cmdAccess, sqlStr);
             if (dataTable.Rows.Count > 0)
             {
@@ -142,7 +139,7 @@ namespace zgcwkj.Util
         /// <returns>行数</returns>
         public static int QueryRowCount(DbAccess cmdAccess)
         {
-            string sqlStr = GetSql(cmdAccess);
+            string sqlStr = cmdAccess.GetSql();
             int fromIndex = sqlStr.ToLower().IndexOf("from");
             //sqlStr.Substring(fromIndex, sqlStr.Length - fromIndex);
             string strFrom = sqlStr[fromIndex..];//找出主脚本
@@ -162,7 +159,7 @@ namespace zgcwkj.Util
         /// <returns>行数</returns>
         public static async Task<int> QueryRowCountAsync(DbAccess cmdAccess)
         {
-            string sqlStr = GetSql(cmdAccess);
+            string sqlStr = cmdAccess.GetSql();
             int fromIndex = sqlStr.ToLower().IndexOf("from");
             //sqlStr.Substring(fromIndex, sqlStr.Length - fromIndex);
             string strFrom = sqlStr[fromIndex..];//找出主脚本
@@ -182,7 +179,7 @@ namespace zgcwkj.Util
         /// <returns></returns>
         public static int UpdateData(DbAccess cmdAccess)
         {
-            string sqlStr = GetSql(cmdAccess);
+            string sqlStr = cmdAccess.GetSql();
             int updateCount = SetData(cmdAccess, sqlStr);
             return updateCount;
         }
@@ -194,32 +191,9 @@ namespace zgcwkj.Util
         /// <returns></returns>
         public static async Task<int> UpdateDataAsync(DbAccess cmdAccess)
         {
-            string sqlStr = GetSql(cmdAccess);
+            string sqlStr = cmdAccess.GetSql();
             int updateCount = await SetDataAsync(cmdAccess, sqlStr);
             return updateCount;
-        }
-
-        /// <summary>
-        /// 获取SQL
-        /// </summary>
-        /// <param name="cmdAccess">脚本模型</param>
-        /// <returns>SQL</returns>
-        private static string GetSql(DbAccess cmdAccess)
-        {
-            string sql = $"{cmdAccess.dbModel.Sql}";
-            //追加的脚本
-            if (!string.IsNullOrEmpty(cmdAccess.dbModel.AppendSql)) sql += $" {cmdAccess.dbModel.AppendSql}";
-            //排序的脚本
-            if (!string.IsNullOrEmpty(cmdAccess.dbModel.OrderBy)) sql += $" {cmdAccess.dbModel.OrderBy}";
-            //组合的脚本
-            if (!string.IsNullOrEmpty(cmdAccess.dbModel.GroupBy)) sql += $" {cmdAccess.dbModel.GroupBy}";
-            //结尾的脚本
-            if (!string.IsNullOrEmpty(cmdAccess.dbModel.EndSql)) sql += $" {cmdAccess.dbModel.EndSql}";
-            //数据库通用脚本
-            sql = GenericScript(sql);
-            //调试环境输出执行的脚本
-            //if (GlobalContext.HostingEnvironment.IsDevelopment()) Log.Logger.Info($"Sql：{sql}");
-            return sql;
         }
 
         /// <summary>
@@ -264,87 +238,6 @@ namespace zgcwkj.Util
         private static async Task<int> SetDataAsync(DbAccess cmdAccess, string sqlStr)
         {
             return await cmdAccess.dataBase.ExecuteSqlRawAsync(sqlStr);
-        }
-
-        /// <summary>
-        /// 数据库通用脚本
-        /// </summary>
-        /// <param name="sql">Sql脚本</param>
-        /// <returns>脚本</returns>
-        private static string GenericScript(string sql)
-        {
-            //转成通用脚本
-            var type = DbFactory.Type;
-            if (type == Enum.DbType.MySql)
-            {
-                //时间函数
-                if (sql.Contains("getdate()"))
-                {
-                    sql = sql.Replace("getdate()", "now()");
-                }
-                //分页函数
-                int pageSql = sql.IndexOf("offset");
-                if (pageSql != -1 && sql.LastIndexOf("only") > pageSql)
-                {
-                    string updSql = string.Empty;
-                    var page = Regex.Match(sql, @"(?<=offset).+(?=rows fetch next.+)").Value;
-                    var pageSize = Regex.Match(sql, @"(?<=rows fetch next.+).+(?=rows only)").Value;
-                    updSql += $" limit {page},{pageSize}";
-                    sql = sql.Substring(0, pageSql) + updSql;
-                }
-            }
-            else if (type == Enum.DbType.SqlServer)
-            {
-                //时间函数
-                if (sql.Contains("now()"))
-                {
-                    sql = sql.Replace("now()", "getdate()");
-                }
-                //是否为空函数
-                string isnullStr = Regex.Match(sql, @"isnull\(.+?\)").Value;
-                if (!isnullStr.IsNull())
-                {
-                    string isnullStrB = Regex.Match(sql, @"(?<=isnull\().+?(?=\))").Value;
-                    sql = sql.Replace(isnullStr, $"{isnullStrB} is null");
-                }
-                //分页函数
-                int pageSql = sql.IndexOf("limit");
-                if (pageSql != -1 && sql.LastIndexOf(",") > pageSql)
-                {
-                    string updSql = string.Empty;
-                    if (!sql.ToLower().Contains("order")) updSql = "order by 1";
-                    var page = Regex.Match(sql, @"(?<=limit).+(?=,.+)").Value;
-                    var pageSize = Regex.Match(sql, @"(?<=limit.+,)[0-9]+").Value;
-                    updSql += $" offset {page} rows fetch next {pageSize} rows only";
-                    sql = sql.Substring(0, pageSql) + updSql;
-                }
-            }
-            else if (type == Enum.DbType.PostgreSql)
-            {
-                //时间函数
-                if (sql.Contains("rand()"))
-                {
-                    sql = sql.Replace("rand()", "random()");
-                }
-                //是否为空函数
-                string isnullStr = Regex.Match(sql, @"isnull\(.+?\)").Value;
-                if (!isnullStr.IsNull())
-                {
-                    string isnullStrB = Regex.Match(sql, @"(?<=isnull\().+?(?=\))").Value;
-                    sql = sql.Replace(isnullStr, $"{isnullStrB} is null");
-                }
-                //分页函数
-                int pageSql = sql.IndexOf("limit");
-                if (pageSql != -1 && sql.LastIndexOf(",") > pageSql)
-                {
-                    string updSql = string.Empty;
-                    var page = Regex.Match(sql, @"(?<=limit).+(?=,.+)").Value;
-                    var pageSize = Regex.Match(sql, @"(?<=limit.+,)[0-9]+").Value;
-                    updSql += $"limit {pageSize} offset {page}";
-                    sql = sql.Substring(0, pageSql) + updSql;
-                }
-            }
-            return sql;
         }
     }
 }

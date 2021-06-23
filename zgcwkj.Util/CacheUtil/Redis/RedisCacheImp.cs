@@ -1,11 +1,7 @@
-﻿using System;
-using Newtonsoft.Json;
-using System.Collections.Generic;
-using CSRedis;
-using zgcwkj.Util.Log;
-using zgcwkj.Util.Web;
-using zgcwkj.Util.DbUtil;
+﻿using CSRedis;
+using System;
 using zgcwkj.Util.Common;
+using zgcwkj.Util.Log;
 
 namespace zgcwkj.Util.CacheUtil.Redis
 {

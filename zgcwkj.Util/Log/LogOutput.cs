@@ -1,7 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Text;
 using System.Threading;
 using zgcwkj.Util.Enum;
 
@@ -53,6 +51,7 @@ namespace zgcwkj.Util.Log
                 catch (Exception ex)
                 {
                     string msg = ex.Message;
+                    if (GlobalConstant.IsDevelopment) Logger.Error(msg);
                     index++;
                     type += $"{index}";
                     Thread.Sleep(100);
@@ -89,6 +88,7 @@ namespace zgcwkj.Util.Log
                 catch (Exception ex)
                 {
                     string msg = ex.Message;
+                    if (GlobalConstant.IsDevelopment) Logger.Error(msg);
                     index++;
                     type += $"{index}";
                     Thread.Sleep(100);

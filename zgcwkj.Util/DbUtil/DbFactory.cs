@@ -1,12 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using zgcwkj.Util.Web;
-using zgcwkj.Util.Enum;
 using zgcwkj.Util.DbUtil.MySql;
-using zgcwkj.Util.DbUtil.SqlServer;
 using zgcwkj.Util.DbUtil.PostgreSql;
 using zgcwkj.Util.DbUtil.SQLite;
+using zgcwkj.Util.DbUtil.SqlServer;
+using zgcwkj.Util.Enum;
+using zgcwkj.Util.Web;
 
 namespace zgcwkj.Util.DbUtil
 {
@@ -22,25 +20,15 @@ namespace zgcwkj.Util.DbUtil
         {
             get
             {
-                DbType dbType;
-                string dbTypeStr = ConfigHelp.Get("DbType");
-                switch (dbTypeStr.ToLower())
+                string dbTypeStr = ConfigHelp.Get("DbType") ?? "sqlite";
+                var dbType = dbTypeStr.ToLower() switch
                 {
-                    case "sqlite":
-                        dbType = DbType.SQLite;
-                        break;
-                    case "postgresql":
-                        dbType = DbType.PostgreSql;
-                        break;
-                    case "sqlserver":
-                        dbType = DbType.SqlServer;
-                        break;
-                    case "mysql":
-                        dbType = DbType.MySql;
-                        break;
-                    default:
-                        throw new Exception("未找到数据库配置");
-                }
+                    "sqlite" => DbType.SQLite,
+                    "postgresql" => DbType.PostgreSql,
+                    "sqlserver" => DbType.SqlServer,
+                    "mysql" => DbType.MySql,
+                    _ => throw new Exception("未找到数据库配置"),
+                };
                 return dbType;
             }
         }
@@ -52,25 +40,14 @@ namespace zgcwkj.Util.DbUtil
         {
             get
             {
-                //数据库连接字符
-                string dbConnect;
-                switch (Type)
+                string dbConnect = Type switch
                 {
-                    case DbType.SQLite:
-                        dbConnect = ConfigHelp.Get("SQLiteConnect");
-                        break;
-                    case DbType.PostgreSql:
-                        dbConnect = ConfigHelp.Get("PgsqlConnect");
-                        break;
-                    case DbType.SqlServer:
-                        dbConnect = ConfigHelp.Get("MssqlConnect");
-                        break;
-                    case DbType.MySql:
-                        dbConnect = ConfigHelp.Get("MysqlConnect");
-                        break;
-                    default:
-                        throw new Exception("未找到数据库配置");
-                }
+                    DbType.SQLite => ConfigHelp.Get("SQLiteConnect"),
+                    DbType.PostgreSql => ConfigHelp.Get("PgsqlConnect"),
+                    DbType.SqlServer => ConfigHelp.Get("MssqlConnect"),
+                    DbType.MySql => ConfigHelp.Get("MysqlConnect"),
+                    _ => throw new Exception("未找到数据库配置"),
+                };
                 return dbConnect;
             }
         }
@@ -93,25 +70,14 @@ namespace zgcwkj.Util.DbUtil
         {
             get
             {
-                //数据库抽象操作对象
-                IDatabase dataBase;
-                switch (Type)
+                IDatabase dataBase = Type switch
                 {
-                    case DbType.SQLite:
-                        dataBase = new SQLiteDatabase();
-                        break;
-                    case DbType.PostgreSql:
-                        dataBase = new PgSqlDatabase();
-                        break;
-                    case DbType.SqlServer:
-                        dataBase = new SqlServerDatabase();
-                        break;
-                    case DbType.MySql:
-                        dataBase = new MySqlDatabase();
-                        break;
-                    default:
-                        throw new Exception("未找到数据库配置");
-                }
+                    DbType.SQLite => new SQLiteDatabase(),
+                    DbType.PostgreSql => new PgSqlDatabase(),
+                    DbType.SqlServer => new SqlServerDatabase(),
+                    DbType.MySql => new MySqlDatabase(),
+                    _ => throw new Exception("未找到数据库配置"),
+                };
                 return dataBase;
             }
         }

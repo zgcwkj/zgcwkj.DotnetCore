@@ -1,11 +1,6 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.AspNetCore.Http;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Web;
+using System;
 
 namespace zgcwkj.Util
 {
@@ -19,13 +14,15 @@ namespace zgcwkj.Util
         /// </summary>
         /// <param name="sName">名称</param>
         /// <param name="sValue">值</param>
-        /// <param name="httpOnly">true代表浏览器的js不能获取到的cookie</param>
+        /// <param name="httpOnly">前端脚本能否获取到的Cookie</param>
         public static bool Set(string sName, string sValue, bool httpOnly = true)
         {
             IHttpContextAccessor hca = GlobalContext.ServiceProvider?.GetService<IHttpContextAccessor>();
-            CookieOptions option = new CookieOptions();
-            option.Expires = DateTime.Now.AddDays(30);
-            option.HttpOnly = httpOnly;
+            CookieOptions option = new CookieOptions
+            {
+                Expires = DateTime.Now.AddDays(30),
+                HttpOnly = httpOnly
+            };
             hca?.HttpContext?.Response.Cookies.Append(sName, sValue, option);
             return true;
         }
@@ -36,13 +33,15 @@ namespace zgcwkj.Util
         /// <param name="sName">名称</param>
         /// <param name="sValue">值</param>
         /// <param name="expires">过期时间(分钟)</param>
-        /// <param name="httpOnly">true代表浏览器的js不能获取到的cookie</param>
+        /// <param name="httpOnly">前端脚本能否获取到的Cookie</param>
         public static bool Set(string sName, string sValue, int expires, bool httpOnly = true)
         {
             IHttpContextAccessor hca = GlobalContext.ServiceProvider?.GetService<IHttpContextAccessor>();
-            CookieOptions option = new CookieOptions();
-            option.Expires = DateTime.Now.AddMinutes(expires);
-            option.HttpOnly = httpOnly;
+            CookieOptions option = new CookieOptions
+            {
+                Expires = DateTime.Now.AddMinutes(expires),
+                HttpOnly = httpOnly
+            };
             hca?.HttpContext?.Response.Cookies.Append(sName, sValue, option);
             return true;
         }

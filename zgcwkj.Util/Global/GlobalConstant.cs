@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Microsoft.Extensions.Hosting;
+using System;
+using zgcwkj.Util.Common;
 
 namespace zgcwkj.Util
 {
@@ -8,13 +10,37 @@ namespace zgcwkj.Util
     public class GlobalConstant
     {
         /// <summary>
-        /// 默认时间
+        /// 是否正式环境
         /// </summary>
-        public static DateTime DefaultTime
+        public static bool IsProduction
         {
             get
             {
-                return DateTime.Parse("1970-01-01 00:00:00");
+                var isDevelopment = GlobalContext.HostingEnvironment?.IsProduction();
+                return isDevelopment.ToBool();
+            }
+        }
+
+        /// <summary>
+        /// 是否开发环境
+        /// </summary>
+        public static bool IsDevelopment
+        {
+            get
+            {
+                var isDevelopment = GlobalContext.HostingEnvironment?.IsDevelopment();
+                return isDevelopment.ToBool();
+            }
+        }
+
+        /// <summary>
+        /// 当前时间戳
+        /// </summary>
+        public static string TimeStamp
+        {
+            get
+            {
+                return DateTime.Now.ToDateByUnix().ToTruncate(0).ToTrim();
             }
         }
 

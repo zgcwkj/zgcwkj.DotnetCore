@@ -1,8 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using zgcwkj.Util.CacheUtil;
 using zgcwkj.Util.DbUtil;
-using zgcwkj.Util.CacheUtil;
 
 namespace zgcwkj.Util
 {

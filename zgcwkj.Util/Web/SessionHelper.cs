@@ -1,13 +1,5 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.AspNetCore.Http;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Web;
-using Microsoft.AspNetCore.Session;
-using Microsoft.AspNetCore.Http.Extensions;
 using System.Text.Json;
 
 namespace zgcwkj.Util
@@ -38,8 +30,7 @@ namespace zgcwkj.Util
         /// <param name="value">Session的键值</param>
         public static bool Set(string key, string value)
         {
-            Set<string>(key, value);
-            return true;
+            return Set<string>(key, value);
         }
 
         /// <summary>

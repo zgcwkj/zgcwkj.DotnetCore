@@ -1,14 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.ChangeTracking;
+using Microsoft.EntityFrameworkCore.Metadata;
+using System;
 using System.Data;
 using System.Data.Common;
+using System.Linq;
 using System.Reflection;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Metadata;
-using Microsoft.EntityFrameworkCore.ChangeTracking;
+using System.Text;
 using zgcwkj.Util.Common;
 
 namespace zgcwkj.Util.Extension
@@ -19,13 +17,24 @@ namespace zgcwkj.Util.Extension
     public static class DbContextExtension
     {
         /// <summary>
+        /// 时间戳最小时间
+        /// </summary>
+        public static DateTime TimeStampMinDateTime
+        {
+            get
+            {
+                return DateTime.Parse("1970-01-01 00:00:00");
+            }
+        }
+
+        /// <summary>
         /// 拼接删除SQL语句
         /// </summary>
         /// <param name="tableName">表名</param>
         /// <returns></returns>
         public static string DeleteSql(string tableName)
         {
-            StringBuilder strSql = new StringBuilder("DELETE FROM " + tableName + "");
+            StringBuilder strSql = new StringBuilder("delete from " + tableName + "");
             return strSql.ToString();
         }
 
@@ -38,7 +47,7 @@ namespace zgcwkj.Util.Extension
         /// <returns></returns>
         public static string DeleteSql(string tableName, string propertyName, string propertyValue)
         {
-            StringBuilder strSql = new StringBuilder("DELETE FROM " + tableName + " WHERE " + propertyName + " = " + propertyValue + "");
+            StringBuilder strSql = new StringBuilder("delete from " + tableName + " where " + propertyName + " = " + propertyValue + "");
             return strSql.ToString();
         }
 
@@ -51,7 +60,7 @@ namespace zgcwkj.Util.Extension
         /// <returns></returns>
         public static string DeleteSql(string tableName, string propertyName, string[] propertyValue)
         {
-            string strSql = "DELETE FROM " + tableName + " WHERE " + propertyName + " IN (" + string.Join(",", propertyValue) + ")";
+            string strSql = "delete from " + tableName + " where " + propertyName + " in (" + string.Join(",", propertyValue) + ")";
             return strSql.ToString();
         }
 
@@ -153,7 +162,7 @@ namespace zgcwkj.Util.Extension
                                 prop.SetValue(entry.Entity, (decimal)0);
                                 break;
                             case "DateTime":
-                                prop.SetValue(entry.Entity, GlobalConstant.DefaultTime);
+                                prop.SetValue(entry.Entity, TimeStampMinDateTime);
                                 break;
                             case "String":
                                 prop.SetValue(entry.Entity, string.Empty);
@@ -164,7 +173,7 @@ namespace zgcwkj.Util.Extension
                     else if (value.ToString() == DateTime.MinValue.ToString())
                     {
                         //SqlServer datetime 类型的的范围不到0001-01-01，所以转成1970-01-01
-                        prop.SetValue(entry.Entity, GlobalConstant.DefaultTime);
+                        prop.SetValue(entry.Entity, TimeStampMinDateTime);
                     }
                 }
             }

@@ -1,7 +1,7 @@
-﻿using System;
-using System.Linq;
+﻿using System.Linq;
 using System.Text.RegularExpressions;
 using zgcwkj.Util.Common;
+using zgcwkj.Util.DbUtil;
 using zgcwkj.Util.Models;
 
 namespace zgcwkj.Util
@@ -30,6 +30,27 @@ namespace zgcwkj.Util
             cmdAccess.dbModel = new SqlModel();
             cmdAccess.dataBase = DataFactory.Db;
             return true;
+        }
+
+        /// <summary>
+        /// 获取执行的脚本
+        /// </summary>
+        /// <returns></returns>
+        public static string GetSql(this DbAccess cmdAccess)
+        {
+            string sql = $"{cmdAccess.dbModel.Sql}";
+            //追加的脚本
+            if (!string.IsNullOrEmpty(cmdAccess.dbModel.AppendSql)) sql += $" {cmdAccess.dbModel.AppendSql}";
+            //排序的脚本
+            if (!string.IsNullOrEmpty(cmdAccess.dbModel.OrderBy)) sql += $" {cmdAccess.dbModel.OrderBy}";
+            //组合的脚本
+            if (!string.IsNullOrEmpty(cmdAccess.dbModel.GroupBy)) sql += $" {cmdAccess.dbModel.GroupBy}";
+            //结尾的脚本
+            if (!string.IsNullOrEmpty(cmdAccess.dbModel.EndSql)) sql += $" {cmdAccess.dbModel.EndSql}";
+            //数据库通用脚本
+            sql = GenericScript(sql);
+            //返回脚本
+            return sql;
         }
 
         /// <summary>
@@ -272,59 +293,6 @@ namespace zgcwkj.Util
         }
 
         /// <summary>
-        /// 时序库的开始时间
-        /// 末尾追加 00:00:00
-        /// </summary>
-        /// <param name="value">值</param>
-        /// <returns>构造值</returns>
-        public static string ToTdStartTimeValue(this string value)
-        {
-            if (!string.IsNullOrEmpty(value))
-            {
-                return $"{value} 00:00:00";
-            }
-            return string.Empty;
-        }
-
-        /// <summary>
-        /// 时序库的结束时间
-        /// 末尾追加 23:59:59
-        /// </summary>
-        /// <param name="value">值</param>
-        /// <returns>构造值</returns>
-        public static string ToTdEndTimeValue(this string value)
-        {
-            if (!string.IsNullOrEmpty(value))
-            {
-                return $"{value} 23:59:59";
-            }
-            return string.Empty;
-        }
-
-        /// <summary>
-        /// 转成符合时序库的时间
-        /// 格式 yyyy-MM-dd HH:mm:ss
-        /// </summary>
-        /// <param name="value">值</param>
-        /// <returns>构造值</returns>
-        public static string ToTdDateTimeValue(this string value)
-        {
-            if (!string.IsNullOrEmpty(value))
-            {
-                try
-                {
-                    return Convert.ToDateTime(value).ToString("yyyy-MM-dd HH:mm:ss");
-                }
-                catch (Exception ex)
-                {
-                    string mes = ex.Message;
-                    throw;
-                }
-            }
-            return string.Empty;
-        }
-
-        /// <summary>
         /// 获取对应的参数
         /// </summary>
         /// <param name="sqlStr">脚本字符</param>
@@ -362,6 +330,87 @@ namespace zgcwkj.Util
             data = data.ToTrim().Replace("\\", "\\\\");
             data = data.ToTrim().Replace("'", "\\'");
             return data;
+        }
+
+        /// <summary>
+        /// 数据库通用脚本
+        /// </summary>
+        /// <param name="sql">Sql脚本</param>
+        /// <returns>脚本</returns>
+        private static string GenericScript(string sql)
+        {
+            //转成通用脚本
+            var type = DbFactory.Type;
+            if (type == Enum.DbType.MySql)
+            {
+                //时间函数
+                if (sql.Contains("getdate()"))
+                {
+                    sql = sql.Replace("getdate()", "now()");
+                }
+                //分页函数
+                int pageSql = sql.IndexOf("offset");
+                if (pageSql != -1 && sql.LastIndexOf("only") > pageSql)
+                {
+                    string updSql = string.Empty;
+                    var page = Regex.Match(sql, @"(?<=offset).+(?=rows fetch next.+)").Value;
+                    var pageSize = Regex.Match(sql, @"(?<=rows fetch next.+).+(?=rows only)").Value;
+                    updSql += $" limit {page},{pageSize}";
+                    sql = sql.Substring(0, pageSql) + updSql;
+                }
+            }
+            else if (type == Enum.DbType.SqlServer)
+            {
+                //时间函数
+                if (sql.Contains("now()"))
+                {
+                    sql = sql.Replace("now()", "getdate()");
+                }
+                //是否为空函数
+                string isnullStr = Regex.Match(sql, @"isnull\(.+?\)").Value;
+                if (!isnullStr.IsNull())
+                {
+                    string isnullStrB = Regex.Match(sql, @"(?<=isnull\().+?(?=\))").Value;
+                    sql = sql.Replace(isnullStr, $"{isnullStrB} is null");
+                }
+                //分页函数
+                int pageSql = sql.IndexOf("limit");
+                if (pageSql != -1 && sql.LastIndexOf(",") > pageSql)
+                {
+                    string updSql = string.Empty;
+                    if (!sql.ToLower().Contains("order")) updSql = "order by 1";
+                    var page = Regex.Match(sql, @"(?<=limit).+(?=,.+)").Value;
+                    var pageSize = Regex.Match(sql, @"(?<=limit.+,)[0-9]+").Value;
+                    updSql += $" offset {page} rows fetch next {pageSize} rows only";
+                    sql = sql.Substring(0, pageSql) + updSql;
+                }
+            }
+            else if (type == Enum.DbType.PostgreSql)
+            {
+                //时间函数
+                if (sql.Contains("rand()"))
+                {
+                    sql = sql.Replace("rand()", "random()");
+                }
+                //是否为空函数
+                string isnullStr = Regex.Match(sql, @"isnull\(.+?\)").Value;
+                if (!isnullStr.IsNull())
+                {
+                    string isnullStrB = Regex.Match(sql, @"(?<=isnull\().+?(?=\))").Value;
+                    sql = sql.Replace(isnullStr, $"{isnullStrB} is null");
+                }
+                //分页函数
+                int pageSql = sql.IndexOf("limit");
+                if (pageSql != -1 && sql.LastIndexOf(",") > pageSql)
+                {
+                    string updSql = string.Empty;
+                    var page = Regex.Match(sql, @"(?<=limit).+(?=,.+)").Value;
+                    var pageSize = Regex.Match(sql, @"(?<=limit.+,)[0-9]+").Value;
+                    updSql += $"limit {pageSize} offset {page}";
+                    sql = sql.Substring(0, pageSql) + updSql;
+                }
+            }
+            return sql;
         }
     }
 }

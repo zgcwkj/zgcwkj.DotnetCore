@@ -1,13 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Logging.Console;
-using Microsoft.Extensions.Logging.Debug;
-using Npgsql;
 using System;
-using System.Collections.Generic;
-using System.Text;
-using zgcwkj.Util.Common;
 using zgcwkj.Util.DbUtil.DbHelp;
 using zgcwkj.Util.Enum;
 
@@ -55,7 +47,7 @@ namespace zgcwkj.Util.DbUtil
             //数据库拦截器
             optionsBuilder.AddInterceptors(new DbInterceptor());
             //输出日志
-            LogFactory.Add(optionsBuilder);
+            EFLogger.Add(optionsBuilder);
             //
             base.OnConfiguring(optionsBuilder);
         }

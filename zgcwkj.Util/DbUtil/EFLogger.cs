@@ -1,18 +1,12 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Logging.Debug;
-using System;
-using System.Collections.Generic;
-using System.Text;
-using zgcwkj.Util.Common;
 
 namespace zgcwkj.Util.DbUtil
 {
     /// <summary>
     /// 执行的脚本日志
     /// </summary>
-    public class LogFactory
+    public class EFLogger
     {
         /// <summary>
         /// 输出到 DeBug
@@ -29,16 +23,14 @@ namespace zgcwkj.Util.DbUtil
         /// </summary>
         public static void Add(DbContextOptionsBuilder optionsBuilder)
         {
-            //控制器
-            if (GlobalContext.HostingEnvironment.IsDevelopment())
+            //开发模式
+            if (GlobalConstant.IsDevelopment)
             {
+                //控制器
                 optionsBuilder.UseLoggerFactory(loggerFactoryConsole);
+                ////DeBug
+                //optionsBuilder.UseLoggerFactory(LoggerFactoryDeBug);
             }
-            //DeBug
-            //if (GlobalContext.HostingEnvironment.IsDevelopment())
-            //{
-            //    optionsBuilder.UseLoggerFactory(LoggerFactoryDeBug);
-            //}
         }
     }
 }

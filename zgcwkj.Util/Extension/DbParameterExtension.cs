@@ -1,9 +1,8 @@
-﻿using System;
-using System.Data;
-using System.Data.Common;
-using Microsoft.Data.SqlClient;
+﻿using Microsoft.Data.SqlClient;
 using MySqlConnector;
 using Npgsql;
+using System;
+using System.Data.Common;
 using zgcwkj.Util.DbUtil;
 
 namespace zgcwkj.Util.Extension
