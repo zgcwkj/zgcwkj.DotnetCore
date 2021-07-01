@@ -377,7 +377,7 @@ namespace zgcwkj.Util.DbUtil
         /// </summary>
         /// <param name="list">列表</param>
         /// <returns></returns>
-        public List<object> DataFormat(List<object> list)
+        private List<object> DataFormat(List<object> list)
         {
             var linq = list.Select(T =>
                 T.GetType() == typeof(string) ? T.ToTrim() :

@@ -6,6 +6,7 @@ using System.Data;
 using System.Data.Common;
 using System.Diagnostics;
 using System.Threading.Tasks;
+using zgcwkj.Util.DbUtil;
 
 namespace zgcwkj.Util.Extension
 {
@@ -124,10 +125,10 @@ namespace zgcwkj.Util.Extension
                     return reader;
                 }
             }
-            catch (Exception)
+            catch (Exception ex)
             {
                 Close();
-                throw;
+                throw ex;
             }
         }
 
@@ -189,10 +190,10 @@ namespace zgcwkj.Util.Extension
                     return reader;
                 }
             }
-            catch (Exception)
+            catch (Exception ex)
             {
                 Close();
-                throw;
+                throw ex;
             }
         }
 
@@ -255,10 +256,10 @@ namespace zgcwkj.Util.Extension
                     return obj;
                 }
             }
-            catch (Exception)
+            catch (Exception ex)
             {
                 Close();
-                throw;
+                throw ex;
             }
         }
 
@@ -321,10 +322,10 @@ namespace zgcwkj.Util.Extension
                     return obj;
                 }
             }
-            catch (Exception)
+            catch (Exception ex)
             {
                 Close();
-                throw;
+                throw ex;
             }
         }
 
@@ -345,7 +346,7 @@ namespace zgcwkj.Util.Extension
             }
             cmd.Connection = conn;
             cmd.CommandText = strSql;
-            cmd.CommandTimeout = 10;
+            cmd.CommandTimeout = DbFactory.Timeout;
             if (isOpenTrans != null)
             {
                 cmd.Transaction = isOpenTrans;
