@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 namespace zgcwkj.Util.DbUtil
 {
     /// <summary>
-    /// 数据库实现接口
+    /// 数据库接口抽象
     /// </summary>
     public interface IDatabase
     {

@@ -9,7 +9,6 @@ namespace zgcwkj.Util
     /// </summary>
     public static class GlobalWebConfig
     {
-
         /// <summary>
         /// 添加本地文件的数据保护
         /// </summary>

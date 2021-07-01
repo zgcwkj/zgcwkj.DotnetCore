@@ -5,6 +5,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Reflection;
 using System.Text;
+using System.Threading.Tasks;
 using zgcwkj.Util.Common;
 
 namespace zgcwkj.Util.DbUtil
@@ -35,6 +36,49 @@ namespace zgcwkj.Util.DbUtil
             var cmd = DbProvider.Create();
             cmd.SetCommandText(sql.ToString());
             var dataRow = DbAccess.QueryDataRow(cmd);
+            if (dataRow.IsNull()) return false;
+            //赋值
+            PropertyInfo[] properties = this.GetType().GetProperties(BindingFlags.Instance | BindingFlags.Public);
+            foreach (var property in properties)
+            {
+                string propertyName = property.Name;
+                foreach (var attribute in property.GetCustomAttributes())
+                {
+                    var columnAttribute = attribute as ColumnAttribute;//字段名称
+                    if (!columnAttribute.IsNull())
+                    {
+                        propertyName = columnAttribute.Name;
+                    }
+                }
+                if (!dataRow[propertyName].IsNull())
+                {
+                    property.SetValue(this, dataRow[propertyName]);
+                }
+            }
+            return true;
+        }
+
+        /// <summary>
+        /// 加载数据(异步)
+        /// </summary>
+        /// <returns></returns>
+        public async Task<bool> LoadDataAsync()
+        {
+            Type type = this.GetType();
+            string tableName = GetTableName(type);
+            var data = GetTableData(type);
+            string[] columns = data.keyColumns.ToArray();
+            object[] values = data.keyValues.ToArray();
+            StringBuilder sql = new StringBuilder();
+            sql.Append($"select * from {tableName} where ");
+            for (int i = 0; i < columns.Length; i++)
+            {
+                sql.Append($" {columns[i]} = '{values[i]}' ");
+                if (i != columns.Length - 1) sql.Append($" and ");
+            }
+            var cmd = DbProvider.Create();
+            cmd.SetCommandText(sql.ToString());
+            var dataRow = await DbAccess.QueryDataRowAsync(cmd);
             if (dataRow.IsNull()) return false;
             //赋值
             PropertyInfo[] properties = this.GetType().GetProperties(BindingFlags.Instance | BindingFlags.Public);
@@ -93,6 +137,41 @@ namespace zgcwkj.Util.DbUtil
         }
 
         /// <summary>
+        /// 新增数据(异步)
+        /// </summary>
+        /// <returns></returns>
+        public async Task<bool> InsertAsync()
+        {
+            Type type = this.GetType();
+            string tableName = GetTableName(type);
+            var data = GetTableData(type);
+            string columns = string.Join(",", data.notkeyColumns);
+            object[] values = data.notkeyValues.ToArray();
+            string keyColumns = string.Join(",", data.keyColumns);
+            object[] keyValues = data.keyValues.ToArray();
+            StringBuilder sql = new StringBuilder();
+            //主键赋值状态
+            var cmd = DbProvider.Create();
+            if (!keyColumns.IsNull())
+            {
+                object[] kvValues = new object[keyValues.Length + values.Length];
+                keyValues.CopyTo(kvValues, 0);
+                values.CopyTo(kvValues, keyValues.Length);
+                sql.Append($"insert into {tableName} ({keyColumns},{columns}) values(@{keyColumns.Replace(",", ",@")},@{columns.Replace(",", ",@")})");
+                cmd.SetCommandText(sql.ToString(), kvValues);
+                int count = DbAccess.UpdateData(cmd);
+                return count > 0;
+            }
+            else
+            {
+                sql.Append($"insert into {tableName} ({columns}) values(@{columns.Replace(",", ",@")})");
+                cmd.SetCommandText(sql.ToString(), values);
+                int count = await DbAccess.UpdateDataAsync(cmd);
+                return count > 0;
+            }
+        }
+
+        /// <summary>
         /// 更新数据
         /// </summary>
         /// <returns></returns>
@@ -125,6 +204,38 @@ namespace zgcwkj.Util.DbUtil
         }
 
         /// <summary>
+        /// 更新数据(异步)
+        /// </summary>
+        /// <returns></returns>
+        public async Task<bool> UpdateAsync()
+        {
+            Type type = this.GetType();
+            string tableName = GetTableName(type);
+            var data = GetTableData(type);
+            StringBuilder sql = new StringBuilder();
+            string[] columns = data.notkeyColumns.ToArray();
+            object[] values = data.notkeyValues.ToArray();
+            sql.Append($"update {tableName} set ");
+            for (int i = 0; i < columns.Length; i++)
+            {
+                sql.Append($" {columns[i]} = @{columns[i]} ");
+                if (i != columns.Length - 1) sql.Append($",");
+            }
+            string[] keyColumns = data.keyColumns.ToArray();
+            object[] keyValues = data.keyValues.ToArray();
+            sql.Append($" where ");
+            for (int i = 0; i < keyColumns.Length; i++)
+            {
+                sql.Append($" {keyColumns[i]} = @{keyColumns[i]} ");
+                if (i != keyColumns.Length - 1) sql.Append($" and ");
+            }
+            var cmd = DbProvider.Create();
+            cmd.SetCommandText(sql.ToString(), values.Concat(keyValues).ToArray());
+            int count = await DbAccess.UpdateDataAsync(cmd);
+            return count > 0;
+        }
+
+        /// <summary>
         /// 删除数据
         /// </summary>
         /// <returns></returns>
@@ -145,6 +256,30 @@ namespace zgcwkj.Util.DbUtil
             var cmd = DbProvider.Create();
             cmd.SetCommandText(sql.ToString(), values);
             int count = DbAccess.UpdateData(cmd);
+            return count > 0;
+        }
+
+        /// <summary>
+        /// 删除数据(异步)
+        /// </summary>
+        /// <returns></returns>
+        public async Task<bool> DeleteAsync()
+        {
+            Type type = this.GetType();
+            string tableName = GetTableName(type);
+            var data = GetTableData(type);
+            string[] columns = data.keyColumns.ToArray();
+            object[] values = data.keyValues.ToArray();
+            StringBuilder sql = new StringBuilder();
+            sql.Append($"delete from {tableName} where ");
+            for (int i = 0; i < columns.Length; i++)
+            {
+                sql.Append($" {columns[i]} = @{columns[i]} ");
+                if (i != columns.Length - 1) sql.Append($" and ");
+            }
+            var cmd = DbProvider.Create();
+            cmd.SetCommandText(sql.ToString(), values);
+            int count = await DbAccess.UpdateDataAsync(cmd);
             return count > 0;
         }
 
