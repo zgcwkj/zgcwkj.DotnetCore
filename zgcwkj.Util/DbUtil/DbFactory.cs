@@ -4,7 +4,6 @@ using zgcwkj.Util.DbUtil.PostgreSql;
 using zgcwkj.Util.DbUtil.SQLite;
 using zgcwkj.Util.DbUtil.SqlServer;
 using zgcwkj.Util.Enum;
-using zgcwkj.Util.Web;
 
 namespace zgcwkj.Util.DbUtil
 {

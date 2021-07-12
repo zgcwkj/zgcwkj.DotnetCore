@@ -2,7 +2,6 @@
 using zgcwkj.Util.CacheUtil.Memory;
 using zgcwkj.Util.CacheUtil.Redis;
 using zgcwkj.Util.Enum;
-using zgcwkj.Util.Web;
 
 namespace zgcwkj.Util.CacheUtil
 {
