@@ -1,6 +1,6 @@
 ﻿using Microsoft.Extensions.Configuration;
 
-namespace zgcwkj.Util.Web
+namespace zgcwkj.Util
 {
     /// <summary>
     /// Config 帮助
