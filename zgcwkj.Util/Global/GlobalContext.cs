@@ -4,8 +4,10 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using System;
+using System.IO;
 using System.Reflection;
 using System.Text;
+using zgcwkj.Util.Common;
 
 namespace zgcwkj.Util
 {
@@ -27,9 +29,33 @@ namespace zgcwkj.Util
         public static IServiceProvider ServiceProvider { get; set; }
 
         /// <summary>
+        /// 配置对象(私有)
+        /// </summary>
+        private static IConfiguration configuration;
+
+        /// <summary>
         /// 配置对象
         /// </summary>
-        public static IConfiguration Configuration { get; set; }
+        public static IConfiguration Configuration
+        {
+            get
+            {
+                if (configuration.IsNull())
+                {
+                    var cBuilder = new ConfigurationBuilder();
+                    var currentDirectory = Directory.GetCurrentDirectory();
+                    var icBuilder = cBuilder.SetBasePath(currentDirectory);
+                    var builder = icBuilder.AddJsonFile("appsettings.json");
+                    var config = builder.Build();
+                    configuration = config;
+                }
+                return configuration;
+            }
+            set
+            {
+                configuration = value;
+            }
+        }
 
         /// <summary>
         /// Web主机环境

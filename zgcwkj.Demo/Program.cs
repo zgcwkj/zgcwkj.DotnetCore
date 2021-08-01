@@ -20,11 +20,11 @@ namespace zgcwkj.Demo
     {
         static void Main(string[] args)
         {
-            var cBuilder = new ConfigurationBuilder();
-            var icBuilder = cBuilder.SetBasePath(Directory.GetCurrentDirectory());
-            var builder = icBuilder.AddJsonFile("appsettings.json");
-            var config = builder.Build();
-            GlobalContext.Configuration = config;
+            //var cBuilder = new ConfigurationBuilder();
+            //var icBuilder = cBuilder.SetBasePath(Directory.GetCurrentDirectory());
+            //var builder = icBuilder.AddJsonFile("appsettings.json");
+            //var config = builder.Build();
+            //GlobalContext.Configuration = config;
 
             string userID = MD5Tool.GetMd5("zgcwkj");
 
