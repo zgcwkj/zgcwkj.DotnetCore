@@ -1,5 +1,6 @@
 ﻿using Microsoft.Extensions.Hosting;
 using System;
+using System.IO;
 using zgcwkj.Util.Common;
 
 namespace zgcwkj.Util
@@ -30,6 +31,18 @@ namespace zgcwkj.Util
             {
                 var isDevelopment = GlobalContext.HostingEnvironment?.IsDevelopment();
                 return isDevelopment.ToBool();
+            }
+        }
+
+        /// <summary>
+        /// 是否开发环境
+        /// </summary>
+        public static string GetRunPath
+        {
+            get
+            {
+                string filePath = Path.GetDirectoryName(typeof(GlobalConstant).Assembly.Location);
+                return filePath;
             }
         }
 

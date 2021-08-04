@@ -26,15 +26,6 @@ namespace zgcwkj.Model
         /// <param name="optionsBuilder">上下文选项生成器</param>
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            if (GlobalContext.Configuration.IsNull())
-            {
-                var cBuilder = new ConfigurationBuilder();
-                var icBuilder = cBuilder.SetBasePath(Directory.GetCurrentDirectory());
-                var builder = icBuilder.AddJsonFile("appsettings.json");
-                var config = builder.Build();
-                GlobalContext.Configuration = config;
-            }
-
             base.OnConfiguring(optionsBuilder);
         }
 

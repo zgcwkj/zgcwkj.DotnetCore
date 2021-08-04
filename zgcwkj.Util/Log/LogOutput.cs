@@ -17,7 +17,7 @@ namespace zgcwkj.Util.Log
         internal static string OutputLogDirectory()
         {
             //文件夹路径
-            string filePath = Directory.GetCurrentDirectory();
+            string filePath = GlobalConstant.GetRunPath;
             filePath = $"{filePath}/Log/";
             //创建文件夹，防止文件夹没有
             if (!Directory.Exists(filePath)) Directory.CreateDirectory(filePath);

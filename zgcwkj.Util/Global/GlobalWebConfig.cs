@@ -15,7 +15,7 @@ namespace zgcwkj.Util
         /// <param name="services"></param>
         public static void AddFileDataProtection(this IServiceCollection services)
         {
-            string protection = Path.Combine(Directory.GetCurrentDirectory(), "Protection");
+            string protection = Path.Combine(GlobalConstant.GetRunPath, "Protection");
             if (!Directory.Exists(protection)) Directory.CreateDirectory(protection);
             services.AddDataProtection().PersistKeysToFileSystem(new DirectoryInfo(protection));
         }

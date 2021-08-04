@@ -35,7 +35,7 @@ namespace zgcwkj.Util.Swagger
                 });
                 options.OrderActionsBy(o => o.RelativePath);
                 //Set the comments path for the swagger json and ui
-                var basePath = Directory.GetCurrentDirectory();
+                var basePath = GlobalConstant.GetRunPath;
                 var root = new DirectoryInfo(basePath);
                 var files = root.GetFiles("*.xml");
                 var linqXmlPaths = files.Select(f => Path.Combine(basePath, f.FullName));
