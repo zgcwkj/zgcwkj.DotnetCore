@@ -35,7 +35,7 @@ namespace zgcwkj.Util
         }
 
         /// <summary>
-        /// 是否开发环境
+        /// 程序运行路径
         /// </summary>
         public static string GetRunPath
         {

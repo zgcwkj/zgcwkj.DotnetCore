@@ -44,6 +44,11 @@ namespace zgcwkj.Util
                 {
                     var cBuilder = new ConfigurationBuilder();
                     var currentDirectory = GlobalConstant.GetRunPath;
+                    if (!File.Exists($"{currentDirectory}/appsettings.json"))
+                    {
+                        //获取当前目录路径
+                        currentDirectory = Directory.GetCurrentDirectory();
+                    }
                     var icBuilder = cBuilder.SetBasePath(currentDirectory);
                     var builder = icBuilder.AddJsonFile("appsettings.json");
                     var config = builder.Build();
