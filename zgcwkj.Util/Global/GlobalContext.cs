@@ -42,17 +42,7 @@ namespace zgcwkj.Util
             {
                 if (configuration.IsNull())
                 {
-                    var cBuilder = new ConfigurationBuilder();
-                    var currentDirectory = GlobalConstant.GetRunPath;
-                    if (!File.Exists($"{currentDirectory}/appsettings.json"))
-                    {
-                        //获取当前目录路径
-                        currentDirectory = Directory.GetCurrentDirectory();
-                    }
-                    var icBuilder = cBuilder.SetBasePath(currentDirectory);
-                    var builder = icBuilder.AddJsonFile("appsettings.json");
-                    var config = builder.Build();
-                    configuration = config;
+                    SetConfigFiles("appsettings.json");
                 }
                 return configuration;
             }
@@ -60,6 +50,29 @@ namespace zgcwkj.Util
             {
                 configuration = value;
             }
+        }
+
+        /// <summary>
+        /// 加载自定义的配置文件
+        /// 例如：SetConfigFiles("appsettings.json")
+        /// </summary>
+        public static void SetConfigFiles(params string[] configFileNames)
+        {
+            var cBuilder = new ConfigurationBuilder();
+            var currentDirectory = GlobalConstant.GetRunPath;
+            var icBuilder = cBuilder.SetBasePath(currentDirectory);
+
+            foreach (var configFileName in configFileNames)
+            {
+                //从运行目录查找文件
+                if (!File.Exists($"{currentDirectory}/{configFileName}")) currentDirectory = Directory.GetCurrentDirectory();
+                //从启动目录查找文件
+                if (!File.Exists($"{currentDirectory}/{configFileName}")) throw new Exception("找不到配置文件");
+                icBuilder.AddJsonFile(configFileName);
+            }
+
+            var config = icBuilder.Build();
+            configuration = config;
         }
 
         /// <summary>

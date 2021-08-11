@@ -1,16 +1,17 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Data;
 using System.Text;
 using System.Text.Json;
+using System.Collections.Generic;
+using zgcwkj.Util.Common;
 using zgcwkj.Util.Log;
 
-namespace zgcwkj.Util.Common
+namespace zgcwkj.Util
 {
     /// <summary>
-    /// 工具包
+    /// 数据转换拓展包
     /// </summary>
-    public static class UtilConversion
+    public static class Conversion
     {
         /// <summary>
         /// 转换成 Int 类型
@@ -221,7 +222,7 @@ namespace zgcwkj.Util.Common
         }
 
         /// <summary>
-        /// 转换成时间类型
+        /// 转换成时间类型并格式化
         /// </summary>
         /// <param name="value">值</param>
         /// <param name="dateMode">时间格式</param>
@@ -240,6 +241,30 @@ namespace zgcwkj.Util.Common
                 if (GlobalConstant.IsDevelopment) Logger.Error(meg);
             }
             return def;
+        }
+
+        /// <summary>
+        /// 格式化日期时间
+        /// </summary>
+        /// <param name="dateTime">日期时间</param>
+        /// <param name="dateMode">自定义格式</param>
+        /// <returns>时间字符</returns>
+        public static string ToStr(this DateTime dateTime, string dateMode)
+        {
+            return dateMode switch
+            {
+                "0" => dateTime.ToString("yyyy-MM-dd"),
+                "1" => dateTime.ToString("yyyy-MM-dd HH:mm:ss"),
+                "2" => dateTime.ToString("yyyy/MM/dd"),
+                "3" => dateTime.ToString("yyyy年MM月dd日"),
+                "4" => dateTime.ToString("MM-dd"),
+                "5" => dateTime.ToString("MM/dd"),
+                "6" => dateTime.ToString("MM月dd日"),
+                "7" => dateTime.ToString("yyyy-MM"),
+                "8" => dateTime.ToString("yyyy/MM"),
+                "9" => dateTime.ToString("yyyy年MM月"),
+                _ => dateTime.ToString(dateMode),
+            };
         }
 
         /// <summary>
@@ -281,30 +306,6 @@ namespace zgcwkj.Util.Common
         {
             TimeSpan timeSpan = dateTime - new DateTime(1970, 1, 1, 0, 0, 0, 0);
             return Math.Truncate(timeSpan.TotalSeconds).ToStr();
-        }
-
-        /// <summary>
-        /// 格式化日期时间
-        /// </summary>
-        /// <param name="dateTime">日期时间</param>
-        /// <param name="dateMode">自定义格式</param>
-        /// <returns>时间字符</returns>
-        public static string ToStr(this DateTime dateTime, string dateMode)
-        {
-            return dateMode switch
-            {
-                "0" => dateTime.ToString("yyyy-MM-dd"),
-                "1" => dateTime.ToString("yyyy-MM-dd HH:mm:ss"),
-                "2" => dateTime.ToString("yyyy/MM/dd"),
-                "3" => dateTime.ToString("yyyy年MM月dd日"),
-                "4" => dateTime.ToString("MM-dd"),
-                "5" => dateTime.ToString("MM/dd"),
-                "6" => dateTime.ToString("MM月dd日"),
-                "7" => dateTime.ToString("yyyy-MM"),
-                "8" => dateTime.ToString("yyyy/MM"),
-                "9" => dateTime.ToString("yyyy年MM月"),
-                _ => dateTime.ToString(dateMode),
-            };
         }
 
         /// <summary>
@@ -388,7 +389,7 @@ namespace zgcwkj.Util.Common
         }
 
         /// <summary>
-        /// 加密 MD5
+        /// 获取 MD5
         /// </summary>
         /// <returns></returns>
         public static string ToMD5(this string value)

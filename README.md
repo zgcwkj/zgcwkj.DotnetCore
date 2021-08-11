@@ -4,25 +4,18 @@
 
 ```
 {
-  "DbType": "PostgreSql", //SqlServer MySql PostgreSql
-  "MssqlConnect": "server=127.0.0.1;port=1433;username=sa;password=123456;database=dbname;", //SqlServer
+  "DbType": "SQLite", //SQLite PostgreSql SqlServer MySql
+  "SQLiteConnect": "data source=dbname.db", //SQLite
+  "PgsqlConnect": "server=127.0.0.1;port=5432;username=postgres;password=root;database=dbname;", //PostgreSql
   "MysqlConnect": "server=127.0.0.1;port=3306;username=root;password=root;database=dbname;charset=utf8;Pooling=true;", //MySql
-  "PgsqlConnect": "server=127.0.0.1;port=5432;username=postgres;password=root;database=dbname;", //PostgreSql integrated security=false;
-  "CacheType": "Redis", //Redis Memory
+  "MssqlConnect": "server=127.0.0.1;port=1433;username=sa;password=123456;database=dbname;", //SqlServer
+  "CacheType": "Memory", //Redis Memory
   "RedisConnect": "127.0.0.1" //Redis
 }
-
 ```
 
 > Code
 ```
-//Load Config
-var cBuilder = new ConfigurationBuilder();
-var icBuilder = cBuilder.SetBasePath(Directory.GetCurrentDirectory());
-var builder = icBuilder.AddJsonFile("appsettings.json");
-var config = builder.Build();
-GlobalContext.Configuration = config;
-
 //Insert
 TableModel table = new TableModel();
 table.ID = GlobalConstant.Guid;
