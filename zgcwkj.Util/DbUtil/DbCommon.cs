@@ -6,7 +6,7 @@ using zgcwkj.Util.Enum;
 namespace zgcwkj.Util.DbUtil
 {
     /// <summary>
-    /// 数据连接对象
+    /// 数据库连接对象
     /// </summary>
     public class DbCommon : DbContext, IDisposable
     {
@@ -45,7 +45,7 @@ namespace zgcwkj.Util.DbUtil
                 optionsBuilder.UseMySql(dbConnect, ServerVersion.AutoDetect(dbConnect), p => p.CommandTimeout(dbTimeout));
             }
             //数据库拦截器
-            optionsBuilder.AddInterceptors(new DbInterceptor());
+            //optionsBuilder.AddInterceptors(new DbInterceptor());
             //输出日志
             EFLogger.Add(optionsBuilder);
             //
