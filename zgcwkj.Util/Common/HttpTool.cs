@@ -10,65 +10,109 @@ namespace zgcwkj.Util.Common
     /// <summary>
     /// 网络请求工具
     /// </summary>
-    public static class HttpTool
+    public class HttpTool
     {
-        #region 网络请求
-
-        private static CookieContainer cookie = new CookieContainer();
-
-        #region Get请求
+        /// <summary>
+        /// Cookie 对象
+        /// </summary>
+        public CookieContainer cookie = new CookieContainer();
 
         /// <summary>
-        /// 请求路径
+        /// Get 请求
         /// </summary>
-        /// <param name="Url">请求的路径</param>
+        /// <param name="url">请求的路径</param>
         /// <returns>返回结果</returns>
-        public static string HttpGet(string Url)
+        public static string Get(string url)
         {
-            HttpWebRequest request = (HttpWebRequest)WebRequest.Create(Url);
-            request.ContentType = "text/html;charset=UTF-8";
-            request.CookieContainer = cookie;
-            request.Method = "GET";
-
-            try
-            {
-                HttpWebResponse response = (HttpWebResponse)request.GetResponse();
-                StreamReader myStreamReader = new StreamReader(response.GetResponseStream(), Encoding.UTF8);
-                string retString = myStreamReader.ReadToEnd();
-                myStreamReader.Close();
-                return retString;
-            }
-            catch (Exception e)
-            {
-                return e.Message;
-            }
+            return HttpTool.Get(url,  out _);
         }
 
-        #endregion Get请求
+        /// <summary>
+        /// Get 请求
+        /// </summary>
+        /// <param name="url">请求的路径</param>
+        /// <param name="httpTool">对象</param>
+        /// <returns>返回结果</returns>
+        public static string Get(string url, out HttpTool httpTool)
+        {
+            httpTool = new HttpTool();
+            HttpWebRequest request = (HttpWebRequest)WebRequest.Create(url);
+            request.ContentType = "text/html;charset=UTF-8";
+            request.CookieContainer = httpTool.cookie;
+            request.Method = "GET";
 
-        #region Post请求
+            return httpTool.InitiateWeb(request);
+        }
 
         /// <summary>
-        /// 提交数据
+        /// Post 请求
         /// </summary>
-        /// <param name="Url">提交的路径</param>
-        /// <param name="Data">提交的数据</param>
+        /// <param name="url">提交的路径</param>
+        /// <param name="data">提交的数据</param>
         /// <returns>返回结果</returns>
-        public static string HttpPost(string Url, string Data)
+        public static string Post(string url, string data)
+        {
+            return HttpTool.Post(url, data, out _);
+        }
+
+        /// <summary>
+        /// Post 请求
+        /// </summary>
+        /// <param name="url">提交的路径</param>
+        /// <param name="data">提交的数据</param>
+        /// <param name="httpTool">对象</param>
+        /// <returns>返回结果</returns>
+        public static string Post(string url, string data, out HttpTool httpTool)
+        {
+            httpTool = new HttpTool();
+            HttpWebRequest request = (HttpWebRequest)WebRequest.Create(url);
+            request.ContentType = "application/x-www-form-urlencoded;charset=UTF-8";
+            request.CookieContainer = httpTool.cookie;
+            request.Referer = url;
+            request.Method = "POST";
+
+            if (!data.IsNull())
+            {
+                request.ContentLength = Encoding.UTF8.GetByteCount(data);
+                Stream myRequestStream = request.GetRequestStream();
+                byte[] postBytes = Encoding.UTF8.GetBytes(data);
+                myRequestStream.Write(postBytes, 0, postBytes.Length);
+            }
+
+            return httpTool.InitiateWeb(request);
+        }
+
+        /// <summary>
+        /// 发起网络请求
+        /// </summary>
+        /// <param name="request">请求对象</param>
+        /// <returns></returns>
+        public static string Initiate(HttpWebRequest request)
+        {
+            return HttpTool.Initiate(request, out _);
+        }
+
+        /// <summary>
+        /// 发起网络请求
+        /// </summary>
+        /// <param name="request">请求对象</param>
+        /// <param name="httpTool">对象</param>
+        /// <returns></returns>
+        public static string Initiate(HttpWebRequest request, out HttpTool httpTool)
+        {
+            httpTool = new HttpTool();
+            return httpTool.InitiateWeb(request);
+        }
+
+        /// <summary>
+        /// 发起网络请求（核心）
+        /// </summary>
+        /// <param name="request">请求对象</param>
+        /// <returns></returns>
+        public string InitiateWeb(HttpWebRequest request)
         {
             try
             {
-                HttpWebRequest request = (HttpWebRequest)WebRequest.Create(Url);
-                request.ContentType = "application/x-www-form-urlencoded;charset=UTF-8";
-                request.ContentLength = Encoding.UTF8.GetByteCount(Data);
-                request.CookieContainer = cookie;
-                //request.Referer = Url;
-                request.Method = "POST";
-
-                Stream myRequestStream = request.GetRequestStream();
-                byte[] postBytes = Encoding.UTF8.GetBytes(Data);
-                myRequestStream.Write(postBytes, 0, postBytes.Length);
-
                 HttpWebResponse response = (HttpWebResponse)request.GetResponse();
                 response.Cookies = cookie.GetCookies(response.ResponseUri);
 
@@ -84,15 +128,8 @@ namespace zgcwkj.Util.Common
             }
         }
 
-        #endregion Post请求
-
-        #endregion 网络请求
-
-        #region 设置证书
-
         /// <summary>
         /// 设置证书策略
-        /// Sets the cert policy
         /// </summary>
         public static void SetCertificatePolicy()
         {
@@ -108,7 +145,5 @@ namespace zgcwkj.Util.Common
             System.Console.WriteLine("Warning, trust any certificate");
             return true;
         }
-
-        #endregion 设置证书
     }
 }

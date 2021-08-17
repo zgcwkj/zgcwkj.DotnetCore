@@ -7,7 +7,10 @@ namespace zgcwkj.Util.Common
     /// </summary>
     public class RandomTool
     {
-        private string strType = "";//字符类型
+        /// <summary>
+        /// 字符类型
+        /// </summary>
+        private string strType = "";
 
         /// <summary>
         /// 生成随机码

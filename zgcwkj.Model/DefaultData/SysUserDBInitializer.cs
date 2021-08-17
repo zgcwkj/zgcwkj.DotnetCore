@@ -19,7 +19,7 @@ namespace zgcwkj.Model.DefaultData
 
                 lists.Add(new SysUserModel
                 {
-                    UserID = GlobalConstant.Guid,
+                    UserID = GlobalConstant.GuidMd5,
                     UserName = "UserName",
                     Password = "Password",
                 });

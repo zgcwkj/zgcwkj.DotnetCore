@@ -65,7 +65,18 @@ namespace zgcwkj.Util
             get
             {
                 Guid guid = System.Guid.NewGuid();
-                string md5Guid = Common.MD5Tool.GetMd5(guid.ToString());
+                return guid.ToString();
+            }
+        }
+
+        /// <summary>
+        /// 获取 GUID MD5 的值
+        /// </summary>
+        public static string GuidMd5
+        {
+            get
+            {
+                string md5Guid = Common.MD5Tool.GetMd5(GlobalConstant.Guid);
                 return md5Guid;
             }
         }
