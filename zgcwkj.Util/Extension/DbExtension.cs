@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore.Query.SqlExpressions;
 using System;
 using System.Collections;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -10,7 +11,6 @@ using System.Data.Common;
 using System.Dynamic;
 using System.Linq;
 using System.Reflection;
-using zgcwkj.Util.Common;
 
 namespace zgcwkj.Util.Extension
 {
@@ -86,7 +86,7 @@ namespace zgcwkj.Util.Extension
                 while (reader.Read())
                 {
                     T model = Activator.CreateInstance<T>();
-                    foreach (PropertyInfo property in ReflectionTool.GetProperties(model.GetType()))
+                    foreach (PropertyInfo property in DbExtensionReflection.GetProperties(model.GetType()))
                     {
                         if (field.Contains(property.Name))
                         {
@@ -142,7 +142,7 @@ namespace zgcwkj.Util.Extension
         public static Hashtable GetPropertyInfo<T>(T entity)
         {
             Hashtable ht = new Hashtable();
-            PropertyInfo[] props = ReflectionTool.GetProperties(entity.GetType());
+            PropertyInfo[] props = DbExtensionReflection.GetProperties(entity.GetType());
             foreach (PropertyInfo prop in props)
             {
                 bool flag = true;
@@ -245,9 +245,70 @@ namespace zgcwkj.Util.Extension
             return sql;
         }
 
-        #region 私有方法
+        /// <summary>
+        /// 获取对象的值（私有）
+        /// </summary>
+        /// <param name="obj"></param>
+        /// <param name="privateField"></param>
+        /// <returns></returns>
         private static object Private(this object obj, string privateField) => obj?.GetType().GetField(privateField, BindingFlags.Instance | BindingFlags.NonPublic)?.GetValue(obj);
+
+        /// <summary>
+        /// 获取对象的值（私有）
+        /// </summary>
+        /// <param name="obj"></param>
+        /// <param name="privateField"></param>
+        /// <returns></returns>
         private static T Private<T>(this object obj, string privateField) => (T)obj?.GetType().GetField(privateField, BindingFlags.Instance | BindingFlags.NonPublic)?.GetValue(obj);
-        #endregion
+    }
+
+    /// <summary>
+    /// 反射工具（私有）
+    /// </summary>
+    partial class DbExtensionReflection
+    {
+        /// <summary>
+        /// 同步字典
+        /// </summary>
+        private static ConcurrentDictionary<string, object> dictCache = new ConcurrentDictionary<string, object>();
+
+        /// <summary>
+        /// 得到类里面的属性集合
+        /// </summary>
+        /// <param name="type">类型</param>
+        /// <param name="columns">列</param>
+        /// <returns></returns>
+        public static PropertyInfo[] GetProperties(Type type, string[] columns = null)
+        {
+            PropertyInfo[] properties = null;
+            if (dictCache.ContainsKey(type.FullName))
+            {
+                properties = dictCache[type.FullName] as PropertyInfo[];
+            }
+            else
+            {
+                properties = type.GetProperties();
+                dictCache.TryAdd(type.FullName, properties);
+            }
+
+            if (columns != null && columns.Length > 0)
+            {
+                //按columns顺序返回属性
+                var columnPropertyList = new List<PropertyInfo>();
+                foreach (var column in columns)
+                {
+                    var columnProperty = properties.Where(p => p.Name == column).FirstOrDefault();
+                    if (columnProperty != null)
+                    {
+                        columnPropertyList.Add(columnProperty);
+                    }
+                }
+                return columnPropertyList.ToArray();
+            }
+            else
+            {
+                return properties;
+            }
+        }
     }
 }

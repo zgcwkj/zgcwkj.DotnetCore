@@ -98,36 +98,6 @@ namespace zgcwkj.Util.DbUtil
         Task<int> ExecuteSqlRawAsync(string strSql, params DbParameter[] dbParameter);
 
         /// <summary>
-        /// 执行存储过程
-        /// </summary>
-        /// <param name="procName">语句</param>
-        /// <returns>影响行数</returns>
-        int ExecuteProcRaw(string procName);
-
-        /// <summary>
-        /// 执行存储过程
-        /// </summary>
-        /// <param name="procName">语句</param>
-        /// <returns>影响行数</returns>
-        Task<int> ExecuteProcRawAsync(string procName);
-
-        /// <summary>
-        /// 执行存储过程
-        /// </summary>
-        /// <param name="procName">过程名称</param>
-        /// <param name="dbParameter">参数</param>
-        /// <returns>影响行数</returns>
-        int ExecuteProcRaw(string procName, DbParameter[] dbParameter);
-
-        /// <summary>
-        /// 执行存储过程
-        /// </summary>
-        /// <param name="procName">过程名称</param>
-        /// <param name="dbParameter">参数</param>
-        /// <returns>影响行数</returns>
-        Task<int> ExecuteProcRawAsync(string procName, DbParameter[] dbParameter);
-
-        /// <summary>
         /// 查询表
         /// </summary>
         /// <param name="strSql">语句</param>
@@ -238,20 +208,6 @@ namespace zgcwkj.Util.DbUtil
         /// 删除表数据
         /// </summary>
         /// <typeparam name="T">实体类型</typeparam>
-        /// <returns>删除数量</returns>
-        int Delete<T>() where T : class;
-
-        /// <summary>
-        /// 删除表数据
-        /// </summary>
-        /// <typeparam name="T">实体类型</typeparam>
-        /// <returns>删除数量</returns>
-        Task<int> DeleteAsync<T>() where T : class;
-
-        /// <summary>
-        /// 删除表数据
-        /// </summary>
-        /// <typeparam name="T">实体类型</typeparam>
         /// <param name="entity">实体对象</param>
         /// <returns>删除数量</returns>
         int Delete<T>(T entity) where T : class;
@@ -295,24 +251,6 @@ namespace zgcwkj.Util.DbUtil
         /// <param name="condition">Linq</param>
         /// <returns>删除数量</returns>
         Task<int> DeleteAsync<T>(Expression<Func<T, bool>> condition) where T : class, new();
-
-        /// <summary>
-        /// 删除表数据
-        /// </summary>
-        /// <typeparam name="T">实体类型</typeparam>
-        /// <param name="propertyName">属性名</param>
-        /// <param name="propertyValue">属性值</param>
-        /// <returns>删除数量</returns>
-        int Delete<T>(string propertyName, string propertyValue) where T : class;
-
-        /// <summary>
-        /// 删除表数据
-        /// </summary>
-        /// <typeparam name="T">实体类型</typeparam>
-        /// <param name="propertyName">属性名</param>
-        /// <param name="propertyValue">属性值</param>
-        /// <returns>删除数量</returns>
-        Task<int> DeleteAsync<T>(string propertyName, string propertyValue) where T : class;
 
         /// <summary>
         /// 修改表数据

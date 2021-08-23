@@ -8,7 +8,6 @@ using System.Data.Common;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
-using zgcwkj.Util.Common;
 using zgcwkj.Util.Extension;
 
 namespace zgcwkj.Util.DbUtil.SQLite
@@ -73,8 +72,6 @@ namespace zgcwkj.Util.DbUtil.SQLite
         {
             try
             {
-                DbContextExtension.SetEntityDefaultValue(MyDbContext);
-
                 int returnValue = MyDbContext.SaveChanges();
                 if (MyDbAffairs != null)
                 {
@@ -107,8 +104,6 @@ namespace zgcwkj.Util.DbUtil.SQLite
         {
             try
             {
-                DbContextExtension.SetEntityDefaultValue(MyDbContext);
-
                 int returnValue = await MyDbContext.SaveChangesAsync();
                 if (MyDbAffairs != null)
                 {
@@ -246,84 +241,6 @@ namespace zgcwkj.Util.DbUtil.SQLite
             else
             {
                 await dbCommon.Database.ExecuteSqlRawAsync(strSql, dbParameter);
-                return MyDbAffairs == null ? await this.CommitTransAsync() : 0;
-            }
-        }
-
-        /// <summary>
-        /// 执行存储过程
-        /// </summary>
-        /// <param name="procName">语句</param>
-        /// <returns>影响行数</returns>
-        public int ExecuteProcRaw(string procName)
-        {
-            var dbCommon = this.MyDbContext;
-            if (MyDbAffairs == null)
-            {
-                return dbCommon.Database.ExecuteSqlRaw(DbContextExtension.BuilderProc(procName));
-            }
-            else
-            {
-                dbCommon.Database.ExecuteSqlRaw(DbContextExtension.BuilderProc(procName));
-                return MyDbAffairs == null ? this.CommitTrans() : 0;
-            }
-        }
-
-        /// <summary>
-        /// 执行存储过程
-        /// </summary>
-        /// <param name="procName">语句</param>
-        /// <returns>影响行数</returns>
-        public async Task<int> ExecuteProcRawAsync(string procName)
-        {
-            var dbCommon = this.MyDbContext;
-            if (MyDbAffairs == null)
-            {
-                return await dbCommon.Database.ExecuteSqlRawAsync(DbContextExtension.BuilderProc(procName));
-            }
-            else
-            {
-                await dbCommon.Database.ExecuteSqlRawAsync(DbContextExtension.BuilderProc(procName));
-                return MyDbAffairs == null ? await this.CommitTransAsync() : 0;
-            }
-        }
-
-        /// <summary>
-        /// 执行存储过程
-        /// </summary>
-        /// <param name="procName">过程名称</param>
-        /// <param name="dbParameter">参数</param>
-        /// <returns>影响行数</returns>
-        public int ExecuteProcRaw(string procName, params DbParameter[] dbParameter)
-        {
-            var dbCommon = this.MyDbContext;
-            if (MyDbAffairs == null)
-            {
-                return dbCommon.Database.ExecuteSqlRaw(DbContextExtension.BuilderProc(procName, dbParameter), dbParameter);
-            }
-            else
-            {
-                dbCommon.Database.ExecuteSqlRaw(DbContextExtension.BuilderProc(procName, dbParameter), dbParameter);
-                return MyDbAffairs == null ? this.CommitTrans() : 0;
-            }
-        }
-
-        /// <summary>
-        /// 执行存储过程
-        /// </summary>
-        /// <param name="procName">过程名称</param>
-        /// <param name="dbParameter">参数</param>
-        /// <returns>影响行数</returns>
-        public async Task<int> ExecuteProcRawAsync(string procName, params DbParameter[] dbParameter)
-        {
-            var dbCommon = this.MyDbContext;
-            if (MyDbAffairs == null)
-            {
-                return await dbCommon.Database.ExecuteSqlRawAsync(DbContextExtension.BuilderProc(procName, dbParameter), dbParameter);
-            }
-            else
-            {
-                await dbCommon.Database.ExecuteSqlRawAsync(DbContextExtension.BuilderProc(procName, dbParameter), dbParameter);
                 return MyDbAffairs == null ? await this.CommitTransAsync() : 0;
             }
         }
@@ -513,40 +430,6 @@ namespace zgcwkj.Util.DbUtil.SQLite
         /// 删除表数据
         /// </summary>
         /// <typeparam name="T">实体类型</typeparam>
-        /// <returns>删除数量</returns>
-        public int Delete<T>() where T : class
-        {
-            var dbCommon = this.MyDbContext;
-            IEntityType entityType = DbContextExtension.GetEntityType<T>(dbCommon);
-            if (entityType != null)
-            {
-                string tableName = entityType.GetTableName();
-                return this.ExecuteSqlRaw(DbContextExtension.DeleteSql(tableName));
-            }
-            return -1;
-        }
-
-        /// <summary>
-        /// 删除表数据
-        /// </summary>
-        /// <typeparam name="T">实体类型</typeparam>
-        /// <returns>删除数量</returns>
-        public async Task<int> DeleteAsync<T>() where T : class
-        {
-            var dbCommon = this.MyDbContext;
-            IEntityType entityType = DbContextExtension.GetEntityType<T>(dbCommon);
-            if (entityType != null)
-            {
-                string tableName = entityType.GetTableName();
-                return await this.ExecuteSqlRawAsync(DbContextExtension.DeleteSql(tableName));
-            }
-            return -1;
-        }
-
-        /// <summary>
-        /// 删除表数据
-        /// </summary>
-        /// <typeparam name="T">实体类型</typeparam>
         /// <param name="entity">实体对象</param>
         /// <returns>删除数量</returns>
         public int Delete<T>(T entity) where T : class
@@ -629,44 +512,6 @@ namespace zgcwkj.Util.DbUtil.SQLite
             var dbCommon = this.MyDbContext;
             IEnumerable<T> entities = await dbCommon.Set<T>().Where(condition).ToListAsync();
             return entities.Count() > 0 ? await DeleteAsync(entities) : 0;
-        }
-
-        /// <summary>
-        /// 删除表数据
-        /// </summary>
-        /// <typeparam name="T">实体类型</typeparam>
-        /// <param name="propertyName">属性名</param>
-        /// <param name="propertyValue">属性值</param>
-        /// <returns>删除数量</returns>
-        public int Delete<T>(string propertyName, string propertyValue) where T : class
-        {
-            var dbCommon = this.MyDbContext;
-            IEntityType entityType = DbContextExtension.GetEntityType<T>(dbCommon);
-            if (entityType != null)
-            {
-                string tableName = entityType.GetTableName();
-                return this.ExecuteSqlRaw(DbContextExtension.DeleteSql(tableName, propertyName, propertyValue));
-            }
-            return -1;
-        }
-
-        /// <summary>
-        /// 删除表数据
-        /// </summary>
-        /// <typeparam name="T">实体类型</typeparam>
-        /// <param name="propertyName">属性名</param>
-        /// <param name="propertyValue">属性值</param>
-        /// <returns>删除数量</returns>
-        public async Task<int> DeleteAsync<T>(string propertyName, string propertyValue) where T : class
-        {
-            var dbCommon = this.MyDbContext;
-            IEntityType entityType = DbContextExtension.GetEntityType<T>(dbCommon);
-            if (entityType != null)
-            {
-                string tableName = entityType.GetTableName();
-                return await this.ExecuteSqlRawAsync(DbContextExtension.DeleteSql(tableName, propertyName, propertyValue));
-            }
-            return -1;
         }
 
         /// <summary>
