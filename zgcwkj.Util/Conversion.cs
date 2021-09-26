@@ -490,6 +490,16 @@ namespace zgcwkj.Util
         }
 
         /// <summary>
+        /// 判断是否不为空
+        /// </summary>
+        /// <param name="value">值</param>
+        /// <returns></returns>
+        public static bool IsNotNull(this object value)
+        {
+            return !value.IsNull();
+        }
+
+        /// <summary>
         /// 判断是否为空或零
         /// </summary>
         /// <param name="value">值</param>
