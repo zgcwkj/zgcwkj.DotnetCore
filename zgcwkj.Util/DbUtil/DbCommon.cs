@@ -1,6 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
-using System;
-using zgcwkj.Util.DbUtil.DbHelp;
+﻿using System;
+using Microsoft.EntityFrameworkCore;
 using zgcwkj.Util.Enum;
 
 namespace zgcwkj.Util.DbUtil

@@ -5,7 +5,6 @@ using System.ComponentModel.DataAnnotations.Schema;
 using System.IO;
 using System.Linq;
 using System.Reflection;
-using zgcwkj.Util.DbUtil.DbHelp;
 
 namespace zgcwkj.Util.DbUtil.MySql
 {
@@ -47,19 +46,6 @@ namespace zgcwkj.Util.DbUtil.MySql
                     }
                     catch { }
                 }
-            }
-            //绑定模型与数据库的关系
-            foreach (var entity in modelBuilder.Model.GetEntityTypes())
-            {
-                PrimaryKeyConvention.SetPrimaryKey(modelBuilder, entity.Name);
-                string currentTableName = modelBuilder.Entity(entity.Name).Metadata.GetTableName();
-                modelBuilder.Entity(entity.Name).ToTable(currentTableName);
-
-                //var properties = entity.GetProperties();
-                //foreach (var property in properties)
-                //{
-                //    ColumnConvention.SetColumnName(modelBuilder, entity.Name, property.Name);
-                //}
             }
             base.OnModelCreating(modelBuilder);
         }
