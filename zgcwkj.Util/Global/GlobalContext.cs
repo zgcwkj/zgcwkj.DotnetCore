@@ -60,14 +60,24 @@ namespace zgcwkj.Util
         {
             var cBuilder = new ConfigurationBuilder();
             var currentDirectory = GlobalConstant.GetRunPath;
-            var icBuilder = cBuilder.SetBasePath(currentDirectory);
-
+            //查找配置文件所在的位置是否正确
             foreach (var configFileName in configFileNames)
             {
                 //从运行目录查找文件
-                if (!File.Exists($"{currentDirectory}/{configFileName}")) currentDirectory = Directory.GetCurrentDirectory();
+                if (!File.Exists($"{currentDirectory}/{configFileName}"))
+                {
+                    currentDirectory = Directory.GetCurrentDirectory();
+                }
                 //从启动目录查找文件
-                if (!File.Exists($"{currentDirectory}/{configFileName}")) throw new Exception("找不到配置文件");
+                if (!File.Exists($"{currentDirectory}/{configFileName}"))
+                {
+                    throw new Exception($"找不到“{configFileName}”配置文件");
+                }
+            }
+            //加载配置文件
+            var icBuilder = cBuilder.SetBasePath(currentDirectory);
+            foreach (var configFileName in configFileNames)
+            {
                 icBuilder.AddJsonFile(configFileName);
             }
 
