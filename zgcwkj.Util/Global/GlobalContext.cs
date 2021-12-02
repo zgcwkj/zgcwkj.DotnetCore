@@ -5,8 +5,8 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using System;
 using System.IO;
-using System.Reflection;
 using System.Text;
+using System.Reflection;
 using zgcwkj.Util.Common;
 
 namespace zgcwkj.Util
@@ -98,6 +98,50 @@ namespace zgcwkj.Util
         {
             Version version = Assembly.GetEntryAssembly().GetName().Version;
             return $"{version.Major}.{version.Minor}";
+        }
+
+        /// <summary>
+        /// 获取环境变量
+        /// </summary>
+        /// <param name="key">键</param>
+        /// <returns></returns>
+        public static string GetEnvVar(string key)
+        {
+            string data = string.Empty;
+            data = Environment.GetEnvironmentVariable(key, EnvironmentVariableTarget.Machine) ?? null;
+            data ??= Environment.GetEnvironmentVariable(key, EnvironmentVariableTarget.Process) ?? null;
+            data ??= Environment.GetEnvironmentVariable(key, EnvironmentVariableTarget.User) ?? null;
+            return data.ToTrim();
+        }
+
+        /// <summary>
+        /// 设置环境变量
+        /// </summary>
+        /// <param name="key">键</param>
+        /// <param name="data">值</param>
+        /// <param name="lasting">永久</param>
+        /// <returns></returns>
+        public static bool SetEnvVar(string key, string data, bool lasting = false)
+        {
+            if (lasting && (GlobalConstant.SystemType == PlatformID.Win32S || GlobalConstant.SystemType == PlatformID.Win32Windows || GlobalConstant.SystemType == PlatformID.Win32NT || GlobalConstant.SystemType == PlatformID.WinCE))
+            {
+                try
+                {
+                    //管理员权限
+                    Environment.SetEnvironmentVariable(key, data, EnvironmentVariableTarget.Machine);
+                }
+                catch (Exception)
+                {
+                    //无管理员权限
+                    Environment.SetEnvironmentVariable(key, data, EnvironmentVariableTarget.User);
+                }
+            }
+            else
+            {
+                Environment.SetEnvironmentVariable(key, data, EnvironmentVariableTarget.Process);
+            }
+            bool ok = GetEnvVar(key) == data;
+            return ok;
         }
 
         /// <summary>

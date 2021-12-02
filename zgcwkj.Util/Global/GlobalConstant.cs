@@ -11,6 +11,39 @@ namespace zgcwkj.Util
     public class GlobalConstant
     {
         /// <summary>
+        /// 系统类型
+        /// </summary>
+        public static PlatformID SystemType
+        {
+            get
+            {
+                return Environment.OSVersion.Platform;
+            }
+        }
+
+        /// <summary>
+        /// 系统 32Or64
+        /// </summary>
+        public static int System32Or64
+        {
+            get
+            {
+                if (IntPtr.Size == 8)
+                {
+                    return 64;//64 bit
+                }
+                else if (IntPtr.Size == 4)
+                {
+                    return 32;//32 bit
+                }
+                else
+                {
+                    return 0;
+                }
+            }
+        }
+
+        /// <summary>
         /// 是否正式环境
         /// </summary>
         public static bool IsProduction
@@ -42,6 +75,42 @@ namespace zgcwkj.Util
             get
             {
                 string filePath = Path.GetDirectoryName(typeof(GlobalConstant).Assembly.Location);
+                return filePath;
+            }
+        }
+
+        /// <summary>（获取基目录，它由程序集冲突解决程序用来探测程序集）
+        /// 程序运行路径
+        /// </summary>
+        public static string GetRunPath2
+        {
+            get
+            {
+                string filePath = System.AppDomain.CurrentDomain.BaseDirectory;
+                return filePath;
+            }
+        }
+
+        /// <summary>
+        /// 程序运行路径（获取或设置当前工作目录的完全限定路径）
+        /// </summary>
+        public static string GetRunPath3
+        {
+            get
+            {
+                string filePath = System.Environment.CurrentDirectory;
+                return filePath;
+            }
+        }
+
+        /// <summary>
+        /// 程序运行路径（获取应用程序的当前工作目录）
+        /// </summary>
+        public static string GetRunPath4
+        {
+            get
+            {
+                string filePath = System.IO.Directory.GetCurrentDirectory();
                 return filePath;
             }
         }
