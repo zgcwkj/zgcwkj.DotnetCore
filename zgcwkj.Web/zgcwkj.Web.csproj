@@ -5,6 +5,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\zgcwkj.Model\zgcwkj.Model.csproj" />
     <ProjectReference Include="..\zgcwkj.Util\zgcwkj.Util.csproj" />
   </ItemGroup>
 
