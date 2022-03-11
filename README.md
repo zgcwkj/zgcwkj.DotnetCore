@@ -5,10 +5,10 @@
 ```
 {
   "DbType": "SQLite", //SQLite PostgreSql SqlServer MySql
-  "SQLiteConnect": "data source=dbname.db", //SQLite
-  "PgsqlConnect": "server=127.0.0.1;port=5432;username=postgres;password=root;database=dbname;", //PostgreSql
-  "MysqlConnect": "server=127.0.0.1;port=3306;username=root;password=root;database=dbname;charset=utf8;Pooling=true;", //MySql
-  "MssqlConnect": "server=127.0.0.1;port=1433;username=sa;password=123456;database=dbname;", //SqlServer
+  "SQLiteConnect": "data source=zgcwkj_db.db", //SQLite
+  "PgsqlConnect": "server=127.0.0.1;port=5432;username=postgres;password=root;database=zgcwkj_db;", //PostgreSql
+  "MysqlConnect": "server=127.0.0.1;port=3306;username=root;password=root;database=zgcwkj_db;charset=utf8;Pooling=true;", //MySql
+  "MssqlConnect": "server=127.0.0.1,1433;uid=sa;pwd=root;database=zgcwkj_db;MultipleActiveResultSets=true;", //SqlServer
   "CacheType": "Memory", //Redis Memory
   "RedisConnect": "127.0.0.1" //Redis
 }
