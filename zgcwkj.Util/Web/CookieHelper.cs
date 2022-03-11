@@ -10,18 +10,29 @@ namespace zgcwkj.Util
     public class CookieHelper
     {
         /// <summary>
+        /// 获取 Cookie 对象
+        /// </summary>
+        /// <returns></returns>
+        public static IResponseCookies GetObj()
+        {
+            IHttpContextAccessor hca = GlobalContext.ServiceProvider?.GetService<IHttpContextAccessor>();
+            return hca?.HttpContext?.Response.Cookies;
+        }
+
+        /// <summary>
         /// 写入 Cookie
         /// </summary>
         /// <param name="sName">名称</param>
         /// <param name="sValue">值</param>
         /// <param name="httpOnly">前端脚本能否获取到的Cookie</param>
+        /// <returns>状态</returns>
         public static bool Set(string sName, string sValue, bool httpOnly = true)
         {
             IHttpContextAccessor hca = GlobalContext.ServiceProvider?.GetService<IHttpContextAccessor>();
             CookieOptions option = new CookieOptions
             {
-                Expires = DateTime.Now.AddDays(30),
-                HttpOnly = httpOnly
+                Expires = DateTime.MaxValue,
+                HttpOnly = httpOnly,
             };
             hca?.HttpContext?.Response.Cookies.Append(sName, sValue, option);
             return true;
@@ -34,13 +45,32 @@ namespace zgcwkj.Util
         /// <param name="sValue">值</param>
         /// <param name="expires">过期时间(分钟)</param>
         /// <param name="httpOnly">前端脚本能否获取到的Cookie</param>
+        /// <returns>状态</returns>
         public static bool Set(string sName, string sValue, int expires, bool httpOnly = true)
         {
             IHttpContextAccessor hca = GlobalContext.ServiceProvider?.GetService<IHttpContextAccessor>();
             CookieOptions option = new CookieOptions
             {
                 Expires = DateTime.Now.AddMinutes(expires),
-                HttpOnly = httpOnly
+                HttpOnly = httpOnly,
+            };
+            hca?.HttpContext?.Response.Cookies.Append(sName, sValue, option);
+            return true;
+        }
+
+        /// <summary>
+        /// 写入临时 Cookie
+        /// </summary>
+        /// <param name="sName">名称</param>
+        /// <param name="sValue">值</param>
+        /// <param name="httpOnly">前端脚本能否获取到的Cookie</param>
+        /// <returns>状态</returns>
+        public static bool SetTemp(string sName, string sValue, bool httpOnly = true)
+        {
+            IHttpContextAccessor hca = GlobalContext.ServiceProvider?.GetService<IHttpContextAccessor>();
+            CookieOptions option = new CookieOptions
+            {
+                HttpOnly = httpOnly,
             };
             hca?.HttpContext?.Response.Cookies.Append(sName, sValue, option);
             return true;
@@ -50,7 +80,7 @@ namespace zgcwkj.Util
         /// 读取 Cookie
         /// </summary>
         /// <param name="sName">名称</param>
-        /// <returns>Cookie值</returns>
+        /// <returns>值</returns>
         public static string Get(string sName)
         {
             IHttpContextAccessor hca = GlobalContext.ServiceProvider?.GetService<IHttpContextAccessor>();
@@ -61,10 +91,32 @@ namespace zgcwkj.Util
         /// 删除 Cookie
         /// </summary>
         /// <param name="sName">Cookie对象名称</param>
+        /// <returns>状态</returns>
         public static bool Remove(string sName)
         {
             IHttpContextAccessor hca = GlobalContext.ServiceProvider?.GetService<IHttpContextAccessor>();
             hca?.HttpContext?.Response.Cookies.Delete(sName);
+            return true;
+        }
+
+        /// <summary>
+        /// 清空 Cookie
+        /// </summary>
+        /// <returns>状态</returns>
+        public static bool Clear()
+        {
+            IHttpContextAccessor hca = GlobalContext.ServiceProvider?.GetService<IHttpContextAccessor>();
+            //请求
+            var request = hca?.HttpContext?.Request;
+            //响应
+            var response = hca?.HttpContext?.Response;
+            //循环所有 Cookie
+            foreach (var cookie in request.Cookies)
+            {
+                var key = cookie.Key;
+                var value = cookie.Value;
+                response.Cookies.Delete(key);
+            }
             return true;
         }
     }

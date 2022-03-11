@@ -10,11 +10,22 @@ namespace zgcwkj.Util
     public class SessionHelper
     {
         /// <summary>
+        /// 获取 Session 对象
+        /// </summary>
+        /// <returns></returns>
+        public static ISession GetObj()
+        {
+            IHttpContextAccessor hca = GlobalContext.ServiceProvider?.GetService<IHttpContextAccessor>();
+            return hca?.HttpContext?.Session;
+        }
+
+        /// <summary>
         /// 写入 Session
         /// </summary>
         /// <typeparam name="T">Session键值的类型</typeparam>
         /// <param name="key">Session的键名</param>
         /// <param name="value">Session的键值</param>
+        /// <returns>状态</returns>
         public static bool Set<T>(string key, T value)
         {
             if (string.IsNullOrEmpty(key)) return false;
@@ -28,6 +39,7 @@ namespace zgcwkj.Util
         /// </summary>
         /// <param name="key">Session的键名</param>
         /// <param name="value">Session的键值</param>
+        /// <returns>状态</returns>
         public static bool Set(string key, string value)
         {
             return Set<string>(key, value);
@@ -36,7 +48,8 @@ namespace zgcwkj.Util
         /// <summary>
         /// 读取 Session
         /// </summary>
-        /// <param name="key">Session的键名</param>        
+        /// <param name="key">Session的键名</param>
+        /// <returns>值</returns>
         public static T Get<T>(string key)
         {
             if (string.IsNullOrEmpty(key)) return default;
@@ -49,7 +62,8 @@ namespace zgcwkj.Util
         /// <summary>
         /// 读取 Session
         /// </summary>
-        /// <param name="key">Session的键名</param>        
+        /// <param name="key">Session的键名</param>
+        /// <returns>值</returns>
         public static string Get(string key)
         {
             return Get<string>(key);
@@ -59,6 +73,7 @@ namespace zgcwkj.Util
         /// 删除 Session
         /// </summary>
         /// <param name="key">Session的键名</param>
+        /// <returns>状态</returns>
         public static bool Remove(string key)
         {
             if (string.IsNullOrEmpty(key)) return false;
@@ -70,6 +85,7 @@ namespace zgcwkj.Util
         /// <summary>
         /// 清空 Session
         /// </summary>
+        /// <returns>状态</returns>
         public static bool Clear()
         {
             IHttpContextAccessor hca = GlobalContext.ServiceProvider?.GetService<IHttpContextAccessor>();
