@@ -245,11 +245,22 @@ namespace zgcwkj.Util
 
         /// <summary>
         /// 格式化日期时间
+        /// 
+        /// 0 > yyyy-MM-dd
+        /// 1 > yyyy-MM-dd HH:mm:ss
+        /// 2 > yyyy/MM/dd
+        /// 3 > yyyy年MM月dd日
+        /// 4 > MM-dd
+        /// 5 > MM/dd
+        /// 6 > MM月dd日
+        /// 7 > yyyy-MM
+        /// 8 > yyyy/MM
+        /// 9 > yyyy年MM月
         /// </summary>
         /// <param name="dateTime">日期时间</param>
         /// <param name="dateMode">自定义格式</param>
         /// <returns>时间字符</returns>
-        public static string ToStr(this DateTime dateTime, string dateMode)
+        public static string ToStr(this DateTime dateTime, string dateMode = "1")
         {
             return dateMode switch
             {
