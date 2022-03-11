@@ -79,8 +79,8 @@ namespace zgcwkj.Util
             }
         }
 
-        /// <summary>（获取基目录，它由程序集冲突解决程序用来探测程序集）
-        /// 程序运行路径
+        /// <summary>
+        /// 程序运行路径（获取基目录，它由程序集冲突解决程序用来探测程序集）
         /// </summary>
         public static string GetRunPath2
         {
@@ -92,7 +92,7 @@ namespace zgcwkj.Util
         }
 
         /// <summary>
-        /// 程序运行路径（获取或设置当前工作目录的完全限定路径）
+        /// 程序运行路径（获取当前工作目录的完全限定路径）
         /// </summary>
         public static string GetRunPath3
         {
