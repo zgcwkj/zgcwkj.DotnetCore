@@ -9,9 +9,4 @@
     <ProjectReference Include="..\zgcwkj.Util\zgcwkj.Util.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="wwwroot\css\" />
-    <Folder Include="wwwroot\js\" />
-  </ItemGroup>
-
 </Project>
