@@ -89,7 +89,7 @@ namespace zgcwkj.Util
             for (int i = 0; i < commandValues.Count(); i++)
             {
                 setStatus = true;
-                commandText = commandText.Replace(matchCollection[i].Value, $"'{commandValues[i].PreventInjection()}'");
+                commandText = commandText.Replace(matchCollection[i].Value, $"'{commandValues[i].PreventInjection(cmdAccess)}'");
             }
             cmdAccess.dbModel.Sql = commandText;
 
@@ -113,7 +113,7 @@ namespace zgcwkj.Util
             for (int i = 0; i < values.Count(); i++)
             {
                 addStatus = true;
-                filter = filter.Replace(matchCollection[i].Value, $"'{values[i].PreventInjection()}'");
+                filter = filter.Replace(matchCollection[i].Value, $"'{values[i].PreventInjection(cmdAccess)}'");
             }
             //判断是否需要加 Where
             if (!cmdAccess.dbModel.Sql.ToLower().Contains("where"))
@@ -151,7 +151,7 @@ namespace zgcwkj.Util
                     if (!string.IsNullOrEmpty(values[i].ToString()))
                     {
                         addStatus = true;
-                        filter = filter.Replace(matchCollection[i].Value, $"'{values[i].PreventInjection()}'");
+                        filter = filter.Replace(matchCollection[i].Value, $"'{values[i].PreventInjection(cmdAccess)}'");
                     }
                 }
             }
@@ -195,7 +195,7 @@ namespace zgcwkj.Util
                     if (!string.IsNullOrEmpty(values[i].ToString()))
                     {
                         addStatus = true;
-                        filter = filter.Replace(matchCollection[i].Value, $"'{values[i].PreventInjection()}'");
+                        filter = filter.Replace(matchCollection[i].Value, $"'{values[i].PreventInjection(cmdAccess)}'");
                     }
                 }
             }
@@ -323,15 +323,42 @@ namespace zgcwkj.Util
         /// <summary>
         /// 防止数据脚本的注入
         /// </summary>
-        /// <returns>脚本</returns>
-        private static string PreventInjection(this object val)
+        /// <param name="value">值</param>
+        /// <param name="cmdAccess">操作对象（在注入时，逆推用）</param>
+        /// <returns></returns>
+        private static string PreventInjection(this object value, DbAccess cmdAccess)
         {
-            string data = val.ToTrim();
-            data = data.ToTrim().Replace("\\", "\\\\");
-            data = data.ToTrim().Replace("'", "\\'");
-            data = data.ToTrim().Replace("=", "\\=");
-            data = data.ToTrim().Replace("<", "\\<");
-            data = data.ToTrim().Replace(">", "\\>");
+            string data = value.ToTrim();
+            if (data.ToTrim().Contains("\\"))
+            {
+                data = data.ToTrim().Replace("\\", "");
+                Log.Logger.Fatal($"脚本含有注入字符，Sql:({cmdAccess.GetSql()}),value:({value})");
+            }
+            if (data.ToTrim().Contains("\\"))
+            {
+                data = data.ToTrim().Replace("'", "");
+                Log.Logger.Fatal($"脚本含有注入字符，Sql:({cmdAccess.GetSql()}),value:({value})");
+            }
+            if (data.ToTrim().Contains("\\"))
+            {
+                data = data.ToTrim().Replace("\"", "");
+                Log.Logger.Fatal($"脚本含有注入字符，Sql:({cmdAccess.GetSql()}),value:({value})");
+            }
+            if (data.ToTrim().Contains("\\"))
+            {
+                data = data.ToTrim().Replace("=", "");
+                Log.Logger.Fatal($"脚本含有注入字符，Sql:({cmdAccess.GetSql()}),value:({value})");
+            }
+            if (data.ToTrim().Contains("\\"))
+            {
+                data = data.ToTrim().Replace("<", "");
+                Log.Logger.Fatal($"脚本含有注入字符，Sql:({cmdAccess.GetSql()}),value:({value})");
+            }
+            if (data.ToTrim().Contains("\\"))
+            {
+                data = data.ToTrim().Replace(">", "");
+                Log.Logger.Fatal($"脚本含有注入字符，Sql:({cmdAccess.GetSql()}),value:({value})");
+            }
             return data;
         }
 
