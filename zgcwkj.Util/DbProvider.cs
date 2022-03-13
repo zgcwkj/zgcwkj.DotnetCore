@@ -329,35 +329,45 @@ namespace zgcwkj.Util
         private static string PreventInjection(this object value, DbAccess cmdAccess)
         {
             string data = value.ToTrim();
+            bool outLog = false;
             if (data.ToTrim().Contains("\\"))
             {
+                outLog = true;
                 data = data.ToTrim().Replace("\\", "");
-                Log.Logger.Fatal($"脚本含有注入字符，Sql:({cmdAccess.GetSql()}),value:({value})");
             }
-            if (data.ToTrim().Contains("\\"))
+            if (data.ToTrim().Contains("'"))
             {
+                outLog = true;
                 data = data.ToTrim().Replace("'", "");
-                Log.Logger.Fatal($"脚本含有注入字符，Sql:({cmdAccess.GetSql()}),value:({value})");
             }
-            if (data.ToTrim().Contains("\\"))
+            if (data.ToTrim().Contains("\""))
             {
+                outLog = true;
                 data = data.ToTrim().Replace("\"", "");
-                Log.Logger.Fatal($"脚本含有注入字符，Sql:({cmdAccess.GetSql()}),value:({value})");
             }
-            if (data.ToTrim().Contains("\\"))
+            if (data.ToTrim().Contains("="))
             {
+                outLog = true;
                 data = data.ToTrim().Replace("=", "");
-                Log.Logger.Fatal($"脚本含有注入字符，Sql:({cmdAccess.GetSql()}),value:({value})");
             }
-            if (data.ToTrim().Contains("\\"))
+            if (data.ToTrim().Contains("<"))
             {
+                outLog = true;
                 data = data.ToTrim().Replace("<", "");
-                Log.Logger.Fatal($"脚本含有注入字符，Sql:({cmdAccess.GetSql()}),value:({value})");
             }
-            if (data.ToTrim().Contains("\\"))
+            if (data.ToTrim().Contains(">"))
             {
+                outLog = true;
                 data = data.ToTrim().Replace(">", "");
-                Log.Logger.Fatal($"脚本含有注入字符，Sql:({cmdAccess.GetSql()}),value:({value})");
+            }
+            if (data.ToTrim().Contains("@"))
+            {
+                outLog = true;
+                data = data.ToTrim().Replace("@", "");
+            }
+            if (outLog)
+            {
+                Log.Logger.Fatal($"参数含有注入字符，Sql:({cmdAccess.GetSql()}),value:({value})");
             }
             return data;
         }

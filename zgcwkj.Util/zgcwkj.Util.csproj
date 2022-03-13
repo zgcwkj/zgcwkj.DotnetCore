@@ -10,10 +10,10 @@
     <PackageTags>Core,Util,Data,Cache</PackageTags>
     <PackageReleaseNotes></PackageReleaseNotes>
     <NeutralLanguage>zh-Hans</NeutralLanguage>
-    <Version>1.1.5</Version>
+    <Version>1.1.6</Version>
     <Description>为 Core 提供一套数据相关的服务，Data、Cache、Log</Description>
-    <AssemblyVersion>1.1.5.0</AssemblyVersion>
-    <FileVersion>1.1.5.0</FileVersion>
+    <AssemblyVersion>1.1.6.0</AssemblyVersion>
+    <FileVersion>1.1.6.0</FileVersion>
     <RepositoryUrl>https://www.nuget.org/packages/zgcwkj.Util</RepositoryUrl>
     <PackageLicenseFile>LICENSE</PackageLicenseFile>
     <RepositoryType>Util</RepositoryType>
