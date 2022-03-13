@@ -24,7 +24,7 @@ namespace zgcwkj.Util
         /// 清空准备的数据
         /// </summary>
         /// <param name="cmdAccess">脚本模型</param>
-        /// <returns>追加状态</returns>
+        /// <returns>状态</returns>
         public static bool Clear(this DbAccess cmdAccess)
         {
             cmdAccess.dbModel = new SqlModel();
@@ -222,7 +222,7 @@ namespace zgcwkj.Util
         /// </summary>
         /// <param name="cmdAccess">脚本模型</param>
         /// <param name="filter">字段（多字段用逗号分开）</param>
-        /// <returns>追加状态</returns>
+        /// <returns>状态</returns>
         public static bool OrderBy(this DbAccess cmdAccess, string filter)
         {
             if (!string.IsNullOrEmpty(filter))
@@ -238,7 +238,7 @@ namespace zgcwkj.Util
         /// </summary>
         /// <param name="cmdAccess">脚本模型</param>
         /// <param name="filter">字段（多字段用逗号分开）</param>
-        /// <returns>追加状态</returns>
+        /// <returns>状态</returns>
         public static bool GroupBy(this DbAccess cmdAccess, string filter)
         {
             if (!string.IsNullOrEmpty(filter))
@@ -254,7 +254,7 @@ namespace zgcwkj.Util
         /// </summary>
         /// <param name="cmdAccess">脚本模型</param>
         /// <param name="sqlStr">添加的字符串</param>
-        /// <returns></returns>
+        /// <returns>状态</returns>
         public static bool SetEndSql(this DbAccess cmdAccess, string sqlStr)
         {
             if (!string.IsNullOrEmpty(sqlStr))
@@ -323,7 +323,7 @@ namespace zgcwkj.Util
         /// <summary>
         /// 防止数据脚本的注入
         /// </summary>
-        /// <returns></returns>
+        /// <returns>脚本</returns>
         private static string PreventInjection(this object val)
         {
             string data = val.ToTrim();
