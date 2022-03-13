@@ -329,6 +329,9 @@ namespace zgcwkj.Util
             string data = val.ToTrim();
             data = data.ToTrim().Replace("\\", "\\\\");
             data = data.ToTrim().Replace("'", "\\'");
+            data = data.ToTrim().Replace("=", "\\=");
+            data = data.ToTrim().Replace("<", "\\<");
+            data = data.ToTrim().Replace(">", "\\>");
             return data;
         }
 
