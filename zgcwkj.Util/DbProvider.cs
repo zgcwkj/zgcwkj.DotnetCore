@@ -340,31 +340,6 @@ namespace zgcwkj.Util
                 outLog = true;
                 data = data.ToTrim().Replace("'", "");
             }
-            if (data.ToTrim().Contains("\""))
-            {
-                outLog = true;
-                data = data.ToTrim().Replace("\"", "");
-            }
-            if (data.ToTrim().Contains("="))
-            {
-                outLog = true;
-                data = data.ToTrim().Replace("=", "");
-            }
-            if (data.ToTrim().Contains("<"))
-            {
-                outLog = true;
-                data = data.ToTrim().Replace("<", "");
-            }
-            if (data.ToTrim().Contains(">"))
-            {
-                outLog = true;
-                data = data.ToTrim().Replace(">", "");
-            }
-            if (data.ToTrim().Contains("@"))
-            {
-                outLog = true;
-                data = data.ToTrim().Replace("@", "");
-            }
             if (outLog)
             {
                 Log.Logger.Fatal($"参数含有注入字符，Sql:({cmdAccess.GetSql()}),value:({value})");
