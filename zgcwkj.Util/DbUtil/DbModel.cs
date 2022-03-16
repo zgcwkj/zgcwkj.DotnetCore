@@ -1,11 +1,11 @@
 ﻿using System;
+using System.Linq;
+using System.Text;
+using System.Reflection;
+using System.Threading.Tasks;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Linq;
-using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
 using zgcwkj.Util.Common;
 
 namespace zgcwkj.Util.DbUtil
@@ -23,9 +23,12 @@ namespace zgcwkj.Util.DbUtil
         {
             Type type = this.GetType();
             string tableName = GetTableName(type);
+            if (tableName.IsNull()) throw new Exception("No table name (DbModel.LoadData)");
             var data = GetTableData(type);
             string[] columns = data.keyColumns.ToArray();
+            if (columns.IsNull()) throw new Exception("Column has no data (DbModel.LoadData)");
             object[] values = data.keyValues.ToArray();
+            if (values.Length == 0) throw new Exception("Column has no value (DbModel.LoadData)");
             StringBuilder sql = new StringBuilder();
             sql.Append($"select * from {tableName} where ");
             for (int i = 0; i < columns.Length; i++)
@@ -66,9 +69,12 @@ namespace zgcwkj.Util.DbUtil
         {
             Type type = this.GetType();
             string tableName = GetTableName(type);
+            if (tableName.IsNull()) throw new Exception("No table name (DbModel.LoadDataAsync)");
             var data = GetTableData(type);
             string[] columns = data.keyColumns.ToArray();
+            if (columns.IsNull()) throw new Exception("Column has no data (DbModel.LoadDataAsync)");
             object[] values = data.keyValues.ToArray();
+            if (values.Length == 0) throw new Exception("Column has no value (DbModel.LoadDataAsync)");
             StringBuilder sql = new StringBuilder();
             sql.Append($"select * from {tableName} where ");
             for (int i = 0; i < columns.Length; i++)
@@ -109,11 +115,16 @@ namespace zgcwkj.Util.DbUtil
         {
             Type type = this.GetType();
             string tableName = GetTableName(type);
+            if (tableName.IsNull()) throw new Exception("No table name (DbModel.Insert)");
             var data = GetTableData(type);
             string columns = string.Join(",", data.notkeyColumns);
+            if (columns.IsNull()) throw new Exception("Column has no data (DbModel.Insert)");
             object[] values = data.notkeyValues.ToArray();
+            if (values.Length == 0) throw new Exception("Column has no value (DbModel.Insert)");
             string keyColumns = string.Join(",", data.keyColumns);
+            if (keyColumns.IsNull()) throw new Exception("No primary key (DbModel.Insert)");
             object[] keyValues = data.keyValues.ToArray();
+            if (keyValues.Length == 0) throw new Exception("No primary value (DbModel.Insert)");
             StringBuilder sql = new StringBuilder();
             //主键赋值状态
             var cmd = DbProvider.Create();
@@ -144,11 +155,16 @@ namespace zgcwkj.Util.DbUtil
         {
             Type type = this.GetType();
             string tableName = GetTableName(type);
+            if (tableName.IsNull()) throw new Exception("No table name (DbModel.InsertAsync)");
             var data = GetTableData(type);
             string columns = string.Join(",", data.notkeyColumns);
+            if (columns.IsNull()) throw new Exception("Column has no data (DbModel.InsertAsync)");
             object[] values = data.notkeyValues.ToArray();
+            if (values.Length == 0) throw new Exception("Column has no value (DbModel.InsertAsync)");
             string keyColumns = string.Join(",", data.keyColumns);
+            if (keyColumns.IsNull()) throw new Exception("No primary key (DbModel.InsertAsync)");
             object[] keyValues = data.keyValues.ToArray();
+            if (keyValues.Length == 0) throw new Exception("No primary keyValue (DbModel.InsertAsync)");
             StringBuilder sql = new StringBuilder();
             //主键赋值状态
             var cmd = DbProvider.Create();
@@ -179,10 +195,13 @@ namespace zgcwkj.Util.DbUtil
         {
             Type type = this.GetType();
             string tableName = GetTableName(type);
+            if (tableName.IsNull()) throw new Exception("No table name (DbModel.Update)");
             var data = GetTableData(type);
             StringBuilder sql = new StringBuilder();
             string[] columns = data.notkeyColumns.ToArray();
+            if (columns.Length == 0) throw new Exception("Column has no data(DbModel.Update)");
             object[] values = data.notkeyValues.ToArray();
+            if (values.Length == 0) throw new Exception("Column has no value (DbModel.Update)");
             sql.Append($"update {tableName} set ");
             for (int i = 0; i < columns.Length; i++)
             {
@@ -211,10 +230,13 @@ namespace zgcwkj.Util.DbUtil
         {
             Type type = this.GetType();
             string tableName = GetTableName(type);
+            if (tableName.IsNull()) throw new Exception("No table name (DbModel.UpdateAsync)");
             var data = GetTableData(type);
             StringBuilder sql = new StringBuilder();
             string[] columns = data.notkeyColumns.ToArray();
+            if (columns.Length == 0) throw new Exception("Column has no data(DbModel.UpdateAsync)");
             object[] values = data.notkeyValues.ToArray();
+            if (values.Length == 0) throw new Exception("Column has no value (DbModel.UpdateAsync)");
             sql.Append($"update {tableName} set ");
             for (int i = 0; i < columns.Length; i++)
             {
@@ -243,9 +265,12 @@ namespace zgcwkj.Util.DbUtil
         {
             Type type = this.GetType();
             string tableName = GetTableName(type);
+            if (tableName.IsNull()) throw new Exception("No table name (DbModel.Delete)");
             var data = GetTableData(type);
-            string[] columns = data.keyColumns.ToArray();
-            object[] values = data.keyValues.ToArray();
+            string[] columns = data.notkeyColumns.ToArray();
+            if (columns.Length == 0) throw new Exception("Column has no data(DbModel.Delete)");
+            object[] values = data.notkeyValues.ToArray();
+            if (values.Length == 0) throw new Exception("Column has no value (DbModel.Delete)");
             StringBuilder sql = new StringBuilder();
             sql.Append($"delete from {tableName} where ");
             for (int i = 0; i < columns.Length; i++)
@@ -267,9 +292,12 @@ namespace zgcwkj.Util.DbUtil
         {
             Type type = this.GetType();
             string tableName = GetTableName(type);
+            if (tableName.IsNull()) throw new Exception("No table name (DbModel.DeleteAsync)");
             var data = GetTableData(type);
-            string[] columns = data.keyColumns.ToArray();
-            object[] values = data.keyValues.ToArray();
+            string[] columns = data.notkeyColumns.ToArray();
+            if (columns.Length == 0) throw new Exception("Column has no data(DbModel.DeleteAsync)");
+            object[] values = data.notkeyValues.ToArray();
+            if (values.Length == 0) throw new Exception("Column has no value (DbModel.DeleteAsync)");
             StringBuilder sql = new StringBuilder();
             sql.Append($"delete from {tableName} where ");
             for (int i = 0; i < columns.Length; i++)
@@ -323,11 +351,11 @@ namespace zgcwkj.Util.DbUtil
         private dynamic GetTableData(Type type)
         {
             List<TableMode> tableModes = GetTableObject(type);
-            var keyData = tableModes.Where(T => T.IsKey == true && T.Value != default);
+            var keyData = tableModes.Where(T => T.IsKey == true && (T.Value != default));
             var keyColumns = keyData.Select(T => T.Column).ToList();
             var keyValues = keyData.Select(T => T.Value).ToList();
             keyValues = DataFormat(keyValues);
-            var notkeyData = tableModes.Where(T => T.IsKey == false && T.Value != default);
+            var notkeyData = tableModes.Where(T => T.IsKey == false && (T.Value != default));
             var notkeyColumns = notkeyData.Select(T => T.Column).ToList();
             var notkeyValues = notkeyData.Select(T => T.Value).ToList();
             notkeyValues = DataFormat(notkeyValues);
@@ -355,19 +383,24 @@ namespace zgcwkj.Util.DbUtil
                 tableMode.Column = property.Name;
                 foreach (var attribute in property.GetCustomAttributes())
                 {
-                    var keyAttribute = attribute as KeyAttribute;//是否主键
+                    var keyAttribute = attribute as KeyAttribute;//主键
                     if (!keyAttribute.IsNull())
                     {
                         tableMode.IsKey = true;
                     }
-                    var columnAttribute = attribute as ColumnAttribute;//字段名称
+                    var columnAttribute = attribute as ColumnAttribute;//字段
                     if (!columnAttribute.IsNull())
                     {
                         tableMode.Column = columnAttribute.Name;
                     }
+                    var notMappedAttribute = attribute as NotMappedAttribute;//排除
+                    if (!notMappedAttribute.IsNull())
+                    {
+                        tableMode.NotMapped = true;
+                    }
                 }
                 tableMode.Value = property.GetValue(this);
-                tableModes.Add(tableMode);
+                if (!tableMode.NotMapped) tableModes.Add(tableMode);
             }
             return tableModes;
         }
@@ -408,6 +441,11 @@ namespace zgcwkj.Util.DbUtil
         /// 字段值
         /// </summary>
         public object Value { get; set; }
+
+        /// <summary>
+        /// 排除字段
+        /// </summary>
+        public bool NotMapped { get; set; }
 
         /// <summary>
         /// 字段类型
