@@ -1,11 +1,12 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using zgcwkj.Util;
 using zgcwkj.Util.DbUtil;
 
 namespace zgcwkj.Model.Models
 {
     /// <summary>
-    /// 用户表
+    /// 系统用户表
     /// </summary>
     [Table("sys_user")]
     public class SysUserModel : DbModel
@@ -15,6 +16,12 @@ namespace zgcwkj.Model.Models
         /// </summary>
         [Key, Column("user_id"), StringLength(32)]
         public string UserID { get; set; } = "";
+
+        /// <summary>
+        /// 系统ID
+        /// </summary>
+        [Column("sys_id")]
+        public string SysID { get; set; } = "";
 
         /// <summary>
         /// 用户名称

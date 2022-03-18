@@ -3,7 +3,7 @@ using zgcwkj.Model.DefaultData;
 using zgcwkj.Model.Models;
 using zgcwkj.Util.DbUtil;
 
-namespace zgcwkj.Model
+namespace zgcwkj.Model.Context
 {
     /// <summary>
     /// 数据连接对象

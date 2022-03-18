@@ -2,6 +2,7 @@
 using System.Linq;
 using zgcwkj.Model;
 using zgcwkj.Model.Models;
+using zgcwkj.Model.Context;
 using zgcwkj.Util;
 using zgcwkj.Util.Common;
 
@@ -13,58 +14,74 @@ namespace zgcwkj.Demo
         {
             string userID = MD5Tool.GetMd5("zgcwkj");
 
-            //var d = new RandomTool(true, true, true);
-            //var dddd = d.GoRandom(10);
-            var s = RandomTool.GetRandomStr(10, "abc123");
-
             //Cache
+            Console.WriteLine("Cache >");
             //DataFactory.Cache.Set("zgcwkj", userID);
             Console.WriteLine(DataFactory.Cache.Get<string>("zgcwkj"));
 
+            //DbContext
+            using var myDbContext = new MyDbContext();
+            using var sQLiteDbContext = new SQLiteDbContext();
+
             //Query
-            using MyDbContext myDbContext = new MyDbContext();
+            Console.WriteLine("Query >");
             var sysUser = myDbContext.SysUserModel.ToList();
             Console.WriteLine(sysUser.ToJson());
 
-            //Query
-            var cmd = DbProvider.Create();
-            cmd.Clear();
-            cmd.SetCommandText("select * from sys_user");
-            var dataTable = DbAccess.QueryDataTable(cmd);
-            Console.WriteLine(dataTable.ToJson());
+            //Insert
+            Console.WriteLine("Insert >");
+            var newUserID = GlobalConstant.GuidMd5;
+            var sysUser2=new SysUserModel();
+            sysUser2.UserID = newUserID;
+            sysUser2.UserName = $"MyName{newUserID}";
+            sysUser2.Password = $"MyPassword{newUserID}";
+            sysUser2.Privacy = "won't insert ";
+            myDbContext.Add(sysUser2);
+            int insertCount = myDbContext.SaveChanges();
 
-            //Affairs
-            cmd.Clear();
-            cmd.TransBegin();
-            cmd.SetCommandText(@"insert into sys_user(user_id,user_name,password) values(@userID,@userName,@password)", "userID", "userName", "myPassword");
-            var data = DbAccess.UpdateData(cmd);
-            //cmd.TransCommit();
-            Console.WriteLine($"updateCount > {data}");
-
-            //Object
-            SysUserModel sysUserModelB = new SysUserModel();
-            sysUserModelB.UserID = userID;
-            var loadOk = sysUserModelB.LoadData();
-            if (loadOk)
-            {
-                sysUserModelB.UserName = "Update";
-                sysUserModelB.Password = "Update";
-                sysUserModelB.Update();
-            }
-            else
-            {
-                sysUserModelB.UserName = "Insert";
-                sysUserModelB.Password = "Insert";
-                sysUserModelB.Insert();
-            }
+            //Update
+            Console.WriteLine("Update >");
+            var sysUser3 = (from sUser in myDbContext.SysUserModel
+                            where sUser.UserID == newUserID
+                            select sUser).FirstOrDefault();
+            sysUser3.Password = $"NewMyPassword{newUserID}";
+            int updateCount = myDbContext.SaveChanges();
 
             //Query
-            var sysUsers = DataFactory.Db.QuerTable<SysUserModel>(T => T.UserID == userID);
+            Console.WriteLine("Query >");
+            var sysUsers = myDbContext.SysUserModel.ToList();
             Console.WriteLine(sysUsers.ToJson());
 
+            //Delete
+            Console.WriteLine("Delete >");
+            var sysUser4 = (from sUser in myDbContext.SysUserModel
+                            where sUser.UserID == newUserID
+                            select sUser).FirstOrDefault();
+            myDbContext.Remove(sysUser4);
+           int deleteCount= myDbContext.SaveChanges();
+
             //Query
-            var sysUserModels = DataFactory.Db.QuerTable<SysUserModel>();
-            Console.WriteLine(sysUserModels.ToJson());
+            Console.WriteLine("Query >");
+            var sysUsers2 = myDbContext.SysUserModel.ToList();
+            Console.WriteLine(sysUsers2.ToJson());
+
+            //Query
+            Console.WriteLine("Cross-database Query >");
+            var sysInfo = sQLiteDbContext.SysInfoModel.ToList();
+            var suInfo = (from sInfo in sysInfo
+                          join sUser in sysUsers2 on sInfo.SysID equals sUser.SysID
+                          select new
+                          {
+                              sInfo.SysID,
+                              sInfo.SysName,
+                              sInfo.SysIP,
+                              sInfo.SysUrl,
+                              sInfo.SysStatus,
+                              sUser.UserID,
+                              sUser.UserName,
+                              sUser.Password,
+                          }).ToList();
+            Console.WriteLine(suInfo.ToJson());
 
             Console.ReadLine();
         }
