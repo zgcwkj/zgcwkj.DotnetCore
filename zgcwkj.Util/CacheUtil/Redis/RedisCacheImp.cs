@@ -1,6 +1,5 @@
-﻿using CSRedis;
-using System;
-using zgcwkj.Util.Common;
+﻿using System;
+using CSRedis;
 using zgcwkj.Util.Log;
 
 namespace zgcwkj.Util.CacheUtil.Redis

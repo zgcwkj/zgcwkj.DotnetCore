@@ -1,6 +1,5 @@
 ﻿using System;
 using System.IO;
-using System.IO.Compression;
 using System.Net;
 using System.Net.Security;
 using System.Security.Cryptography.X509Certificates;
@@ -119,17 +118,17 @@ namespace zgcwkj.Util.Common
         /// <summary>
         /// Cookie 对象
         /// </summary>
-        public CookieContainer cookie { get; set; } = new CookieContainer();
+        public CookieContainer Cookie { get; set; } = new CookieContainer();
 
         /// <summary>
         /// Cookie 数据字符串
         /// </summary>
-        public string cookieStr { get; set; } = "";
+        public string CookieStr { get; set; } = "";
 
         /// <summary>
         /// 编码类型
         /// </summary>
-        public Encoding encoding { get; set; } = Encoding.UTF8;
+        public Encoding Encoding { get; set; } = Encoding.UTF8;
 
         /// <summary>
         /// 发起网络请求（核心）
@@ -140,14 +139,14 @@ namespace zgcwkj.Util.Common
         {
             try
             {
-                if (cookieStr.IsNull()) request.CookieContainer = cookie;
-                else request.Headers.Add("Cookie", cookieStr);
+                if (CookieStr.IsNull()) request.CookieContainer = Cookie;
+                else request.Headers.Add("Cookie", CookieStr);
 
                 HttpWebResponse response = (HttpWebResponse)request.GetResponse();
-                response.Cookies = cookie.GetCookies(response.ResponseUri);
+                response.Cookies = Cookie.GetCookies(response.ResponseUri);
 
                 using Stream stream = response.GetResponseStream();
-                using StreamReader myStreamReader = new StreamReader(stream, encoding);
+                using StreamReader myStreamReader = new StreamReader(stream, Encoding);
 
                 string retString = myStreamReader.ReadToEnd();
                 return retString;
@@ -169,11 +168,11 @@ namespace zgcwkj.Util.Common
             //float percent = 0;//百分比
             try
             {
-                if (cookieStr.IsNull()) request.CookieContainer = cookie;
-                else request.Headers.Add("Cookie", cookieStr);
+                if (CookieStr.IsNull()) request.CookieContainer = Cookie;
+                else request.Headers.Add("Cookie", CookieStr);
 
                 HttpWebResponse response = (HttpWebResponse)request.GetResponse();
-                response.Cookies = cookie.GetCookies(response.ResponseUri);
+                response.Cookies = Cookie.GetCookies(response.ResponseUri);
 
                 using Stream stream = response.GetResponseStream();
                 using Stream outStream = new FileStream(filePath, FileMode.Create);
@@ -248,6 +247,7 @@ namespace zgcwkj.Util.Common
         /// </summary>
         /// <param name="httpTool">对象</param>
         /// <param name="url">请求的路径</param>
+        /// <param name="data">提交的数据</param>
         /// <returns>结果</returns>
         public static string Post(this HttpTool httpTool, string url, string data)
         {

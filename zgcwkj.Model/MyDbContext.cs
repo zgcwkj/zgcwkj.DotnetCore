@@ -1,16 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations.Schema;
-using System.IO;
-using System.Linq;
-using System.Reflection;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Metadata;
-using Microsoft.Extensions.Configuration;
+﻿using Microsoft.EntityFrameworkCore;
 using zgcwkj.Model.DefaultData;
 using zgcwkj.Model.Models;
-using zgcwkj.Util;
-using zgcwkj.Util.Common;
 using zgcwkj.Util.DbUtil;
 
 namespace zgcwkj.Model

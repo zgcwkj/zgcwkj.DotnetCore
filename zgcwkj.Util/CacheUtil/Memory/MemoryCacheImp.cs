@@ -1,8 +1,7 @@
-﻿using Microsoft.Extensions.Caching.Memory;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using zgcwkj.Util.Common;
+using Microsoft.Extensions.Caching.Memory;
 using zgcwkj.Util.Log;
 
 namespace zgcwkj.Util.CacheUtil.Memory
@@ -18,7 +17,7 @@ namespace zgcwkj.Util.CacheUtil.Memory
         private static IMemoryCache memoryCache;
 
         /// <summary>
-        /// Redis 缓存实例时
+        /// Memory 缓存实例时
         /// </summary>
         public MemoryCacheImp()
         {

@@ -1,10 +1,9 @@
-﻿using Microsoft.AspNetCore.Builder;
+﻿using System;
+using System.IO;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.SwaggerUI;
-using System;
-using System.IO;
-using System.Linq;
 
 namespace zgcwkj.Util.Swagger
 {
@@ -36,10 +35,8 @@ namespace zgcwkj.Util.Swagger
                 options.OrderActionsBy(o => o.RelativePath);
                 //Set the comments path for the swagger json and ui
                 var basePath = GlobalConstant.GetRunPath;
-                var root = new DirectoryInfo(basePath);
-                var files = root.GetFiles("*.xml");
-                var linqXmlPaths = files.Select(f => Path.Combine(basePath, f.FullName));
-                foreach (var xmlPath in linqXmlPaths.ToList())
+                var xmlFilesPath = Directory.GetFiles(basePath, "*.xml");
+                foreach (var xmlPath in xmlFilesPath)
                 {
                     options.IncludeXmlComments(xmlPath);
                 }

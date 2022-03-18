@@ -1,6 +1,6 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using System;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
-using System;
 
 namespace zgcwkj.Util
 {
@@ -114,7 +114,7 @@ namespace zgcwkj.Util
             foreach (var cookie in request.Cookies)
             {
                 var key = cookie.Key;
-                var value = cookie.Value;
+                //var value = cookie.Value;
                 response.Cookies.Delete(key);
             }
             return true;

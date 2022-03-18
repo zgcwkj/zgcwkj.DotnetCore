@@ -121,6 +121,7 @@ namespace zgcwkj.Util.Extension
             /// The ParameterExpression map
             /// </summary>
             readonly Dictionary<ParameterExpression, ParameterExpression> map;
+
             /// <summary>
             /// Initializes a new instance of the <see cref="ParameterRebinder"/> class.
             /// </summary>
@@ -129,6 +130,7 @@ namespace zgcwkj.Util.Extension
             {
                 this.map = map ?? new Dictionary<ParameterExpression, ParameterExpression>();
             }
+
             /// <summary>
             /// Replaces the parameters.
             /// </summary>
@@ -139,6 +141,7 @@ namespace zgcwkj.Util.Extension
             {
                 return new ParameterRebinder(map).Visit(exp);
             }
+
             /// <summary>
             /// Visits the parameter.
             /// </summary>
@@ -146,9 +149,7 @@ namespace zgcwkj.Util.Extension
             /// <returns>Expression</returns>
             protected override Expression VisitParameter(ParameterExpression p)
             {
-                ParameterExpression replacement;
-
-                if (map.TryGetValue(p, out replacement))
+                if (map.TryGetValue(p, out ParameterExpression replacement))
                 {
                     p = replacement;
                 }

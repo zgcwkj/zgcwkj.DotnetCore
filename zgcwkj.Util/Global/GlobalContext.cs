@@ -1,13 +1,12 @@
-﻿using Microsoft.AspNetCore.Hosting;
+﻿using System;
+using System.IO;
+using System.Reflection;
+using System.Text;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.StaticFiles;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using System;
-using System.IO;
-using System.Text;
-using System.Reflection;
-using zgcwkj.Util.Common;
 
 namespace zgcwkj.Util
 {
@@ -107,8 +106,7 @@ namespace zgcwkj.Util
         /// <returns></returns>
         public static string GetEnvVar(string key)
         {
-            string data = string.Empty;
-            data = Environment.GetEnvironmentVariable(key, EnvironmentVariableTarget.Machine) ?? null;
+            string data = Environment.GetEnvironmentVariable(key, EnvironmentVariableTarget.Machine) ?? null;
             data ??= Environment.GetEnvironmentVariable(key, EnvironmentVariableTarget.Process) ?? null;
             data ??= Environment.GetEnvironmentVariable(key, EnvironmentVariableTarget.User) ?? null;
             return data.ToTrim();

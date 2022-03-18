@@ -1,10 +1,5 @@
-﻿using System;
-using System.Text;
-using System.Collections.Generic;
-using System.Data;
-using System.Data.Common;
+﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.ComponentModel.DataAnnotations;
 using zgcwkj.Util.DbUtil;
 
 namespace zgcwkj.Model.Models

@@ -10,17 +10,61 @@ namespace zgcwkj.Util.DbUtil
     public class DbCommon : DbContext, IDisposable
     {
         /// <summary>
+        /// 数据库类型
+        /// </summary>
+        private readonly DbType dbType;
+
+        /// <summary>
+        /// 连接字符
+        /// </summary>
+        private readonly string dbConnect;
+
+        /// <summary>
+        /// 连接命令超时
+        /// </summary>
+        private readonly int dbTimeout;
+
+        /// <summary>
+        /// 数据库连接对象（在配置文件中获取连接信息）
+        /// </summary>
+        public DbCommon()
+        {
+            this.dbType = DbFactory.Type;
+            this.dbConnect = DbFactory.Connect;
+            this.dbTimeout = DbFactory.Timeout;
+        }
+
+        /// <summary>
+        /// 数据库连接对象（自定义连接信息）
+        /// </summary>
+        /// <param name="dbType">数据库类型</param>
+        /// <param name="dbConnect">连接字符</param>
+        /// <param name="dbTimeout">连接命令超时</param>
+        public DbCommon(DbType dbType, string dbConnect, int dbTimeout = 100)
+        {
+            this.dbType = dbType;
+            this.dbConnect = dbConnect;
+            this.dbTimeout = dbTimeout;
+        }
+
+        /// <summary>
+        /// 数据库连接对象（自定义连接信息，统一数据库类型）
+        /// </summary>
+        /// <param name="dbConnect">连接字符</param>
+        /// <param name="dbTimeout">连接命令超时</param>
+        public DbCommon(string dbConnect, int dbTimeout = 100)
+        {
+            this.dbType = DbFactory.Type;
+            this.dbConnect = dbConnect;
+            this.dbTimeout = dbTimeout;
+        }
+
+        /// <summary>
         /// 配置要使用的数据库 
         /// </summary>
         /// <param name="optionsBuilder">上下文选项生成器</param>
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            //数据库类型
-            var dbType = DbFactory.Type;
-            //连接字符
-            string dbConnect = DbFactory.Connect;
-            //连接命令超时
-            int dbTimeout = DbFactory.Timeout;
             //SQLite
             if (dbType == DbType.SQLite)
             {

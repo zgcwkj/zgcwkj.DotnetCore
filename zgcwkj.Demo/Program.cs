@@ -1,18 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Data;
-using System.Data.Common;
-using System.IO;
 using System.Linq;
-using System.Linq.Expressions;
-using System.Text.RegularExpressions;
-using zgcwkj.Util;
-using zgcwkj.Util.Common;
-using zgcwkj.Util.DbUtil;
-using zgcwkj.Util.Extension;
-using Microsoft.Extensions.Configuration;
 using zgcwkj.Model;
 using zgcwkj.Model.Models;
+using zgcwkj.Util;
+using zgcwkj.Util.Common;
 
 namespace zgcwkj.Demo
 {
@@ -21,6 +12,10 @@ namespace zgcwkj.Demo
         static void Main(string[] args)
         {
             string userID = MD5Tool.GetMd5("zgcwkj");
+
+            //var d = new RandomTool(true, true, true);
+            //var dddd = d.GoRandom(10);
+            var s = RandomTool.GetRandomStr(10, "abc123");
 
             //Cache
             //DataFactory.Cache.Set("zgcwkj", userID);
