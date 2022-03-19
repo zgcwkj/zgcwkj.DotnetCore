@@ -39,24 +39,24 @@ namespace zgcwkj.Util.DbUtil
         /// </summary>
         /// <param name="dbType">数据库类型</param>
         /// <param name="dbConnect">连接字符</param>
-        /// <param name="dbTimeout">连接命令超时</param>
-        public DbCommon(DbType dbType, string dbConnect, int dbTimeout = 100)
+        /// <param name="dbTimeout">连接超时</param>
+        public DbCommon(DbType dbType, string dbConnect, int dbTimeout = 10)
         {
             this.dbType = dbType;
             this.dbConnect = dbConnect;
-            this.dbTimeout = dbTimeout;
+            this.dbTimeout = dbTimeout == 10 ? dbTimeout : DbFactory.Timeout;
         }
 
         /// <summary>
         /// 数据库连接对象（自定义连接信息，统一数据库类型）
         /// </summary>
         /// <param name="dbConnect">连接字符</param>
-        /// <param name="dbTimeout">连接命令超时</param>
-        public DbCommon(string dbConnect, int dbTimeout = 100)
+        /// <param name="dbTimeout">连接超时</param>
+        public DbCommon(string dbConnect, int dbTimeout = 10)
         {
             this.dbType = DbFactory.Type;
             this.dbConnect = dbConnect;
-            this.dbTimeout = dbTimeout;
+            this.dbTimeout = dbTimeout == 10 ? dbTimeout : DbFactory.Timeout;
         }
 
         /// <summary>
