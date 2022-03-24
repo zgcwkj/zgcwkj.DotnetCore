@@ -58,8 +58,8 @@ namespace zgcwkj.Util.DbUtil
         {
             get
             {
-                string dbTimeoutStr = ConfigHelp.Get("DbTimeout") ?? "10";
-                return dbTimeoutStr.ToInt();
+                string dbTimeoutStr = ConfigHelp.Get("DbTimeout");
+                return dbTimeoutStr.IsNullOrZero() ? 10 : dbTimeoutStr.ToInt();
             }
         }
 
