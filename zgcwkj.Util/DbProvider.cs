@@ -80,16 +80,8 @@ namespace zgcwkj.Util
         /// <returns>设置状态</returns>
         public static bool SetCommandText(this DbAccess cmdAccess, string commandText, params object[] commandValues)
         {
-            //设置状态
-            bool setStatus = false;
-            //得到脚本上的变量
-            MatchCollection matchCollection = GetMatchCollection(commandText);
-            //循环变量
-            for (int i = 0; i < commandValues.Count(); i++)
-            {
-                setStatus = true;
-                commandText = commandText.Replace(matchCollection[i].Value, $"'{commandValues[i].PreventInjection(cmdAccess)}'");
-            }
+            //setStatus 设置状态
+            commandText = GetScriptAfterParameter(cmdAccess, out bool setStatus, commandText, commandValues);
             cmdAccess.dbModel.Sql = commandText;
 
             return setStatus;
@@ -104,16 +96,8 @@ namespace zgcwkj.Util
         /// <returns>追加状态</returns>
         public static bool Append(this DbAccess cmdAccess, string filter, params object[] values)
         {
-            //添加状态
-            bool addStatus = false;
-            //得到脚本上的变量
-            MatchCollection matchCollection = GetMatchCollection(filter);
-            //循环变量
-            for (int i = 0; i < values.Count(); i++)
-            {
-                addStatus = true;
-                filter = filter.Replace(matchCollection[i].Value, $"'{values[i].PreventInjection(cmdAccess)}'");
-            }
+            //addStatus 添加状态
+            filter = GetScriptAfterParameter(cmdAccess, out bool addStatus, filter, values);
             //判断是否需要加 Where
             if (!cmdAccess.dbModel.Sql.ToLower().Contains("where"))
             {
@@ -138,22 +122,8 @@ namespace zgcwkj.Util
         /// <returns>追加状态</returns>
         public static bool AppendAnd(this DbAccess cmdAccess, string filter, params object[] values)
         {
-            //添加状态
-            bool addStatus = false;
-            //得到脚本上的变量
-            MatchCollection matchCollection = GetMatchCollection(filter);
-            //循环变量
-            for (int i = 0; i < values.Count(); i++)
-            {
-                if (values[i] != null)
-                {
-                    if (!string.IsNullOrEmpty(values[i].ToString()))
-                    {
-                        addStatus = true;
-                        filter = filter.Replace(matchCollection[i].Value, $"'{values[i].PreventInjection(cmdAccess)}'");
-                    }
-                }
-            }
+            //addStatus 添加状态
+            filter = GetScriptAfterParameter(cmdAccess, out bool addStatus, filter, values);
             //是否添加
             if (addStatus)
             {
@@ -182,22 +152,8 @@ namespace zgcwkj.Util
         /// <returns>追加状态</returns>
         public static bool AppendOr(this DbAccess cmdAccess, string filter, params object[] values)
         {
-            //添加状态
-            bool addStatus = false;
-            //得到脚本上的变量
-            MatchCollection matchCollection = GetMatchCollection(filter);
-            //循环变量
-            for (int i = 0; i < values.Count(); i++)
-            {
-                if (values[i] != null)
-                {
-                    if (!string.IsNullOrEmpty(values[i].ToString()))
-                    {
-                        addStatus = true;
-                        filter = filter.Replace(matchCollection[i].Value, $"'{values[i].PreventInjection(cmdAccess)}'");
-                    }
-                }
-            }
+            //addStatus 添加状态
+            filter = GetScriptAfterParameter(cmdAccess, out bool addStatus, filter, values);
             //是否添加
             if (addStatus)
             {
@@ -221,11 +177,13 @@ namespace zgcwkj.Util
         /// </summary>
         /// <param name="cmdAccess">脚本模型</param>
         /// <param name="filter">字段（多字段用逗号分开）</param>
+        /// <param name="values">值</param>
         /// <returns>状态</returns>
-        public static bool OrderBy(this DbAccess cmdAccess, string filter)
+        public static bool OrderBy(this DbAccess cmdAccess, string filter, params object[] values)
         {
             if (!string.IsNullOrEmpty(filter))
             {
+                filter = GetScriptAfterParameter(cmdAccess, out _, filter, values);
                 cmdAccess.dbModel.OrderBy = $"order by {filter}";
                 return true;
             }
@@ -237,11 +195,13 @@ namespace zgcwkj.Util
         /// </summary>
         /// <param name="cmdAccess">脚本模型</param>
         /// <param name="filter">字段（多字段用逗号分开）</param>
+        /// <param name="values">值</param>
         /// <returns>状态</returns>
-        public static bool GroupBy(this DbAccess cmdAccess, string filter)
+        public static bool GroupBy(this DbAccess cmdAccess, string filter, params object[] values)
         {
             if (!string.IsNullOrEmpty(filter))
             {
+                filter = GetScriptAfterParameter(cmdAccess,out _, filter, values);
                 cmdAccess.dbModel.GroupBy = $"group by {filter}";
                 return true;
             }
@@ -299,6 +259,34 @@ namespace zgcwkj.Util
         private static MatchCollection GetMatchCollection(string sqlStr)
         {
             return Regex.Matches(sqlStr, @"(?<=[^0-9a-zA-Z])@(?!@)[0-9a-zA-Z_$#@]+");
+        }
+
+        /// <summary>
+        /// 获取参数后的脚本
+        /// </summary>
+        /// <param name="cmdAccess">脚本模型</param>
+        /// <param name="isStatus">替换状态</param>
+        /// <param name="sqlStr">脚本字符</param>
+        /// <param name="values">参数值</param>
+        /// <returns></returns>
+        private static string GetScriptAfterParameter(DbAccess cmdAccess, out bool isStatus, string sqlStr, params object[] values)
+        {
+            isStatus = false;
+            //得到脚本上的变量
+            MatchCollection matchCollection = GetMatchCollection(sqlStr);
+            //循环变量
+            for (int i = 0; i < values.Count(); i++)
+            {
+                if (values[i] != null)
+                {
+                    if (!string.IsNullOrEmpty(values[i].ToString()))
+                    {
+                        isStatus = true;
+                        sqlStr = sqlStr.Replace(matchCollection[i].Value, $"'{values[i].PreventInjection(cmdAccess)}'");
+                    }
+                }
+            }
+            return sqlStr;
         }
 
         /// <summary>
