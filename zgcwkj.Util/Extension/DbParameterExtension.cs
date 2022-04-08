@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Data.Common;
 using Microsoft.Data.SqlClient;
+using Microsoft.Data.Sqlite;
 using MySqlConnector;
 using Npgsql;
 using zgcwkj.Util.DbUtil;
@@ -19,17 +20,14 @@ namespace zgcwkj.Util.Extension
         /// <returns></returns>
         public static DbParameter CreateDbParameter()
         {
-            switch (DbFactory.Type)
+            return DbFactory.Type switch
             {
-                case Enum.DbType.MySql:
-                    return new MySqlParameter();
-                case Enum.DbType.SqlServer:
-                    return new SqlParameter();
-                case Enum.DbType.PostgreSql:
-                    return new NpgsqlParameter();
-                default:
-                    throw new Exception("未找到数据库配置");
-            }
+                Enum.DbType.MySql => new MySqlParameter(),
+                Enum.DbType.SqlServer => new SqlParameter(),
+                Enum.DbType.PostgreSql => new NpgsqlParameter(),
+                Enum.DbType.SQLite => new SqliteParameter(),
+                _ => throw new Exception("未找到数据库配置"),
+            };
         }
 
         /// <summary>

@@ -11,7 +11,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Hosting;
 using zgcwkj.Util;
-using zgcwkj.Util.Swagger;
+using zgcwkj.Web.Comm;
 
 namespace zgcwkj.Web
 {
@@ -52,6 +52,11 @@ namespace zgcwkj.Web
         /// <param name="services">服务</param>
         public void ConfigureServices(IServiceCollection services)
         {
+            //所有注册服务和类实例容器
+            GlobalContext.Services = services;
+            //配置对象
+            GlobalContext.Configuration = Configuration;
+            //添加单例
             services.AddSingleton(HtmlEncoder.Create(UnicodeRanges.All));
             //注册编码
             Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
@@ -84,11 +89,9 @@ namespace zgcwkj.Web
                 options.Filters.Add(new GlobalException());
             });
             //配置 Swagger
-            services.AddSwagger();
-            //所有注册服务和类实例容器
-            GlobalContext.Services = services;
-            //配置对象
-            GlobalContext.Configuration = Configuration;
+            services.AddSwaggerJwt();
+            //配置 Jwt
+            services.AddJwtConfig(new MyJwtValidator());
         }
 
         /// <summary>
@@ -99,6 +102,8 @@ namespace zgcwkj.Web
         /// <param name="env">环境</param>
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
+            //服务提供者
+            GlobalContext.ServiceProvider = app.ApplicationServices;
             //运行模式
             if (env.IsDevelopment())
             {
@@ -146,15 +151,20 @@ namespace zgcwkj.Web
                 FileProvider = new PhysicalFileProvider(resource),
                 OnPrepareResponse = GlobalContext.SetCacheControl
             });
-            //用户 Session
-            app.UseSession();
             //用户路由
             app.UseRouting();
-            ////用户授权
-            //app.UseAuthorization();
+            //用户 Session
+            app.UseSession();
+            //用户 WebSockets
+            var webSocketOptions = new WebSocketOptions()
+            {
+                KeepAliveInterval = TimeSpan.FromSeconds(120),//有效时长
+            };
+            app.UseWebSockets(webSocketOptions);
+            //启用 Jwt
+            app.JwtAuthorize();
             //用户访问地址重写
-            app.UseRewriter(new RewriteOptions()
-                .AddRedirect(@"(.*?)[/]{2,}$", "/"));
+            app.UseRewriter(new RewriteOptions().AddRedirect(@"(.*?)[/]{2,}$", "/"));
             //用户默认路由
             app.UseEndpoints(endpoints =>
             {
@@ -165,8 +175,6 @@ namespace zgcwkj.Web
                     name: "default",
                     pattern: "{controller=Home}/{action=Index}/{id?}");
             });
-            //服务提供者
-            GlobalContext.ServiceProvider = app.ApplicationServices;
         }
     }
 }

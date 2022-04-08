@@ -118,7 +118,7 @@ namespace zgcwkj.Util.CacheUtil.Memory
         /// <returns>数据</returns>
         public T HashGet<T>(string key, string hashKey)
         {
-            var dict = GetHashFieldCache<T>(key, new Dictionary<string, T> { { hashKey, default(T) } });
+            var dict = GetHashFieldCache<T>(key, new Dictionary<string, T> { { hashKey, default } });
             return dict[hashKey];
         }
 

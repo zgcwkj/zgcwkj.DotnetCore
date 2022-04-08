@@ -1,14 +1,49 @@
 ﻿using System;
 using System.Linq;
+using System.Text;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
 using zgcwkj.Util;
+using zgcwkj.Web.Comm;
 
 namespace zgcwkj.Web.Controllers
 {
+    /// <summary>
+    /// ApiController
+    /// </summary>
+    [Authorize]
     [Route("[controller]/[action]")]
     public class ApiController : Controller
     {
+        /// <summary>
+        /// Login
+        /// </summary>
+        /// <param name="userName">用户名称</param>
+        /// <param name="password">用户密码</param>
+        /// <returns></returns>
+        [AllowAnonymous]
+        [HttpPost]
+        public IActionResult Login(string userName, string password)
+        {
+            //登录方法体
+            var myJwtv = new MyJwtValidator
+            {
+                Account = userName,
+                Password = password,
+            };
+            var jwtToken = JwtConfig.GetToken(myJwtv);
+            //返回结果
+            var jsonResult = new
+            {
+                status = jwtToken.Status,
+                token = jwtToken.Token,
+                validTo = jwtToken.ValidTo,
+            };
+            return Json(jsonResult);
+        }
+
         /// <summary>
         /// GetData
         /// </summary>
