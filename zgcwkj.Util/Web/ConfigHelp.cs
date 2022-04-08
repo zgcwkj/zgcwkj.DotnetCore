@@ -1,4 +1,6 @@
-﻿using Microsoft.Extensions.Configuration;
+﻿using System;
+using Microsoft.Extensions.Configuration;
+using zgcwkj.Util.Log;
 using zgcwkj.Util.Common;
 
 namespace zgcwkj.Util
@@ -24,14 +26,24 @@ namespace zgcwkj.Util
         /// <returns>值</returns>
         public static T Get<T>(string sName)
         {
-            var config = GlobalContext.Configuration;
-            if (string.IsNullOrEmpty(sName)) return default;
-            var configValue = config.GetValue<T>(sName);
-            if (configValue.IsNull())
+            try
             {
-                configValue = (T)config.GetSection(sName).Get(typeof(T));
+                var config = GlobalContext.Configuration;
+                if (string.IsNullOrEmpty(sName)) return default;
+                var configValue = config.GetValue<T>(sName);
+                if (configValue.IsNull())
+                {
+                    var sectionValue = config.GetSection(sName);
+                    configValue = (T)sectionValue.Get(typeof(T));
+                }
+                return configValue;
             }
-            return configValue;
+            catch (Exception ex)
+            {
+                string message = ex.Message;
+                //Logger.Error($"获取配置异常：{message}");
+                return default;
+            }
         }
 
         /// <summary>
