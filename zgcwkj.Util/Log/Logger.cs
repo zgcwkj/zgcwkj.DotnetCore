@@ -10,41 +10,41 @@ namespace zgcwkj.Util.Log
         /// <summary>
         /// 信息输出
         /// </summary>
-        /// <param name="message">消息</param>
+        /// <param name="messages">消息</param>
         /// <returns></returns>
-        public static bool Info(string message)
+        public static bool Info(params string[] messages)
         {
-            return LogOutput.OutputLogFile(message, LogType.Info);
+            return LogOutput.OutputLogFile(string.Join(",", messages), LogType.Info);
         }
 
         /// <summary>
         /// 调试输出
         /// </summary>
-        /// <param name="message">消息</param>
+        /// <param name="messages">消息</param>
         /// <returns></returns>
-        public static bool Debug(string message)
+        public static bool Debug(params string[] messages)
         {
-            return LogOutput.OutputLogFile(message, LogType.Debug);
+            return LogOutput.OutputLogFile(string.Join(",", messages), LogType.Debug);
         }
 
         /// <summary>
         /// 错误输出
         /// </summary>
-        /// <param name="message">消息</param>
+        /// <param name="messages">消息</param>
         /// <returns></returns>
-        public static bool Error(string message)
+        public static bool Error(params string[] messages)
         {
-            return LogOutput.OutputLogFile(message, LogType.Error);
+            return LogOutput.OutputLogFile(string.Join(",", messages), LogType.Error);
         }
 
         /// <summary>
         /// 致命输出
         /// </summary>
-        /// <param name="message">消息</param>
+        /// <param name="messages">消息</param>
         /// <returns></returns>
-        public static bool Fatal(string message)
+        public static bool Fatal(params string[] messages)
         {
-            return LogOutput.OutputLogFile(message, LogType.Fatal);
+            return LogOutput.OutputLogFile(string.Join(",", messages), LogType.Fatal);
         }
 
         /// <summary>
