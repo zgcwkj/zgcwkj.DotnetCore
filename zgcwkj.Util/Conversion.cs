@@ -285,16 +285,16 @@ namespace zgcwkj.Util
         /// <returns></returns>
         public static DateTime ToUnixByDate(this double timeStamp)
         {
-            DateTime nowTime;
+            DateTime nowTime = new DateTime(1970, 1, 1, 0, 0, 0);
             if (timeStamp.ToString().Length == 13)
             {
-                nowTime = new DateTime(1970, 1, 1, 0, 0, 0).AddMilliseconds(timeStamp);
+                nowTime = nowTime.AddMilliseconds(timeStamp);
             }
             else
             {
-                nowTime = new DateTime(1970, 1, 1, 0, 0, 0).AddSeconds(timeStamp);
+                nowTime = nowTime.AddSeconds(timeStamp);
             }
-            return nowTime;
+            return TimeZoneInfo.ConvertTime(nowTime, TimeZoneInfo.Local);
         }
 
         /// <summary>
@@ -304,8 +304,9 @@ namespace zgcwkj.Util
         /// <returns></returns>
         public static double ToDateByUnix(this DateTime dateTime)
         {
-            TimeSpan timeSpan = dateTime - new DateTime(1970, 1, 1, 0, 0, 0, 0);
-            return timeSpan.TotalSeconds;
+            DateTime nowTime = new DateTime(1970, 1, 1, 0, 0, 0);
+            TimeSpan nowSpan = dateTime - TimeZoneInfo.ConvertTime(nowTime, TimeZoneInfo.Local);
+            return nowSpan.TotalSeconds;
         }
 
         /// <summary>
@@ -315,8 +316,7 @@ namespace zgcwkj.Util
         /// <returns></returns>
         public static string ToDateByUnixStr(this DateTime dateTime)
         {
-            TimeSpan timeSpan = dateTime - new DateTime(1970, 1, 1, 0, 0, 0, 0);
-            return Math.Truncate(timeSpan.TotalSeconds).ToStr();
+            return dateTime.ToDateByUnix().ToStr();
         }
 
         /// <summary>
