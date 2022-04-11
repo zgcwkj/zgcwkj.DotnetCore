@@ -145,8 +145,7 @@ namespace zgcwkj.Util
         {
             get
             {
-                string md5Guid = MD5Tool.GetMd5(GlobalConstant.Guid);
-                return md5Guid;
+                return Guid.ToMD5();
             }
         }
     }
