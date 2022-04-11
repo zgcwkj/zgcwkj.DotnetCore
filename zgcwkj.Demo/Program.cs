@@ -12,7 +12,7 @@ namespace zgcwkj.Demo
     {
         static void Main(string[] args)
         {
-            string userID = MD5Tool.GetMd5("zgcwkj");
+            string userID = "zgcwkj".ToMD5();
 
             //Cache
             Console.WriteLine("Cache >");
