@@ -21,7 +21,6 @@ namespace zgcwkj.Util.DbUtil.SqlServer
         {
             //提取所有模型
             string filePath = GlobalConstant.GetRunPath;
-            //string filePath = Directory.GetCurrentDirectory();
             DirectoryInfo root = new DirectoryInfo(filePath);
             FileInfo[] files = root.GetFiles();
             foreach (var file in files)
