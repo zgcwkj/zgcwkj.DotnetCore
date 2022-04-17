@@ -274,7 +274,7 @@ namespace zgcwkj.Util.DbUtil.SQLite
         {
             var dbCommon = this.MyDbContext;
             using var dbConnection = dbCommon.Database.GetDbConnection();
-            DbScalarExtension dbScalar = new DbScalarExtension(dbCommon, dbConnection);
+            var dbScalar = new DbScalarExtension(dbCommon, dbConnection);
             var reader = dbScalar.ExecuteReade(CommandType.Text, strSql, dbParameter);
             return DbExtension.IDataReaderToDataTable(reader);
         }
@@ -289,7 +289,7 @@ namespace zgcwkj.Util.DbUtil.SQLite
         {
             var dbCommon = this.MyDbContext;
             using var dbConnection = dbCommon.Database.GetDbConnection();
-            DbScalarExtension dbScalar = new DbScalarExtension(dbCommon, dbConnection);
+            var dbScalar = new DbScalarExtension(dbCommon, dbConnection);
             var reader = await dbScalar.ExecuteReadeAsync(CommandType.Text, strSql, dbParameter);
             return DbExtension.IDataReaderToDataTable(reader);
         }
@@ -324,7 +324,7 @@ namespace zgcwkj.Util.DbUtil.SQLite
         {
             var dbCommon = this.MyDbContext;
             using var dbConnection = dbCommon.Database.GetDbConnection();
-            DbScalarExtension dbScalar = new DbScalarExtension(dbCommon, dbConnection);
+            var dbScalar = new DbScalarExtension(dbCommon, dbConnection);
             return dbScalar.ExecuteScalar(CommandType.Text, strSql, dbParameter);
         }
 
@@ -338,7 +338,7 @@ namespace zgcwkj.Util.DbUtil.SQLite
         {
             var dbCommon = this.MyDbContext;
             using var dbConnection = dbCommon.Database.GetDbConnection();
-            DbScalarExtension dbScalar = new DbScalarExtension(dbCommon, dbConnection);
+            var dbScalar = new DbScalarExtension(dbCommon, dbConnection);
             return await dbScalar.ExecuteScalarAsync(CommandType.Text, strSql, dbParameter);
         }
 

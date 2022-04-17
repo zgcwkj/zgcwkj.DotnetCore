@@ -149,7 +149,7 @@ namespace zgcwkj.Web
             {
                 RequestPath = "/Resource",
                 FileProvider = new PhysicalFileProvider(resource),
-                OnPrepareResponse = GlobalContext.SetCacheControl
+                OnPrepareResponse = GlobalContext.SetCacheControl,
             });
             //用户路由
             app.UseRouting();

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Text.RegularExpressions;
 using Microsoft.EntityFrameworkCore;
 using zgcwkj.Util.Enum;
 
@@ -25,12 +26,18 @@ namespace zgcwkj.Util.DbUtil
         private readonly int dbTimeout;
 
         /// <summary>
+        /// 数据库版本
+        /// </summary>
+        private readonly int dbVersion;
+
+        /// <summary>
         /// 数据库连接对象（在配置文件中获取连接信息）
         /// </summary>
         public DbCommon()
         {
             this.dbType = DbFactory.Type;
-            this.dbConnect = DbFactory.Connect;
+            this.dbConnect = DbFactory.Connect.Replace(Regex.Match(DbFactory.Connect, "version=.+?;").Value, "");
+            this.dbVersion = Regex.Match(DbFactory.Connect, "(?<=version=).+?(?=;)").Value.ToInt();
             this.dbTimeout = DbFactory.Timeout;
         }
 
@@ -43,7 +50,8 @@ namespace zgcwkj.Util.DbUtil
         public DbCommon(DbType dbType, string dbConnect, int dbTimeout = 10)
         {
             this.dbType = dbType;
-            this.dbConnect = dbConnect;
+            this.dbConnect = dbConnect.Replace(Regex.Match(dbConnect, "version=.+?;").Value, "");
+            this.dbVersion = Regex.Match(dbConnect, "(?<=version=).+?(?=;)").Value.ToInt();
             this.dbTimeout = dbTimeout == 10 ? dbTimeout : DbFactory.Timeout;
         }
 
@@ -55,7 +63,8 @@ namespace zgcwkj.Util.DbUtil
         public DbCommon(string dbConnect, int dbTimeout = 10)
         {
             this.dbType = DbFactory.Type;
-            this.dbConnect = dbConnect;
+            this.dbConnect = dbConnect.Replace(Regex.Match(dbConnect, "version=.+?;").Value, "");
+            this.dbVersion = Regex.Match(dbConnect, "(?<=version=).+?(?=;)").Value.ToInt();
             this.dbTimeout = dbTimeout == 10 ? dbTimeout : DbFactory.Timeout;
         }
 
@@ -68,24 +77,39 @@ namespace zgcwkj.Util.DbUtil
             //SQLite
             if (dbType == DbType.SQLite)
             {
-                optionsBuilder.UseSqlite(dbConnect, p => p.CommandTimeout(dbTimeout));
+                optionsBuilder.UseSqlite(dbConnect, p =>
+                {
+                    p.CommandTimeout(dbTimeout);
+                });
             }
             //PostgreSql
             else if (dbType == DbType.PostgreSql)
             {
-                optionsBuilder.UseNpgsql(dbConnect, p => p.CommandTimeout(dbTimeout));
+                optionsBuilder.UseNpgsql(dbConnect, p =>
+                {
+                    p.CommandTimeout(dbTimeout);
+                    //指定数据库版本
+                    if (this.dbVersion > 0)
+                    {
+                        p.SetPostgresVersion(this.dbVersion, 0);
+                    }
+                });
             }
             //SqlServer
             else if (dbType == DbType.SqlServer)
             {
-                optionsBuilder.UseSqlServer(dbConnect, p => p.CommandTimeout(dbTimeout));
+                optionsBuilder.UseSqlServer(dbConnect, p =>
+                {
+                    p.CommandTimeout(dbTimeout);
+                });
             }
             //MySql
             else if (dbType == DbType.MySql)
             {
-                //ServerVersion.TryParse(dbConnect, out ServerVersion serverVersion);
-                //optionsBuilder.UseMySql(serverVersion, p => p.CommandTimeout(dbTimeout));
-                optionsBuilder.UseMySql(dbConnect, ServerVersion.AutoDetect(dbConnect), p => p.CommandTimeout(dbTimeout));
+                optionsBuilder.UseMySql(dbConnect, ServerVersion.AutoDetect(dbConnect), p =>
+                {
+                    p.CommandTimeout(dbTimeout);
+                });
             }
             //数据库拦截器
             //optionsBuilder.AddInterceptors(new DbInterceptor());
