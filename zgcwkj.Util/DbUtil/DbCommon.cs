@@ -36,9 +36,17 @@ namespace zgcwkj.Util.DbUtil
         public DbCommon()
         {
             this.dbType = DbFactory.Type;
-            this.dbConnect = DbFactory.Connect.Replace(Regex.Match(DbFactory.Connect, "version=.+?;").Value, "");
-            this.dbVersion = Regex.Match(DbFactory.Connect, "(?<=version=).+?(?=;)").Value.ToInt();
             this.dbTimeout = DbFactory.Timeout;
+            if(Regex.Match(DbFactory.Connect, "version=.+?;").Value.IsNotNull())
+            {
+                this.dbConnect = DbFactory.Connect.Replace(Regex.Match(DbFactory.Connect, "version=.+?;").Value, "");
+                this.dbVersion = Regex.Match(DbFactory.Connect, "(?<=version=).+?(?=;)").Value.ToInt();
+            }
+            else
+            {
+                this.dbConnect = DbFactory.Connect;
+                this.dbVersion = 0;
+            }
         }
 
         /// <summary>
@@ -50,9 +58,17 @@ namespace zgcwkj.Util.DbUtil
         public DbCommon(DbType dbType, string dbConnect, int dbTimeout = 10)
         {
             this.dbType = dbType;
-            this.dbConnect = dbConnect.Replace(Regex.Match(dbConnect, "version=.+?;").Value, "");
-            this.dbVersion = Regex.Match(dbConnect, "(?<=version=).+?(?=;)").Value.ToInt();
             this.dbTimeout = dbTimeout == 10 ? dbTimeout : DbFactory.Timeout;
+            if(Regex.Match(dbConnect, "version=.+?;").Value.IsNotNull())
+            {
+                this.dbConnect = dbConnect.Replace(Regex.Match(dbConnect, "version=.+?;").Value, "");
+                this.dbVersion = Regex.Match(dbConnect, "(?<=version=).+?(?=;)").Value.ToInt();
+            }
+            else
+            {
+                this.dbConnect = dbConnect;
+                this.dbVersion = 0;
+            }
         }
 
         /// <summary>
@@ -63,9 +79,17 @@ namespace zgcwkj.Util.DbUtil
         public DbCommon(string dbConnect, int dbTimeout = 10)
         {
             this.dbType = DbFactory.Type;
-            this.dbConnect = dbConnect.Replace(Regex.Match(dbConnect, "version=.+?;").Value, "");
-            this.dbVersion = Regex.Match(dbConnect, "(?<=version=).+?(?=;)").Value.ToInt();
             this.dbTimeout = dbTimeout == 10 ? dbTimeout : DbFactory.Timeout;
+            if (Regex.Match(dbConnect, "version=.+?;").Value.IsNotNull())
+            {
+                this.dbConnect = dbConnect.Replace(Regex.Match(dbConnect, "version=.+?;").Value, "");
+                this.dbVersion = Regex.Match(dbConnect, "(?<=version=).+?(?=;)").Value.ToInt();
+            }
+            else
+            {
+                this.dbConnect = dbConnect;
+                this.dbVersion = 0;
+            }
         }
 
         /// <summary>
