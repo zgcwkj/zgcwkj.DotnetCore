@@ -16,14 +16,14 @@ namespace zgcwkj.Util.DbUtil
         private readonly DbType dbType;
 
         /// <summary>
-        /// 连接字符
-        /// </summary>
-        private readonly string dbConnect;
-
-        /// <summary>
         /// 连接命令超时
         /// </summary>
         private readonly int dbTimeout;
+
+        /// <summary>
+        /// 连接字符
+        /// </summary>
+        private readonly string dbConnect;
 
         /// <summary>
         /// 数据库版本
@@ -37,15 +37,12 @@ namespace zgcwkj.Util.DbUtil
         {
             this.dbType = DbFactory.Type;
             this.dbTimeout = DbFactory.Timeout;
-            if(Regex.Match(DbFactory.Connect, "version=.+?;").Value.IsNotNull())
+            this.dbConnect = DbFactory.Connect;
+            this.dbVersion = 0;
+            if (Regex.Match(DbFactory.Connect, "version=.+?;").Value.IsNotNull())
             {
                 this.dbConnect = DbFactory.Connect.Replace(Regex.Match(DbFactory.Connect, "version=.+?;").Value, "");
                 this.dbVersion = Regex.Match(DbFactory.Connect, "(?<=version=).+?(?=;)").Value.ToInt();
-            }
-            else
-            {
-                this.dbConnect = DbFactory.Connect;
-                this.dbVersion = 0;
             }
         }
 
@@ -59,15 +56,12 @@ namespace zgcwkj.Util.DbUtil
         {
             this.dbType = dbType;
             this.dbTimeout = dbTimeout == 10 ? dbTimeout : DbFactory.Timeout;
-            if(Regex.Match(dbConnect, "version=.+?;").Value.IsNotNull())
+            this.dbConnect = dbConnect;
+            this.dbVersion = 0;
+            if (Regex.Match(dbConnect, "version=.+?;").Value.IsNotNull())
             {
                 this.dbConnect = dbConnect.Replace(Regex.Match(dbConnect, "version=.+?;").Value, "");
                 this.dbVersion = Regex.Match(dbConnect, "(?<=version=).+?(?=;)").Value.ToInt();
-            }
-            else
-            {
-                this.dbConnect = dbConnect;
-                this.dbVersion = 0;
             }
         }
 
@@ -80,15 +74,12 @@ namespace zgcwkj.Util.DbUtil
         {
             this.dbType = DbFactory.Type;
             this.dbTimeout = dbTimeout == 10 ? dbTimeout : DbFactory.Timeout;
+            this.dbConnect = dbConnect;
+            this.dbVersion = 0;
             if (Regex.Match(dbConnect, "version=.+?;").Value.IsNotNull())
             {
                 this.dbConnect = dbConnect.Replace(Regex.Match(dbConnect, "version=.+?;").Value, "");
                 this.dbVersion = Regex.Match(dbConnect, "(?<=version=).+?(?=;)").Value.ToInt();
-            }
-            else
-            {
-                this.dbConnect = dbConnect;
-                this.dbVersion = 0;
             }
         }
 

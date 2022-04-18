@@ -23,12 +23,8 @@ namespace zgcwkj.Util
             //如果异常没有被处理则进行处理
             if (context.ExceptionHandled == false)
             {
-                //排除类型
-                if (!ExcludeErrorTypes(context))
-                {
-                    //记录日志
-                    Logger.Error(context.Exception.ToTrim());
-                }
+                //记录日志
+                Logger.Error(context.Exception.ToTrim());
                 //定义返回数据
                 var result = new MethodResult()
                 {
@@ -54,20 +50,6 @@ namespace zgcwkj.Util
             //标记异常已经被处理了
             context.ExceptionHandled = true;
             return Task.CompletedTask;
-        }
-
-        /// <summary>
-        /// 排除错误
-        /// </summary>
-        /// <param name="context"></param>
-        /// <returns>是否排除</returns>
-        public bool ExcludeErrorTypes(ExceptionContext context)
-        {
-            if (!context.Exception.Message.Contains("Unexpected end of request content"))
-            {
-                return true;
-            }
-            return false;
         }
     }
 }
