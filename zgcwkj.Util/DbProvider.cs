@@ -1,6 +1,6 @@
 ﻿using System.Linq;
 using System.Text.RegularExpressions;
-using zgcwkj.Util.DbUtil;
+using zgcwkj.Util.Data.DataBase;
 using zgcwkj.Util.Models;
 
 namespace zgcwkj.Util

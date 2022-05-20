@@ -1,6 +1,6 @@
 ﻿using System.Data;
 using System.Threading.Tasks;
-using zgcwkj.Util.DbUtil;
+using zgcwkj.Util.Data.DataBase;
 using zgcwkj.Util.Models;
 
 namespace zgcwkj.Util
@@ -18,7 +18,7 @@ namespace zgcwkj.Util
         /// <summary>
         /// 数据操作对象
         /// </summary>
-        public IDatabase dataBase;
+        public IDataBase dataBase;
 
         /// <summary>
         /// 实例对象时

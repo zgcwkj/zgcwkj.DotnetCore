@@ -4,9 +4,9 @@ using Microsoft.Data.SqlClient;
 using Microsoft.Data.Sqlite;
 using MySqlConnector;
 using Npgsql;
-using zgcwkj.Util.DbUtil;
+using zgcwkj.Util.Data.DataBase;
 
-namespace zgcwkj.Util.Extension
+namespace zgcwkj.Util.Data.Extension
 {
     /// <summary>
     /// 数据库参数拓展

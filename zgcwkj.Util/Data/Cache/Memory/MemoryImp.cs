@@ -4,12 +4,12 @@ using System.Linq;
 using Microsoft.Extensions.Caching.Memory;
 using zgcwkj.Util.Log;
 
-namespace zgcwkj.Util.CacheUtil.Memory
+namespace zgcwkj.Util.Data.Cache.Memory
 {
     /// <summary>
     /// Memory 缓存
     /// </summary>
-    public class MemoryCacheImp : ICache
+    public class MemoryImp : ICache
     {
         /// <summary>
         /// Memory 缓存
@@ -19,7 +19,7 @@ namespace zgcwkj.Util.CacheUtil.Memory
         /// <summary>
         /// Memory 缓存实例时
         /// </summary>
-        public MemoryCacheImp()
+        public MemoryImp()
         {
             if (memoryCache.IsNull())
             {

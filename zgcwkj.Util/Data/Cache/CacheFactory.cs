@@ -1,9 +1,9 @@
 ﻿using System;
-using zgcwkj.Util.CacheUtil.Memory;
-using zgcwkj.Util.CacheUtil.Redis;
+using zgcwkj.Util.Data.Cache.Memory;
+using zgcwkj.Util.Data.Cache.Redis;
 using zgcwkj.Util.Enum;
 
-namespace zgcwkj.Util.CacheUtil
+namespace zgcwkj.Util.Data.Cache
 {
     /// <summary>
     /// 缓存工厂
@@ -54,8 +54,8 @@ namespace zgcwkj.Util.CacheUtil
             {
                 ICache cache = Type switch
                 {
-                    CacheType.Memory => new MemoryCacheImp(),
-                    CacheType.Redis => new RedisCacheImp(),
+                    CacheType.Memory => new MemoryImp(),
+                    CacheType.Redis => new RedisImp(),
                     _ => throw new Exception("未找到缓存配置"),
                 };
                 return cache;

@@ -1,9 +1,14 @@
 ﻿using System;
+using System.IO;
+using System.Linq;
+using System.Reflection;
+using System.Collections.Generic;
 using System.Text.RegularExpressions;
+using System.ComponentModel.DataAnnotations.Schema;
 using Microsoft.EntityFrameworkCore;
 using zgcwkj.Util.Enum;
 
-namespace zgcwkj.Util.DbUtil
+namespace zgcwkj.Util.Data.DataBase
 {
     /// <summary>
     /// 数据库连接对象
@@ -132,6 +137,42 @@ namespace zgcwkj.Util.DbUtil
             EFLogger.Add(optionsBuilder);
             //
             base.OnConfiguring(optionsBuilder);
+        }
+
+        /// <summary>
+        /// 配置通过约定发现的模型
+        /// </summary>
+        /// <param name="modelBuilder">模型制作者</param>
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            //提取所有模型
+            string filePath = GlobalConstant.GetRunPath;
+            DirectoryInfo root = new DirectoryInfo(filePath);
+            FileInfo[] files = root.GetFiles();
+            foreach (var file in files)
+            {
+                if (file.FullName.Contains("Microsoft")) continue;
+                if (file.FullName.Contains("System")) continue;
+                if (file.Extension == ".dll")
+                {
+                    try
+                    {
+                        string fileName = file.Name.Replace(file.Extension, "");
+                        AssemblyName assemblyName = new AssemblyName(fileName);
+                        Assembly entityAssembly = Assembly.Load(assemblyName);
+                        IEnumerable<Type> typesToRegister = entityAssembly.GetTypes()
+                            .Where(p => !string.IsNullOrEmpty(p.Namespace))
+                            .Where(p => !string.IsNullOrEmpty(p.GetCustomAttribute<TableAttribute>()?.Name));
+                        foreach (Type type in typesToRegister)
+                        {
+                            dynamic configurationInstance = Activator.CreateInstance(type);
+                            modelBuilder.Model.AddEntityType(type);
+                        }
+                    }
+                    catch { }
+                }
+            }
+            base.OnModelCreating(modelBuilder);
         }
     }
 }

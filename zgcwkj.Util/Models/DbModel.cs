@@ -7,7 +7,7 @@ using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace zgcwkj.Util.DbUtil
+namespace zgcwkj.Util
 {
     /// <summary>
     /// 数据对象
@@ -20,7 +20,7 @@ namespace zgcwkj.Util.DbUtil
         /// <returns></returns>
         public bool LoadData()
         {
-            Type type = this.GetType();
+            Type type = GetType();
             string tableName = GetTableName(type);
             if (tableName.IsNull()) throw new Exception("No table name (DbModel.LoadData)");
             var data = GetTableData(type);
@@ -40,7 +40,7 @@ namespace zgcwkj.Util.DbUtil
             var dataRow = DbAccess.QueryDataRow(cmd);
             if (dataRow.IsNull()) return false;
             //赋值
-            PropertyInfo[] properties = this.GetType().GetProperties(BindingFlags.Instance | BindingFlags.Public);
+            PropertyInfo[] properties = GetType().GetProperties(BindingFlags.Instance | BindingFlags.Public);
             foreach (var property in properties)
             {
                 string propertyName = property.Name;
@@ -66,7 +66,7 @@ namespace zgcwkj.Util.DbUtil
         /// <returns></returns>
         public async Task<bool> LoadDataAsync()
         {
-            Type type = this.GetType();
+            Type type = GetType();
             string tableName = GetTableName(type);
             if (tableName.IsNull()) throw new Exception("No table name (DbModel.LoadDataAsync)");
             var data = GetTableData(type);
@@ -86,7 +86,7 @@ namespace zgcwkj.Util.DbUtil
             var dataRow = await DbAccess.QueryDataRowAsync(cmd);
             if (dataRow.IsNull()) return false;
             //赋值
-            PropertyInfo[] properties = this.GetType().GetProperties(BindingFlags.Instance | BindingFlags.Public);
+            PropertyInfo[] properties = GetType().GetProperties(BindingFlags.Instance | BindingFlags.Public);
             foreach (var property in properties)
             {
                 string propertyName = property.Name;
@@ -112,7 +112,7 @@ namespace zgcwkj.Util.DbUtil
         /// <returns></returns>
         public bool Insert()
         {
-            Type type = this.GetType();
+            Type type = GetType();
             string tableName = GetTableName(type);
             if (tableName.IsNull()) throw new Exception("No table name (DbModel.Insert)");
             var data = GetTableData(type);
@@ -152,7 +152,7 @@ namespace zgcwkj.Util.DbUtil
         /// <returns></returns>
         public async Task<bool> InsertAsync()
         {
-            Type type = this.GetType();
+            Type type = GetType();
             string tableName = GetTableName(type);
             if (tableName.IsNull()) throw new Exception("No table name (DbModel.InsertAsync)");
             var data = GetTableData(type);
@@ -192,7 +192,7 @@ namespace zgcwkj.Util.DbUtil
         /// <returns></returns>
         public bool Update()
         {
-            Type type = this.GetType();
+            Type type = GetType();
             string tableName = GetTableName(type);
             if (tableName.IsNull()) throw new Exception("No table name (DbModel.Update)");
             var data = GetTableData(type);
@@ -227,7 +227,7 @@ namespace zgcwkj.Util.DbUtil
         /// <returns></returns>
         public async Task<bool> UpdateAsync()
         {
-            Type type = this.GetType();
+            Type type = GetType();
             string tableName = GetTableName(type);
             if (tableName.IsNull()) throw new Exception("No table name (DbModel.UpdateAsync)");
             var data = GetTableData(type);
@@ -262,7 +262,7 @@ namespace zgcwkj.Util.DbUtil
         /// <returns></returns>
         public bool Delete()
         {
-            Type type = this.GetType();
+            Type type = GetType();
             string tableName = GetTableName(type);
             if (tableName.IsNull()) throw new Exception("No table name (DbModel.Delete)");
             var data = GetTableData(type);
@@ -289,7 +289,7 @@ namespace zgcwkj.Util.DbUtil
         /// <returns></returns>
         public async Task<bool> DeleteAsync()
         {
-            Type type = this.GetType();
+            Type type = GetType();
             string tableName = GetTableName(type);
             if (tableName.IsNull()) throw new Exception("No table name (DbModel.DeleteAsync)");
             var data = GetTableData(type);
@@ -350,11 +350,11 @@ namespace zgcwkj.Util.DbUtil
         private dynamic GetTableData(Type type)
         {
             List<TableMode> tableModes = GetTableObject(type);
-            var keyData = tableModes.Where(T => T.IsKey == true && (T.Value != default));
+            var keyData = tableModes.Where(T => T.IsKey == true && T.Value != default);
             var keyColumns = keyData.Select(T => T.Column).ToList();
             var keyValues = keyData.Select(T => T.Value).ToList();
             keyValues = DataFormat(keyValues);
-            var notkeyData = tableModes.Where(T => T.IsKey == false && (T.Value != default));
+            var notkeyData = tableModes.Where(T => T.IsKey == false && T.Value != default);
             var notkeyColumns = notkeyData.Select(T => T.Column).ToList();
             var notkeyValues = notkeyData.Select(T => T.Value).ToList();
             notkeyValues = DataFormat(notkeyValues);

@@ -1,11 +1,11 @@
 ﻿using System;
-using zgcwkj.Util.DbUtil.MySql;
-using zgcwkj.Util.DbUtil.PostgreSql;
-using zgcwkj.Util.DbUtil.SQLite;
-using zgcwkj.Util.DbUtil.SqlServer;
+using zgcwkj.Util.Data.DataBase.MySql;
+using zgcwkj.Util.Data.DataBase.PostgreSql;
+using zgcwkj.Util.Data.DataBase.SQLite;
+using zgcwkj.Util.Data.DataBase.SqlServer;
 using zgcwkj.Util.Enum;
 
-namespace zgcwkj.Util.DbUtil
+namespace zgcwkj.Util.Data.DataBase
 {
     /// <summary>
     /// 数据库工厂
@@ -66,16 +66,16 @@ namespace zgcwkj.Util.DbUtil
         /// <summary>
         /// 数据库对象
         /// </summary>
-        public static IDatabase Db
+        public static IDataBase Db
         {
             get
             {
-                IDatabase dataBase = Type switch
+                IDataBase dataBase = Type switch
                 {
-                    DbType.SQLite => new SQLiteDatabase(),
-                    DbType.PostgreSql => new PgSqlDatabase(),
-                    DbType.SqlServer => new SqlServerDatabase(),
-                    DbType.MySql => new MySqlDatabase(),
+                    DbType.SQLite => new SQLiteDB(),
+                    DbType.PostgreSql => new PostgreSqlDB(),
+                    DbType.SqlServer => new SqlServerDB(),
+                    DbType.MySql => new MySqlDB(),
                     _ => throw new Exception("未找到数据库配置"),
                 };
                 return dataBase;

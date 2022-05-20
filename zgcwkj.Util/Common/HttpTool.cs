@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Net;
+using System.Net.NetworkInformation;
 using System.Net.Security;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
@@ -226,6 +227,42 @@ namespace zgcwkj.Util.Common
     /// </summary>
     public static class HttpToolHelp
     {
+        /// <summary>
+        /// 验证端口是否打开
+        /// </summary>
+        /// <param name="port">端口</param>
+        /// <returns>占用状态</returns>
+        public static bool IsPortOpen(int port)
+        {
+            IPGlobalProperties ipProperties = IPGlobalProperties.GetIPGlobalProperties();
+            IPEndPoint[] ipEndPoints = ipProperties.GetActiveTcpListeners();
+
+            foreach (IPEndPoint endPoint in ipEndPoints)
+            {
+                if (endPoint.Port == port) return true;
+            }
+            return false;
+        }
+
+        /// <summary>
+        /// 获取IP地址
+        /// </summary>
+        /// <param name="url">地址</param>
+        /// <returns></returns>
+        public static string GetIP(string url)
+        {
+            try
+            {
+                IPHostEntry host = Dns.GetHostEntry(new Uri(url).Host);
+                if (host.AddressList.Length != 0)
+                {
+                    return host.AddressList[0].ToStr();
+                }
+            }
+            catch { }
+            return "";
+        }
+
         /// <summary>
         /// Get 请求
         /// </summary>

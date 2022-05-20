@@ -1,5 +1,5 @@
-﻿using zgcwkj.Util.CacheUtil;
-using zgcwkj.Util.DbUtil;
+﻿using zgcwkj.Util.Data.Cache;
+using zgcwkj.Util.Data.DataBase;
 
 namespace zgcwkj.Util
 {
@@ -11,7 +11,7 @@ namespace zgcwkj.Util
         /// <summary>
         /// 数据库对象
         /// </summary>
-        public static IDatabase Db
+        public static IDataBase Db
         {
             get
             {

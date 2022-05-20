@@ -6,9 +6,9 @@ using System.Data;
 using System.Data.Common;
 using System.Diagnostics;
 using System.Threading.Tasks;
-using zgcwkj.Util.DbUtil;
+using zgcwkj.Util.Data.DataBase;
 
-namespace zgcwkj.Util.Extension
+namespace zgcwkj.Util.Data.Extension
 {
     /// <summary>
     /// 数据查询拓展

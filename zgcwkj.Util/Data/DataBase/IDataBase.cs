@@ -8,12 +8,12 @@ using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
 
-namespace zgcwkj.Util.DbUtil
+namespace zgcwkj.Util.Data.DataBase
 {
     /// <summary>
     /// 数据库接口抽象
     /// </summary>
-    public interface IDatabase
+    public interface IDataBase
     {
         /// <summary>
         /// 数据访问对象
@@ -29,13 +29,13 @@ namespace zgcwkj.Util.DbUtil
         /// 开始事务开始
         /// </summary>
         /// <returns></returns>
-        IDatabase BeginTrans();
+        IDataBase BeginTrans();
 
         /// <summary>
         /// 开始事务
         /// </summary>
         /// <returns></returns>
-        Task<IDatabase> BeginTransAsync();
+        Task<IDataBase> BeginTransAsync();
 
         /// <summary>
         /// 回滚事务

@@ -12,7 +12,7 @@ using System.Reflection;
 using Microsoft.EntityFrameworkCore.Query;
 using Microsoft.EntityFrameworkCore.Query.SqlExpressions;
 
-namespace zgcwkj.Util.Extension
+namespace zgcwkj.Util.Data.Extension
 {
     /// <summary>
     /// 数据库拓展

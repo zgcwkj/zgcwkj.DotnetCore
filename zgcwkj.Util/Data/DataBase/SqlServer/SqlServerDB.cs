@@ -7,27 +7,27 @@ using System.Linq.Expressions;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
-using zgcwkj.Util.Extension;
+using zgcwkj.Util.Data.Extension;
 
-namespace zgcwkj.Util.DbUtil.SQLite
+namespace zgcwkj.Util.Data.DataBase.SqlServer
 {
     /// <summary>
-    /// SQLite 数据库
+    /// SqlServer 数据库
     /// </summary>
-    public class SQLiteDatabase : IDatabase
+    public class SqlServerDB : IDataBase
     {
         /// <summary>
         /// 构造方法
         /// </summary>
-        public SQLiteDatabase()
+        public SqlServerDB()
         {
-            MyDbContext = new SqliteDbContext();
+            MyDbContext = new DbCommon();
         }
 
         /// <summary>
         /// 数据访问对象
         /// </summary>
-        public DbContext MyDbContext { get; set; }
+        public Microsoft.EntityFrameworkCore.DbContext MyDbContext { get; set; }
 
         /// <summary>
         /// 事务对象
@@ -38,7 +38,7 @@ namespace zgcwkj.Util.DbUtil.SQLite
         /// 事务开始
         /// </summary>
         /// <returns></returns>
-        public IDatabase BeginTrans()
+        public IDataBase BeginTrans()
         {
             DbConnection dbConnection = MyDbContext.Database.GetDbConnection();
             if (dbConnection.State == ConnectionState.Closed)
@@ -53,7 +53,7 @@ namespace zgcwkj.Util.DbUtil.SQLite
         /// 事务开始
         /// </summary>
         /// <returns></returns>
-        public async Task<IDatabase> BeginTransAsync()
+        public async Task<IDataBase> BeginTransAsync()
         {
             DbConnection dbConnection = MyDbContext.Database.GetDbConnection();
             if (dbConnection.State == ConnectionState.Closed)

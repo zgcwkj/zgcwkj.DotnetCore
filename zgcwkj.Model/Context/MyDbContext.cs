@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using zgcwkj.Model.DefaultData;
 using zgcwkj.Model.Models;
-using zgcwkj.Util.DbUtil;
+using zgcwkj.Util.Data.DataBase;
 
 namespace zgcwkj.Model.Context
 {
