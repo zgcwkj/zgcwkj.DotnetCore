@@ -4,7 +4,7 @@ using zgcwkj.Model;
 using zgcwkj.Model.Models;
 using zgcwkj.Model.Context;
 using zgcwkj.Util;
-using zgcwkj.Util.Common;
+using zgcwkj.Util.Data;
 
 namespace zgcwkj.Demo
 {
