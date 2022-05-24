@@ -72,7 +72,7 @@ namespace zgcwkj.Web
             //启动 Session
             services.AddSession(options =>
             {
-                options.Cookie.Name = System.Reflection.Assembly.GetExecutingAssembly().FullName;
+                options.Cookie.Name = ".AspNetCore.Session";//设置Session在Cookie的Key
                 options.IdleTimeout = TimeSpan.FromMinutes(20);//设置Session的过期时间
                 options.Cookie.HttpOnly = true;//设置在浏览器不能通过js获得该Cookie的值
                 options.Cookie.IsEssential = true;
