@@ -1,6 +1,7 @@
 ﻿using System.Data;
 using System.Threading.Tasks;
-using zgcwkj.Util.Data.DataBase;
+using zgcwkj.Util.Interface;
+using zgcwkj.Util.Data;
 using zgcwkj.Util.Models;
 
 namespace zgcwkj.Util

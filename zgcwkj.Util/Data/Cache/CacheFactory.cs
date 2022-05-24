@@ -2,8 +2,9 @@
 using zgcwkj.Util.Data.Cache.Memory;
 using zgcwkj.Util.Data.Cache.Redis;
 using zgcwkj.Util.Enum;
+using zgcwkj.Util.Interface;
 
-namespace zgcwkj.Util.Data.Cache
+namespace zgcwkj.Util.Data
 {
     /// <summary>
     /// 缓存工厂

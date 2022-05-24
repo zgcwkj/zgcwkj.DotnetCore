@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
 using zgcwkj.Util;
+using zgcwkj.Util.Data;
 using zgcwkj.Web.Comm;
 
 namespace zgcwkj.Web.Controllers

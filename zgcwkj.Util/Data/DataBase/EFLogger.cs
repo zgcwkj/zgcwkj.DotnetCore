@@ -4,7 +4,7 @@ using System.Text;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 
-namespace zgcwkj.Util.Data.DataBase
+namespace zgcwkj.Util.Data
 {
     /// <summary>
     /// 执行的脚本日志

@@ -57,23 +57,18 @@ namespace zgcwkj.Util
         /// </summary>
         public static void SetConfigFiles(params string[] configFileNames)
         {
-            var cBuilder = new ConfigurationBuilder();
             var currentDirectory = GlobalConstant.GetRunPath;
             //查找配置文件所在的位置是否正确
             foreach (var configFileName in configFileNames)
             {
-                //从运行目录查找文件
-                if (!File.Exists($"{currentDirectory}/{configFileName}"))
-                {
-                    currentDirectory = Directory.GetCurrentDirectory();
-                }
-                //从启动目录查找文件
-                if (!File.Exists($"{currentDirectory}/{configFileName}"))
-                {
-                    throw new Exception($"找不到“{configFileName}”配置文件");
-                }
+                if (!File.Exists($"{currentDirectory}/{configFileName}")) currentDirectory = GlobalConstant.GetRunPath;
+                if (!File.Exists($"{currentDirectory}/{configFileName}")) currentDirectory = GlobalConstant.GetRunPath2;
+                if (!File.Exists($"{currentDirectory}/{configFileName}")) currentDirectory = GlobalConstant.GetRunPath3;
+                if (!File.Exists($"{currentDirectory}/{configFileName}")) currentDirectory = GlobalConstant.GetRunPath4;
+                if (!File.Exists($"{currentDirectory}/{configFileName}")) throw new Exception($"找不到“{configFileName}”配置文件");
             }
             //加载配置文件
+            var cBuilder = new ConfigurationBuilder();
             var icBuilder = cBuilder.SetBasePath(currentDirectory);
             foreach (var configFileName in configFileNames)
             {

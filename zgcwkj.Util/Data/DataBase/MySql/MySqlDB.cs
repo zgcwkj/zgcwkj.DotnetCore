@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
 using zgcwkj.Util.Data.Extension;
+using zgcwkj.Util.Interface;
 
 namespace zgcwkj.Util.Data.DataBase.MySql
 {

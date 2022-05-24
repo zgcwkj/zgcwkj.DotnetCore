@@ -1,7 +1,6 @@
-﻿using zgcwkj.Util.Data.Cache;
-using zgcwkj.Util.Data.DataBase;
+﻿using zgcwkj.Util.Interface;
 
-namespace zgcwkj.Util
+namespace zgcwkj.Util.Data
 {
     /// <summary>
     /// 数据工厂

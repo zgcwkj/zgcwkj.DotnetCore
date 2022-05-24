@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
 
-namespace zgcwkj.Util.Data.DataBase
+namespace zgcwkj.Util.Interface
 {
     /// <summary>
     /// 数据库接口抽象

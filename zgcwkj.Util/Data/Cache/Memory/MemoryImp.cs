@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.Extensions.Caching.Memory;
+using zgcwkj.Util.Interface;
 using zgcwkj.Util.Log;
 
 namespace zgcwkj.Util.Data.Cache.Memory

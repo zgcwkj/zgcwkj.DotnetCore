@@ -8,7 +8,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 using Microsoft.EntityFrameworkCore;
 using zgcwkj.Util.Enum;
 
-namespace zgcwkj.Util.Data.DataBase
+namespace zgcwkj.Util.Data
 {
     /// <summary>
     /// 数据库连接对象

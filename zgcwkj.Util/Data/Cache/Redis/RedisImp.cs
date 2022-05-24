@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using zgcwkj.Util.Interface;
 
 namespace zgcwkj.Util.Data.Cache.Redis
 {

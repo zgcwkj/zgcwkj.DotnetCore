@@ -4,8 +4,9 @@ using zgcwkj.Util.Data.DataBase.PostgreSql;
 using zgcwkj.Util.Data.DataBase.SQLite;
 using zgcwkj.Util.Data.DataBase.SqlServer;
 using zgcwkj.Util.Enum;
+using zgcwkj.Util.Interface;
 
-namespace zgcwkj.Util.Data.DataBase
+namespace zgcwkj.Util.Data
 {
     /// <summary>
     /// 数据库工厂

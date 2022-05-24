@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace zgcwkj.Util.Data.Cache
+namespace zgcwkj.Util.Interface
 {
     /// <summary>
     /// 缓存抽象类
