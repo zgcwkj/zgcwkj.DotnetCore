@@ -2,6 +2,7 @@
 using System;
 using System.Text.Json;
 using zgcwkj.Util.Interface;
+using zgcwkj.Util.Log;
 
 namespace zgcwkj.Util.Data.Cache.Redis
 {
@@ -66,7 +67,19 @@ namespace zgcwkj.Util.Data.Cache.Redis
         public bool Set<T>(string key, T value, int db = -1, TimeSpan timeSpan = default)
         {
             var redisBase = multiplexer.GetDatabase(db);
-            return redisBase.StringSet(key, JsonSerializer.Serialize(value), timeSpan);
+            try
+            {
+                if (timeSpan == default)
+                {
+                    return redisBase.StringSet(key, JsonSerializer.Serialize(value));
+                }
+                return redisBase.StringSet(key, JsonSerializer.Serialize(value), timeSpan);
+            }
+            catch (Exception ex)
+            {
+                Logger.Error(ex.ToString());
+            }
+            return false;
         }
 
         /// <summary>
