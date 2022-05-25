@@ -1,7 +1,7 @@
-﻿using System;
+﻿using Microsoft.Extensions.Caching.Memory;
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using Microsoft.Extensions.Caching.Memory;
 using zgcwkj.Util.Interface;
 using zgcwkj.Util.Log;
 
@@ -33,8 +33,9 @@ namespace zgcwkj.Util.Data.Cache.Memory
         /// Key 是否存在
         /// </summary>
         /// <param name="key">键</param>
+        /// <param name="db">数据库索引</param>
         /// <returns>存在</returns>
-        public bool Exists(string key)
+        public bool Exists(string key, int db = -1)
         {
             return memoryCache.TryGetValue(key, out _);
         }
@@ -45,9 +46,10 @@ namespace zgcwkj.Util.Data.Cache.Memory
         /// <typeparam name="T">类型</typeparam>
         /// <param name="key">键</param>
         /// <param name="value">值</param>
+        /// <param name="db">数据库索引</param>
         /// <param name="timeSpan">时间差</param>
         /// <returns></returns>
-        public bool Set<T>(string key, T value, TimeSpan timeSpan = default)
+        public bool Set<T>(string key, T value, int db = -1, TimeSpan timeSpan = default)
         {
             try
             {
@@ -69,8 +71,9 @@ namespace zgcwkj.Util.Data.Cache.Memory
         /// </summary>
         /// <typeparam name="T">类型</typeparam>
         /// <param name="key">键</param>
+        /// <param name="db">数据库索引</param>
         /// <returns></returns>
-        public T Get<T>(string key)
+        public T Get<T>(string key, int db = -1)
         {
             return memoryCache.Get<T>(key);
         }
@@ -79,8 +82,9 @@ namespace zgcwkj.Util.Data.Cache.Memory
         /// 删除缓存
         /// </summary>
         /// <param name="key">类型</param>
+        /// <param name="db">数据库索引</param>
         /// <returns></returns>
-        public bool Remove(string key)
+        public bool Remove(string key, int db = -1)
         {
             memoryCache.Remove(key);
             return true;
@@ -91,8 +95,9 @@ namespace zgcwkj.Util.Data.Cache.Memory
         /// </summary>
         /// <param name="key">键</param>
         /// <param name="hashKey">哈希键</param>
+        /// <param name="db">数据库索引</param>
         /// <returns>存在</returns>
-        public bool HashExists(string key, string hashKey)
+        public bool HashExists(string key, string hashKey, int db = -1)
         {
             return ExistsHashFieldCache(key, hashKey);
         }
@@ -103,8 +108,9 @@ namespace zgcwkj.Util.Data.Cache.Memory
         /// <param name="key">键</param>
         /// <param name="hashKey">哈希键</param>
         /// <param name="hashValue">哈希值</param>
+        /// <param name="db">数据库索引</param>
         /// <returns>状态</returns>
-        public bool HashSet<T>(string key, string hashKey, T hashValue)
+        public bool HashSet<T>(string key, string hashKey, T hashValue, int db = -1)
         {
             int count = SetHashFieldCache(key, new Dictionary<string, T> { { hashKey, hashValue } });
             return count > 0;
@@ -116,8 +122,9 @@ namespace zgcwkj.Util.Data.Cache.Memory
         /// <typeparam name="T">类型</typeparam>
         /// <param name="key">键</param>
         /// <param name="hashKey">哈希键</param>
+        /// <param name="db">数据库索引</param>
         /// <returns>数据</returns>
-        public T HashGet<T>(string key, string hashKey)
+        public T HashGet<T>(string key, string hashKey, int db = -1)
         {
             var dict = GetHashFieldCache<T>(key, new Dictionary<string, T> { { hashKey, default } });
             return dict[hashKey];
@@ -128,10 +135,11 @@ namespace zgcwkj.Util.Data.Cache.Memory
         /// </summary>
         /// <param name="key">键</param>
         /// <param name="hashKey">哈希键</param>
+        /// <param name="db">数据库索引</param>
         /// <returns>状态</returns>
-        public long HashRemove(string key, string hashKey)
+        public long HashRemove(string key, string hashKey, int db = -1)
         {
-            bool remove = RemoveHashFieldCache(key, hashKey);
+            var remove = RemoveHashFieldCache(key, hashKey);
             return remove ? 1 : 0;
         }
 
