@@ -67,8 +67,6 @@ namespace zgcwkj.Web
             });
             //启用缓存功能
             services.AddMemoryCache();
-            //启动数据保护服务
-            services.AddFileDataProtection();
             //启动 Session
             services.AddSession(options =>
             {
@@ -77,6 +75,8 @@ namespace zgcwkj.Web
                 options.Cookie.HttpOnly = true;//设置在浏览器不能通过js获得该Cookie的值
                 options.Cookie.IsEssential = true;
             });
+            //启动数据保护服务
+            services.AddFileDataProtection();
             //添加 Options 模式
             services.AddOptions();
             //添加 MVC
