@@ -2,8 +2,8 @@
 using zgcwkj.Model.DefaultData;
 using zgcwkj.Model.Models;
 using zgcwkj.Util;
-using zgcwkj.Util.Enum;
 using zgcwkj.Util.Data;
+using zgcwkj.Util.Enum;
 
 namespace zgcwkj.Model.Context
 {
@@ -32,7 +32,7 @@ namespace zgcwkj.Model.Context
         /// <param name="modelBuilder">模型制作者</param>
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            //初始化用户数据
+            //初始化系统数据
             modelBuilder.Entity<SysInfoModel>().HasData(SysInfoDBInitializer.GetData);
 
             base.OnModelCreating(modelBuilder);

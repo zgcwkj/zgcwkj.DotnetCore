@@ -350,11 +350,11 @@ namespace zgcwkj.Util
         private dynamic GetTableData(Type type)
         {
             List<TableMode> tableModes = GetTableObject(type);
-            var keyData = tableModes.Where(T => T.IsKey == true && T.Value != default);
+            var keyData = tableModes.Where(T => T.IsKey == true);//&& T.Value != default && T.Value.GetType() != typeof(string)
             var keyColumns = keyData.Select(T => T.Column).ToList();
             var keyValues = keyData.Select(T => T.Value).ToList();
             keyValues = DataFormat(keyValues);
-            var notkeyData = tableModes.Where(T => T.IsKey == false && T.Value != default);
+            var notkeyData = tableModes.Where(T => T.IsKey == false);//&& T.Value != default && T.Value.GetType() != typeof(string)
             var notkeyColumns = notkeyData.Select(T => T.Column).ToList();
             var notkeyValues = notkeyData.Select(T => T.Value).ToList();
             notkeyValues = DataFormat(notkeyValues);

@@ -7,6 +7,7 @@ using System.Text.RegularExpressions;
 using System.ComponentModel.DataAnnotations.Schema;
 using Microsoft.EntityFrameworkCore;
 using zgcwkj.Util.Enum;
+using zgcwkj.Util.Interface;
 
 namespace zgcwkj.Util.Data
 {
