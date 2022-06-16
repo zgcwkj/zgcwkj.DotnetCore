@@ -44,3 +44,4 @@ namespace zgcwkj.Model.Context
         public DbSet<SysInfoModel> SysInfoModel { get; set; }
     }
 }
+
