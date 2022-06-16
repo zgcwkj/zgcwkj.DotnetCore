@@ -1,15 +1,23 @@
-﻿using System.Linq;
+﻿using System.Data;
+using System.Linq;
 using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 using zgcwkj.Util.Data;
-using zgcwkj.Util.Models;
 
 namespace zgcwkj.Util
 {
     /// <summary>
-    /// 数据库操作对象
+    /// <b>数据库操作提供者</b>
+    /// 
+    /// <para>常规使用：DbProvider.Create()</para>
+    /// <para>注入使用：services.AddTransient&lt;RedisFunction&gt;()</para>
+    /// <para>建议使用<b>EF</b>操作数据库，打代码更爽！by zgcwkj</para>
     /// </summary>
     public static class DbProvider
     {
+
+        #region 操作对象
+
         /// <summary>
         /// 创建数据库命令
         /// </summary>
@@ -31,6 +39,10 @@ namespace zgcwkj.Util
             return true;
         }
 
+        #endregion
+
+        #region 操作脚本
+
         /// <summary>
         /// 获取执行的脚本
         /// </summary>
@@ -39,13 +51,13 @@ namespace zgcwkj.Util
         {
             string sql = $"{cmdAccess.dbModel.Sql}";
             //追加的脚本
-            if (!string.IsNullOrEmpty(cmdAccess.dbModel.AppendSql)) sql += $" {cmdAccess.dbModel.AppendSql}";
+            if (cmdAccess.dbModel.AppendSql.IsNotNull()) sql += $" {cmdAccess.dbModel.AppendSql}";
             //排序的脚本
-            if (!string.IsNullOrEmpty(cmdAccess.dbModel.OrderBy)) sql += $" {cmdAccess.dbModel.OrderBy}";
+            if (cmdAccess.dbModel.OrderBy.IsNotNull()) sql += $" {cmdAccess.dbModel.OrderBy}";
             //组合的脚本
-            if (!string.IsNullOrEmpty(cmdAccess.dbModel.GroupBy)) sql += $" {cmdAccess.dbModel.GroupBy}";
+            if (cmdAccess.dbModel.GroupBy.IsNotNull()) sql += $" {cmdAccess.dbModel.GroupBy}";
             //结尾的脚本
-            if (!string.IsNullOrEmpty(cmdAccess.dbModel.EndSql)) sql += $" {cmdAccess.dbModel.EndSql}";
+            if (cmdAccess.dbModel.EndSql.IsNotNull()) sql += $" {cmdAccess.dbModel.EndSql}";
             //数据库通用脚本
             sql = GenericScript(sql);
             //返回脚本
@@ -201,7 +213,7 @@ namespace zgcwkj.Util
         {
             if (!string.IsNullOrEmpty(filter))
             {
-                filter = GetScriptAfterParameter(cmdAccess,out _, filter, values);
+                filter = GetScriptAfterParameter(cmdAccess, out _, filter, values);
                 cmdAccess.dbModel.GroupBy = $"group by {filter}";
                 return true;
             }
@@ -389,7 +401,7 @@ namespace zgcwkj.Util
             }
             else if (type == Enum.DbType.PostgreSql)
             {
-                //时间函数
+                //随机函数
                 if (sql.Contains("rand()"))
                 {
                     sql = sql.Replace("rand()", "random()");
@@ -414,5 +426,221 @@ namespace zgcwkj.Util
             }
             return sql;
         }
+
+        #endregion
+
+        #region 操作数据库
+
+        /// <summary>
+        /// 查询数据库数据
+        /// </summary>
+        /// <param name="cmdAccess">脚本模型</param>
+        /// <returns>数据</returns>
+        public static DataTable QueryDataTable(this DbAccess cmdAccess)
+        {
+            string sqlStr = cmdAccess.GetSql();
+            return GetData(cmdAccess, sqlStr);
+        }
+
+        /// <summary>
+        /// 查询数据库数据
+        /// </summary>
+        /// <param name="cmdAccess">脚本模型</param>
+        /// <returns>数据</returns>
+        public static async Task<DataTable> QueryDataTableAsync(this DbAccess cmdAccess)
+        {
+            string sqlStr = cmdAccess.GetSql();
+            return await GetDataAsync(cmdAccess, sqlStr);
+        }
+
+        /// <summary>
+        /// 查询数据库的第一行数据
+        /// </summary>
+        /// <param name="cmdAccess">脚本模型</param>
+        /// <returns>行数据</returns>
+        public static DataRow QueryDataRow(this DbAccess cmdAccess)
+        {
+            if (!cmdAccess.dbModel.Sql.ToLower().Contains("limit"))
+            {
+                cmdAccess.dbModel.EndSql = "limit 1";
+            }
+            string sqlStr = cmdAccess.GetSql();
+            DataTable dataTable = GetData(cmdAccess, sqlStr);
+            if (dataTable.Rows.Count > 0)
+            {
+                return dataTable.Rows[0];
+            }
+            return null;
+        }
+
+        /// <summary>
+        /// 查询数据库的第一行数据
+        /// </summary>
+        /// <param name="cmdAccess">脚本模型</param>
+        /// <returns>行数据</returns>
+        public static async Task<DataRow> QueryDataRowAsync(this DbAccess cmdAccess)
+        {
+            if (!cmdAccess.dbModel.Sql.ToLower().Contains("limit"))
+            {
+                cmdAccess.dbModel.EndSql = "limit 1";
+            }
+            string sqlStr = cmdAccess.GetSql();
+            DataTable dataTable = await GetDataAsync(cmdAccess, sqlStr);
+            if (dataTable.Rows.Count > 0)
+            {
+                return dataTable.Rows[0];
+            }
+            return null;
+        }
+
+        /// <summary>
+        /// 查询数据库的首行首列数据
+        /// </summary>
+        /// <param name="cmdAccess">脚本模型</param>
+        /// <returns>首行首列</returns>
+        public static object QueryScalar(this DbAccess cmdAccess)
+        {
+            if (!cmdAccess.dbModel.Sql.ToLower().Contains("limit"))
+            {
+                cmdAccess.dbModel.EndSql = "limit 1";
+            }
+            string sqlStr = cmdAccess.GetSql();
+            DataTable dataTable = GetData(cmdAccess, sqlStr);
+            if (dataTable.Rows.Count > 0)
+            {
+                return dataTable.Rows[0][0];
+            }
+            return null;
+        }
+
+        /// <summary>
+        /// 查询数据库的首行首列数据
+        /// </summary>
+        /// <param name="cmdAccess">脚本模型</param>
+        /// <returns>首行首列</returns>
+        public static async Task<object> QueryScalarAsync(this DbAccess cmdAccess)
+        {
+            if (!cmdAccess.dbModel.Sql.ToLower().Contains("limit"))
+            {
+                cmdAccess.dbModel.EndSql = "limit 1";
+            }
+            string sqlStr = cmdAccess.GetSql();
+            DataTable dataTable = await GetDataAsync(cmdAccess, sqlStr);
+            if (dataTable.Rows.Count > 0)
+            {
+                return dataTable.Rows[0][0];
+            }
+            return null;
+        }
+
+        /// <summary>
+        /// 查询数据库的行数
+        /// </summary>
+        /// <param name="cmdAccess">脚本模型</param>
+        /// <returns>行数</returns>
+        public static int QueryRowCount(this DbAccess cmdAccess)
+        {
+            string sqlStr = cmdAccess.GetSql();
+            int fromIndex = sqlStr.ToLower().IndexOf("from");
+            //sqlStr.Substring(fromIndex, sqlStr.Length - fromIndex);
+            string strFrom = sqlStr[fromIndex..];//找出主脚本
+            strFrom = $"select count(0) as counts {strFrom}";
+            DataTable dataTable = GetData(cmdAccess, strFrom);
+            if (dataTable.Rows.Count > 0)
+            {
+                return dataTable.Rows[0][0].ToInt();
+            }
+            return 0;
+        }
+
+        /// <summary>
+        /// 查询数据库的行数
+        /// </summary>
+        /// <param name="cmdAccess">脚本模型</param>
+        /// <returns>行数</returns>
+        public static async Task<int> QueryRowCountAsync(this DbAccess cmdAccess)
+        {
+            string sqlStr = cmdAccess.GetSql();
+            int fromIndex = sqlStr.ToLower().IndexOf("from");
+            //sqlStr.Substring(fromIndex, sqlStr.Length - fromIndex);
+            string strFrom = sqlStr[fromIndex..];//找出主脚本
+            strFrom = $"select count(0) as counts {strFrom}";
+            DataTable dataTable = await GetDataAsync(cmdAccess, strFrom);
+            if (dataTable.Rows.Count > 0)
+            {
+                return dataTable.Rows[0][0].ToInt();
+            }
+            return 0;
+        }
+
+        /// <summary>
+        /// 修改数据库数据
+        /// </summary>
+        /// <param name="cmdAccess">脚本模型</param>
+        /// <returns>影响行数</returns>
+        public static int UpdateData(this DbAccess cmdAccess)
+        {
+            string sqlStr = cmdAccess.GetSql();
+            int updateCount = SetData(cmdAccess, sqlStr);
+            return updateCount;
+        }
+
+        /// <summary>
+        /// 修改数据库数据
+        /// </summary>
+        /// <param name="cmdAccess">脚本模型</param>
+        /// <returns>影响行数</returns>
+        public static async Task<int> UpdateDataAsync(this DbAccess cmdAccess)
+        {
+            string sqlStr = cmdAccess.GetSql();
+            int updateCount = await SetDataAsync(cmdAccess, sqlStr);
+            return updateCount;
+        }
+
+        /// <summary>
+        /// 查询数据
+        /// </summary>
+        /// <param name="cmdAccess">脚本模型</param>
+        /// <param name="sqlStr">Sql脚本</param>
+        /// <returns>数据</returns>
+        private static DataTable GetData(this DbAccess cmdAccess, string sqlStr)
+        {
+            return cmdAccess.dataBase.FindTable(sqlStr);
+        }
+
+        /// <summary>
+        /// 查询数据
+        /// </summary>
+        /// <param name="cmdAccess">脚本模型</param>
+        /// <param name="sqlStr">Sql脚本</param>
+        /// <returns>数据</returns>
+        private static async Task<DataTable> GetDataAsync(this DbAccess cmdAccess, string sqlStr)
+        {
+            return await cmdAccess.dataBase.FindTableAsync(sqlStr);
+        }
+
+        /// <summary>
+        /// 修改数据
+        /// </summary>
+        /// <param name="cmdAccess">脚本模型</param>
+        /// <param name="sqlStr">Sql脚本</param>
+        /// <returns>影响行数</returns>
+        private static int SetData(this DbAccess cmdAccess, string sqlStr)
+        {
+            return cmdAccess.dataBase.ExecuteSqlRaw(sqlStr);
+        }
+
+        /// <summary>
+        /// 修改数据
+        /// </summary>
+        /// <param name="cmdAccess">脚本模型</param>
+        /// <param name="sqlStr">Sql脚本</param>
+        /// <returns>影响行数</returns>
+        private static async Task<int> SetDataAsync(this DbAccess cmdAccess, string sqlStr)
+        {
+            return await cmdAccess.dataBase.ExecuteSqlRawAsync(sqlStr);
+        }
+
+        #endregion
     }
 }

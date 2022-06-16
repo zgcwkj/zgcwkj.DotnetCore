@@ -10,9 +10,11 @@ using System.Threading.Tasks;
 namespace zgcwkj.Util
 {
     /// <summary>
-    /// 数据对象
+    /// <b>数据表对象</b>
+    /// 
+    /// <para>继承后可以操作数据库</para>
     /// </summary>
-    public class DbModel
+    public abstract class DbModel
     {
         /// <summary>
         /// 加载数据
@@ -37,7 +39,7 @@ namespace zgcwkj.Util
             }
             var cmd = DbProvider.Create();
             cmd.SetCommandText(sql.ToString());
-            var dataRow = DbAccess.QueryDataRow(cmd);
+            var dataRow = cmd.QueryDataRow();
             if (dataRow.IsNull()) return false;
             //赋值
             PropertyInfo[] properties = GetType().GetProperties(BindingFlags.Instance | BindingFlags.Public);
@@ -83,7 +85,7 @@ namespace zgcwkj.Util
             }
             var cmd = DbProvider.Create();
             cmd.SetCommandText(sql.ToString());
-            var dataRow = await DbAccess.QueryDataRowAsync(cmd);
+            var dataRow = await cmd.QueryDataRowAsync();
             if (dataRow.IsNull()) return false;
             //赋值
             PropertyInfo[] properties = GetType().GetProperties(BindingFlags.Instance | BindingFlags.Public);
@@ -134,14 +136,14 @@ namespace zgcwkj.Util
                 values.CopyTo(kvValues, keyValues.Length);
                 sql.Append($"insert into {tableName} ({keyColumns},{columns}) values(@{keyColumns.Replace(",", ",@")},@{columns.Replace(",", ",@")})");
                 cmd.SetCommandText(sql.ToString(), kvValues);
-                int count = DbAccess.UpdateData(cmd);
+                int count = cmd.UpdateData();
                 return count > 0;
             }
             else
             {
                 sql.Append($"insert into {tableName} ({columns}) values(@{columns.Replace(",", ",@")})");
                 cmd.SetCommandText(sql.ToString(), values);
-                int count = DbAccess.UpdateData(cmd);
+                int count = cmd.UpdateData();
                 return count > 0;
             }
         }
@@ -174,14 +176,14 @@ namespace zgcwkj.Util
                 values.CopyTo(kvValues, keyValues.Length);
                 sql.Append($"insert into {tableName} ({keyColumns},{columns}) values(@{keyColumns.Replace(",", ",@")},@{columns.Replace(",", ",@")})");
                 cmd.SetCommandText(sql.ToString(), kvValues);
-                int count = DbAccess.UpdateData(cmd);
+                int count = cmd.UpdateData();
                 return count > 0;
             }
             else
             {
                 sql.Append($"insert into {tableName} ({columns}) values(@{columns.Replace(",", ",@")})");
                 cmd.SetCommandText(sql.ToString(), values);
-                int count = await DbAccess.UpdateDataAsync(cmd);
+                int count = await cmd.UpdateDataAsync();
                 return count > 0;
             }
         }
@@ -217,7 +219,7 @@ namespace zgcwkj.Util
             }
             var cmd = DbProvider.Create();
             cmd.SetCommandText(sql.ToString(), values.Concat(keyValues).ToArray());
-            int count = DbAccess.UpdateData(cmd);
+            int count = cmd.UpdateData();
             return count > 0;
         }
 
@@ -252,7 +254,7 @@ namespace zgcwkj.Util
             }
             var cmd = DbProvider.Create();
             cmd.SetCommandText(sql.ToString(), values.Concat(keyValues).ToArray());
-            int count = await DbAccess.UpdateDataAsync(cmd);
+            int count = await cmd.UpdateDataAsync();
             return count > 0;
         }
 
@@ -279,7 +281,7 @@ namespace zgcwkj.Util
             }
             var cmd = DbProvider.Create();
             cmd.SetCommandText(sql.ToString(), values);
-            int count = DbAccess.UpdateData(cmd);
+            int count = cmd.UpdateData();
             return count > 0;
         }
 
@@ -306,7 +308,7 @@ namespace zgcwkj.Util
             }
             var cmd = DbProvider.Create();
             cmd.SetCommandText(sql.ToString(), values);
-            int count = await DbAccess.UpdateDataAsync(cmd);
+            int count = await cmd.UpdateDataAsync();
             return count > 0;
         }
 
@@ -349,12 +351,12 @@ namespace zgcwkj.Util
         /// <returns></returns>
         private dynamic GetTableData(Type type)
         {
-            List<TableMode> tableModes = GetTableObject(type);
-            var keyData = tableModes.Where(T => T.IsKey == true);//&& T.Value != default && T.Value.GetType() != typeof(string)
+            var tableModes = GetTableObject(type);
+            var keyData = tableModes.Where(T => T.IsKey == true && T.Value != null);
             var keyColumns = keyData.Select(T => T.Column).ToList();
             var keyValues = keyData.Select(T => T.Value).ToList();
             keyValues = DataFormat(keyValues);
-            var notkeyData = tableModes.Where(T => T.IsKey == false);//&& T.Value != default && T.Value.GetType() != typeof(string)
+            var notkeyData = tableModes.Where(T => T.IsKey == false && T.Value != null);
             var notkeyColumns = notkeyData.Select(T => T.Column).ToList();
             var notkeyValues = notkeyData.Select(T => T.Value).ToList();
             notkeyValues = DataFormat(notkeyValues);
@@ -375,10 +377,10 @@ namespace zgcwkj.Util
         /// <returns></returns>
         private List<TableMode> GetTableObject(Type type)
         {
-            List<TableMode> tableModes = new List<TableMode>();
+            var tableModes = new List<TableMode>();
             foreach (var property in type.GetProperties())
             {
-                TableMode tableMode = new TableMode();
+                var tableMode = new TableMode();
                 tableMode.Column = property.Name;
                 foreach (var attribute in property.GetCustomAttributes())
                 {

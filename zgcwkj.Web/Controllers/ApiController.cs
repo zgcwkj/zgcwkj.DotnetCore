@@ -55,7 +55,7 @@ namespace zgcwkj.Web.Controllers
             var cmd = DbProvider.Create();
             cmd.Clear();
             cmd.SetCommandText("select * from sys_user");
-            var dataTable = await DbAccess.QueryDataTableAsync(cmd);
+            var dataTable = await cmd.QueryDataTableAsync();
             return Json(dataTable.ToList());
         }
 

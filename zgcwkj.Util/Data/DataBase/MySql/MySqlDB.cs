@@ -28,7 +28,7 @@ namespace zgcwkj.Util.Data.DataBase.MySql
         /// <summary>
         /// 数据访问对象
         /// </summary>
-        public Microsoft.EntityFrameworkCore.DbContext MyDbContext { get; set; }
+        public DbContext MyDbContext { get; set; }
 
         /// <summary>
         /// 事务对象

@@ -1,25 +1,29 @@
-﻿using System.Data;
+﻿using System;
+using System.Data;
 using System.Threading.Tasks;
-using zgcwkj.Util.Interface;
 using zgcwkj.Util.Data;
-using zgcwkj.Util.Models;
+using zgcwkj.Util.Interface;
 
 namespace zgcwkj.Util
 {
     /// <summary>
-    /// 数据库操作对象
+    /// <b>数据库操作对象</b>
+    /// 
+    /// <para>常规使用：DbProvider.Create()</para>
+    /// <para>注入使用：services.AddTransient&lt;RedisFunction&gt;()</para>
+    /// <para>建议使用<b>EF</b>操作数据库，打代码更爽！by zgcwkj</para>
     /// </summary>
     public class DbAccess
     {
         /// <summary>
         /// SQL实体
         /// </summary>
-        public SqlModel dbModel;
+        internal SqlModel dbModel;
 
         /// <summary>
         /// 数据操作对象
         /// </summary>
-        public IDataBase dataBase;
+        internal IDataBase dataBase;
 
         /// <summary>
         /// 实例对象时
@@ -35,6 +39,7 @@ namespace zgcwkj.Util
         /// </summary>
         /// <param name="cmdAccess">脚本模型</param>
         /// <returns>数据</returns>
+        [Obsolete]
         public static DataTable QueryDataTable(DbAccess cmdAccess)
         {
             string sqlStr = cmdAccess.GetSql();
@@ -46,6 +51,7 @@ namespace zgcwkj.Util
         /// </summary>
         /// <param name="cmdAccess">脚本模型</param>
         /// <returns>数据</returns>
+        [Obsolete]
         public static async Task<DataTable> QueryDataTableAsync(DbAccess cmdAccess)
         {
             string sqlStr = cmdAccess.GetSql();
@@ -57,6 +63,7 @@ namespace zgcwkj.Util
         /// </summary>
         /// <param name="cmdAccess">脚本模型</param>
         /// <returns>行数据</returns>
+        [Obsolete]
         public static DataRow QueryDataRow(DbAccess cmdAccess)
         {
             if (!cmdAccess.dbModel.Sql.ToLower().Contains("limit"))
@@ -77,6 +84,7 @@ namespace zgcwkj.Util
         /// </summary>
         /// <param name="cmdAccess">脚本模型</param>
         /// <returns>行数据</returns>
+        [Obsolete]
         public static async Task<DataRow> QueryDataRowAsync(DbAccess cmdAccess)
         {
             if (!cmdAccess.dbModel.Sql.ToLower().Contains("limit"))
@@ -97,6 +105,7 @@ namespace zgcwkj.Util
         /// </summary>
         /// <param name="cmdAccess">脚本模型</param>
         /// <returns>首行首列</returns>
+        [Obsolete]
         public static object QueryScalar(DbAccess cmdAccess)
         {
             if (!cmdAccess.dbModel.Sql.ToLower().Contains("limit"))
@@ -117,6 +126,7 @@ namespace zgcwkj.Util
         /// </summary>
         /// <param name="cmdAccess">脚本模型</param>
         /// <returns>首行首列</returns>
+        [Obsolete]
         public static async Task<object> QueryScalarAsync(DbAccess cmdAccess)
         {
             if (!cmdAccess.dbModel.Sql.ToLower().Contains("limit"))
@@ -137,6 +147,7 @@ namespace zgcwkj.Util
         /// </summary>
         /// <param name="cmdAccess">脚本模型</param>
         /// <returns>行数</returns>
+        [Obsolete]
         public static int QueryRowCount(DbAccess cmdAccess)
         {
             string sqlStr = cmdAccess.GetSql();
@@ -157,6 +168,7 @@ namespace zgcwkj.Util
         /// </summary>
         /// <param name="cmdAccess">脚本模型</param>
         /// <returns>行数</returns>
+        [Obsolete]
         public static async Task<int> QueryRowCountAsync(DbAccess cmdAccess)
         {
             string sqlStr = cmdAccess.GetSql();
@@ -177,6 +189,7 @@ namespace zgcwkj.Util
         /// </summary>
         /// <param name="cmdAccess">脚本模型</param>
         /// <returns>影响行数</returns>
+        [Obsolete]
         public static int UpdateData(DbAccess cmdAccess)
         {
             string sqlStr = cmdAccess.GetSql();
@@ -189,6 +202,7 @@ namespace zgcwkj.Util
         /// </summary>
         /// <param name="cmdAccess">脚本模型</param>
         /// <returns>影响行数</returns>
+        [Obsolete]
         public static async Task<int> UpdateDataAsync(DbAccess cmdAccess)
         {
             string sqlStr = cmdAccess.GetSql();
@@ -202,6 +216,7 @@ namespace zgcwkj.Util
         /// <param name="cmdAccess">脚本模型</param>
         /// <param name="sqlStr">Sql脚本</param>
         /// <returns>数据</returns>
+        [Obsolete]
         private static DataTable GetData(DbAccess cmdAccess, string sqlStr)
         {
             return cmdAccess.dataBase.FindTable(sqlStr);
@@ -213,6 +228,7 @@ namespace zgcwkj.Util
         /// <param name="cmdAccess">脚本模型</param>
         /// <param name="sqlStr">Sql脚本</param>
         /// <returns>数据</returns>
+        [Obsolete]
         private static async Task<DataTable> GetDataAsync(DbAccess cmdAccess, string sqlStr)
         {
             return await cmdAccess.dataBase.FindTableAsync(sqlStr);
@@ -224,6 +240,7 @@ namespace zgcwkj.Util
         /// <param name="cmdAccess">脚本模型</param>
         /// <param name="sqlStr">Sql脚本</param>
         /// <returns>影响行数</returns>
+        [Obsolete]
         private static int SetData(DbAccess cmdAccess, string sqlStr)
         {
             return cmdAccess.dataBase.ExecuteSqlRaw(sqlStr);
@@ -235,6 +252,7 @@ namespace zgcwkj.Util
         /// <param name="cmdAccess">脚本模型</param>
         /// <param name="sqlStr">Sql脚本</param>
         /// <returns>影响行数</returns>
+        [Obsolete]
         private static async Task<int> SetDataAsync(DbAccess cmdAccess, string sqlStr)
         {
             return await cmdAccess.dataBase.ExecuteSqlRawAsync(sqlStr);

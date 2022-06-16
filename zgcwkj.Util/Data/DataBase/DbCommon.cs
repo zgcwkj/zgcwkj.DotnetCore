@@ -7,12 +7,13 @@ using System.Text.RegularExpressions;
 using System.ComponentModel.DataAnnotations.Schema;
 using Microsoft.EntityFrameworkCore;
 using zgcwkj.Util.Enum;
-using zgcwkj.Util.Interface;
 
 namespace zgcwkj.Util.Data
 {
     /// <summary>
-    /// 数据库连接对象
+    /// <b>数据库连接对象</b>
+    /// 
+    /// <para>继承此对象可以实现原生操作</para>
     /// </summary>
     public class DbCommon : DbContext, IDisposable
     {
@@ -37,7 +38,8 @@ namespace zgcwkj.Util.Data
         private readonly int dbVersion;
 
         /// <summary>
-        /// 数据库连接对象（在配置文件中获取连接信息）
+        /// <para>数据库连接对象</para>
+        /// <para><b>使用配置文件中信息来连接</b></para>
         /// </summary>
         public DbCommon()
         {
@@ -53,7 +55,9 @@ namespace zgcwkj.Util.Data
         }
 
         /// <summary>
-        /// 数据库连接对象（自定义连接信息）
+        /// <para>数据库连接对象</para>
+        /// <para><b>使用自定义配置来连接</b></para>
+        /// <para>用法：base(DbType, "SQLConnect")</para>
         /// </summary>
         /// <param name="dbType">数据库类型</param>
         /// <param name="dbConnect">连接字符</param>
@@ -71,8 +75,10 @@ namespace zgcwkj.Util.Data
             }
         }
 
-        /// <summary>
-        /// 数据库连接对象（自定义连接信息，统一数据库类型）
+        /// <summary>-
+        /// <para>数据库连接对象</para>
+        /// <para><b>使用自定义配置来连接，数据库类型相同</b></para>
+        /// <para>用法：base("SQLConnect")</para>
         /// </summary>
         /// <param name="dbConnect">连接字符</param>
         /// <param name="dbTimeout">连接超时</param>

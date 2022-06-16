@@ -1,9 +1,9 @@
-﻿namespace zgcwkj.Util.Models
+﻿namespace zgcwkj.Util
 {
     /// <summary>
     /// SQL实体
     /// </summary>
-    public class SqlModel
+    internal class SqlModel
     {
         /// <summary>
         /// 脚本
