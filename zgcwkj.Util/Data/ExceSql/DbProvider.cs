@@ -541,10 +541,7 @@ namespace zgcwkj.Util
         public static int QueryRowCount(this DbAccess cmdAccess)
         {
             string sqlStr = cmdAccess.GetSql();
-            int fromIndex = sqlStr.ToLower().IndexOf("from");
-            //sqlStr.Substring(fromIndex, sqlStr.Length - fromIndex);
-            string strFrom = sqlStr[fromIndex..];//找出主脚本
-            strFrom = $"select count(0) as counts {strFrom}";
+            string strFrom = $"select count(0) as counts from ({sqlStr}) tables";
             DataTable dataTable = GetData(cmdAccess, strFrom);
             if (dataTable.Rows.Count > 0)
             {
@@ -561,10 +558,7 @@ namespace zgcwkj.Util
         public static async Task<int> QueryRowCountAsync(this DbAccess cmdAccess)
         {
             string sqlStr = cmdAccess.GetSql();
-            int fromIndex = sqlStr.ToLower().IndexOf("from");
-            //sqlStr.Substring(fromIndex, sqlStr.Length - fromIndex);
-            string strFrom = sqlStr[fromIndex..];//找出主脚本
-            strFrom = $"select count(0) as counts {strFrom}";
+            string strFrom = $"select count(0) as counts from ({sqlStr}) tables";
             DataTable dataTable = await GetDataAsync(cmdAccess, strFrom);
             if (dataTable.Rows.Count > 0)
             {
