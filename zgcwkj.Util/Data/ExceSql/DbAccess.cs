@@ -10,7 +10,7 @@ namespace zgcwkj.Util
     /// <b>数据库操作对象</b>
     /// 
     /// <para>常规使用：DbProvider.Create()</para>
-    /// <para>注入使用：services.AddTransient&lt;RedisFunction&gt;()</para>
+    /// <para>注入使用：services.AddTransient&lt;DbAccess&gt;()</para>
     /// <para>建议使用<b>EF</b>操作数据库，打代码更爽！by zgcwkj</para>
     /// </summary>
     public class DbAccess
