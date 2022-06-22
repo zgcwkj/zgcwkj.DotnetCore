@@ -1,15 +1,12 @@
 ﻿using System;
-using zgcwkj.Util.Data.Cache.Memory;
-using zgcwkj.Util.Data.Cache.Redis;
 using zgcwkj.Util.Enum;
-using zgcwkj.Util.Interface;
 
 namespace zgcwkj.Util.Data
 {
     /// <summary>
     /// 缓存工厂
     /// </summary>
-    public class CacheFactory
+    internal class CacheFactory
     {
         /// <summary>
         /// 缓存类型
@@ -43,23 +40,6 @@ namespace zgcwkj.Util.Data
                     _ => throw new Exception("未找到缓存配置"),
                 };
                 return dbConnect;
-            }
-        }
-
-        /// <summary>
-        /// 缓存对象
-        /// </summary>
-        public static ICache Cache
-        {
-            get
-            {
-                ICache cache = Type switch
-                {
-                    CacheType.Memory => new MemoryImp(),
-                    CacheType.Redis => new RedisImp(),
-                    _ => throw new Exception("未找到缓存配置"),
-                };
-                return cache;
             }
         }
     }

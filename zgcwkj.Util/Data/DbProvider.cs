@@ -1,21 +1,22 @@
-﻿using System.Data;
+﻿using Microsoft.EntityFrameworkCore;
+using System.Data;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using zgcwkj.Util.Data;
+using zgcwkj.Util.Data.Extension;
 
 namespace zgcwkj.Util
 {
     /// <summary>
     /// <b>数据库操作提供者</b>
     /// 
-    /// <para>常规使用：DbProvider.Create()</para>
+    /// <para>常规使用：using var cmd = DbProvider.Create()</para>
     /// <para>注入使用：services.AddTransient&lt;DbAccess&gt;()</para>
-    /// <para>建议使用<b>EF</b>操作数据库，打代码更爽！by zgcwkj</para>
+    /// <para>建议使用<b>EF</b>操作数据库</para>
     /// </summary>
     public static class DbProvider
     {
-
         #region 操作对象
 
         /// <summary>
@@ -30,12 +31,12 @@ namespace zgcwkj.Util
         /// <summary>
         /// 清空准备的数据
         /// </summary>
-        /// <param name="cmdAccess">脚本模型</param>
+        /// <param name="cmdAccess">对象</param>
         /// <returns>状态</returns>
         public static bool Clear(this DbAccess cmdAccess)
         {
             cmdAccess.dbModel = new SqlModel();
-            cmdAccess.dataBase = DataFactory.Db;
+            //cmdAccess.dbCommon = new DbCommon();
             return true;
         }
 
@@ -46,6 +47,7 @@ namespace zgcwkj.Util
         /// <summary>
         /// 获取执行的脚本
         /// </summary>
+        /// <param name="cmdAccess">对象</param>
         /// <returns></returns>
         public static string GetSql(this DbAccess cmdAccess)
         {
@@ -67,11 +69,12 @@ namespace zgcwkj.Util
         /// <summary>
         /// 设置CommandText
         /// </summary>
-        /// <param name="cmdAccess">脚本模型</param>
+        /// <param name="cmdAccess">对象</param>
         /// <param name="commandText">命令Text</param>
         /// <returns>设置状态</returns>
         public static bool SetCommandText(this DbAccess cmdAccess, string commandText)
         {
+            cmdAccess.Clear();
             //设置状态
             bool setStatus = false;
             //防止空字符
@@ -86,12 +89,13 @@ namespace zgcwkj.Util
         /// <summary>
         /// 设置CommandText
         /// </summary>
-        /// <param name="cmdAccess">脚本模型</param>
+        /// <param name="cmdAccess">对象</param>
         /// <param name="commandText">命令Text</param>
         /// <param name="commandValues">Sql命令的参数值</param>
         /// <returns>设置状态</returns>
         public static bool SetCommandText(this DbAccess cmdAccess, string commandText, params object[] commandValues)
         {
+            cmdAccess.Clear();
             //setStatus 设置状态
             commandText = GetScriptAfterParameter(cmdAccess, out bool setStatus, commandText, commandValues);
             cmdAccess.dbModel.Sql = commandText;
@@ -102,7 +106,7 @@ namespace zgcwkj.Util
         /// <summary>
         /// 末尾追加字符串，并赋参数值
         /// </summary>
-        /// <param name="cmdAccess">脚本模型</param>
+        /// <param name="cmdAccess">对象</param>
         /// <param name="filter">字段</param>
         /// <param name="values">值</param>
         /// <returns>追加状态</returns>
@@ -128,7 +132,7 @@ namespace zgcwkj.Util
         /// 末尾追加字符串，并赋参数值
         /// 追加与条件
         /// </summary>
-        /// <param name="cmdAccess">脚本模型</param>
+        /// <param name="cmdAccess">对象</param>
         /// <param name="filter">字段</param>
         /// <param name="values">值</param>
         /// <returns>追加状态</returns>
@@ -158,7 +162,7 @@ namespace zgcwkj.Util
         /// 末尾追加字符串，并赋参数值
         /// 追加或条件
         /// </summary>
-        /// <param name="cmdAccess">脚本模型</param>
+        /// <param name="cmdAccess">对象</param>
         /// <param name="filter">字段</param>
         /// <param name="values">值</param>
         /// <returns>追加状态</returns>
@@ -187,7 +191,7 @@ namespace zgcwkj.Util
         /// <summary>
         /// 排序
         /// </summary>
-        /// <param name="cmdAccess">脚本模型</param>
+        /// <param name="cmdAccess">对象</param>
         /// <param name="filter">字段（多字段用逗号分开）</param>
         /// <param name="values">值</param>
         /// <returns>状态</returns>
@@ -205,7 +209,7 @@ namespace zgcwkj.Util
         /// <summary>
         /// 分组
         /// </summary>
-        /// <param name="cmdAccess">脚本模型</param>
+        /// <param name="cmdAccess">对象</param>
         /// <param name="filter">字段（多字段用逗号分开）</param>
         /// <param name="values">值</param>
         /// <returns>状态</returns>
@@ -223,7 +227,7 @@ namespace zgcwkj.Util
         /// <summary>
         /// 设置结尾脚本
         /// </summary>
-        /// <param name="cmdAccess">脚本模型</param>
+        /// <param name="cmdAccess">对象</param>
         /// <param name="sqlStr">添加的字符串</param>
         /// <returns>状态</returns>
         public static bool SetEndSql(this DbAccess cmdAccess, string sqlStr)
@@ -234,33 +238,6 @@ namespace zgcwkj.Util
                 return true;
             }
             return false;
-        }
-
-        /// <summary>
-        /// 事务开始
-        /// </summary>
-        /// <param name="cmdAccess">脚本模型</param>
-        public static void TransBegin(this DbAccess cmdAccess)
-        {
-            cmdAccess.dataBase.BeginTrans();
-        }
-
-        /// <summary>
-        /// 事务提交
-        /// </summary>
-        /// <param name="cmdAccess">脚本模型</param>
-        public static int TransCommit(this DbAccess cmdAccess)
-        {
-            return cmdAccess.dataBase.CommitTrans();
-        }
-
-        /// <summary>
-        /// 事务回滚
-        /// </summary>
-        /// <param name="cmdAccess">脚本模型</param>
-        public static void TransRollback(this DbAccess cmdAccess)
-        {
-            cmdAccess.dataBase.RollbackTrans();
         }
 
         /// <summary>
@@ -276,7 +253,7 @@ namespace zgcwkj.Util
         /// <summary>
         /// 获取参数后的脚本
         /// </summary>
-        /// <param name="cmdAccess">脚本模型</param>
+        /// <param name="cmdAccess">对象</param>
         /// <param name="isStatus">替换状态</param>
         /// <param name="sqlStr">脚本字符</param>
         /// <param name="values">参数值</param>
@@ -372,6 +349,14 @@ namespace zgcwkj.Util
                     updSql += $" limit {page},{pageSize}";
                     sql = sql.Substring(0, pageSql) + updSql;
                 }
+                //记录数函数
+                string topStr = Regex.Match(sql, @"select.+top.+?[0-9]+").Value;
+                if (!topStr.IsNull())
+                {
+                    string countStr = Regex.Match(topStr, @"(?<=select.+top.+?)[0-9]+").Value;
+                    sql = sql.Replace(topStr, "select ");
+                    if (!sql.Contains("limit")) sql = $"{sql} limit {countStr}";
+                }
             }
             else if (type == Enum.DbType.SqlServer)
             {
@@ -389,14 +374,24 @@ namespace zgcwkj.Util
                 }
                 //分页函数
                 int pageSql = sql.IndexOf("limit");
-                if (pageSql != -1 && sql.LastIndexOf(",") > pageSql)
+                if (pageSql != -1)
                 {
-                    string updSql = string.Empty;
-                    if (!sql.ToLower().Contains("order")) updSql = "order by 1";
-                    var page = Regex.Match(sql, @"(?<=limit).+(?=,.+)").Value;
-                    var pageSize = Regex.Match(sql, @"(?<=limit.+,)[0-9]+").Value;
-                    updSql += $" offset {page} rows fetch next {pageSize} rows only";
-                    sql = sql.Substring(0, pageSql) + updSql;
+                    if (sql.LastIndexOf(",") > pageSql)
+                    {
+                        string updSql = string.Empty;
+                        if (!sql.ToLower().Contains("order")) updSql = "order by 1";
+                        var page = Regex.Match(sql, @"(?<=limit).+(?=,.+)").Value;
+                        var pageSize = Regex.Match(sql, @"(?<=limit.+,)[0-9]+").Value;
+                        updSql += $" offset {page} rows fetch next {pageSize} rows only";
+                        sql = sql.Substring(0, pageSql) + updSql;
+                    }
+                    else
+                    {
+                        var limitStr = Regex.Match(sql, @"limit.+[0-9]+").Value;
+                        var countStr = Regex.Match(sql, @"(?<=limit).+[0-9]+").Value;
+                        sql = sql.Replace(limitStr, "");
+                        sql = $"select top {countStr} * from ({sql}) tables";
+                    }
                 }
             }
             else if (type == Enum.DbType.PostgreSql)
@@ -423,8 +418,73 @@ namespace zgcwkj.Util
                     updSql += $"limit {pageSize} offset {page}";
                     sql = sql.Substring(0, pageSql) + updSql;
                 }
+                //记录数函数
+                string topStr = Regex.Match(sql, @"select.+top.+?[0-9]+").Value;
+                if (!topStr.IsNull())
+                {
+                    string countStr = Regex.Match(topStr, @"(?<=select.+top.+?)[0-9]+").Value;
+                    sql = sql.Replace(topStr, "select ");
+                    if (!sql.Contains("limit")) sql = $"{sql} limit {countStr}";
+                }
             }
             return sql;
+        }
+
+        #endregion
+
+        #region 操作事务
+
+        /// <summary>
+        /// 事务开始
+        /// </summary>
+        /// <param name="cmdAccess">对象</param>
+        public static void TransBegin(this DbAccess cmdAccess)
+        {
+            var database = cmdAccess.dbCommon.Database;
+            var dbConnection = database.GetDbConnection();
+            if (dbConnection.State == ConnectionState.Closed)
+            {
+                dbConnection.Open();
+            }
+            cmdAccess.dbTrans = database.BeginTransaction();
+        }
+
+        /// <summary>
+        /// 事务提交
+        /// </summary>
+        /// <param name="cmdAccess">对象</param>
+        public static int TransCommit(this DbAccess cmdAccess)
+        {
+            var dbCommon = cmdAccess.dbCommon;
+            var dbTrans = cmdAccess.dbTrans;
+            try
+            {
+                int returnValue = dbCommon.SaveChanges();
+                if (dbTrans != null) dbTrans.Commit();
+                dbCommon.Dispose();
+                return returnValue;
+            }
+            catch
+            {
+                throw;
+            }
+            finally
+            {
+                if (dbTrans == null) dbCommon.Dispose();
+            }
+        }
+
+        /// <summary>
+        /// 事务回滚
+        /// </summary>
+        /// <param name="cmdAccess">对象</param>
+        public static void TransRollback(this DbAccess cmdAccess)
+        {
+            var dbCommon = cmdAccess.dbCommon;
+            var dbTrans = cmdAccess.dbTrans;
+            dbTrans.Rollback();
+            dbTrans.Dispose();
+            dbCommon.Dispose();
         }
 
         #endregion
@@ -434,7 +494,7 @@ namespace zgcwkj.Util
         /// <summary>
         /// 查询数据库数据
         /// </summary>
-        /// <param name="cmdAccess">脚本模型</param>
+        /// <param name="cmdAccess">对象</param>
         /// <returns>数据</returns>
         public static DataTable QueryDataTable(this DbAccess cmdAccess)
         {
@@ -445,7 +505,7 @@ namespace zgcwkj.Util
         /// <summary>
         /// 查询数据库数据
         /// </summary>
-        /// <param name="cmdAccess">脚本模型</param>
+        /// <param name="cmdAccess">对象</param>
         /// <returns>数据</returns>
         public static async Task<DataTable> QueryDataTableAsync(this DbAccess cmdAccess)
         {
@@ -456,7 +516,7 @@ namespace zgcwkj.Util
         /// <summary>
         /// 查询数据库的第一行数据
         /// </summary>
-        /// <param name="cmdAccess">脚本模型</param>
+        /// <param name="cmdAccess">对象</param>
         /// <returns>行数据</returns>
         public static DataRow QueryDataRow(this DbAccess cmdAccess)
         {
@@ -476,7 +536,7 @@ namespace zgcwkj.Util
         /// <summary>
         /// 查询数据库的第一行数据
         /// </summary>
-        /// <param name="cmdAccess">脚本模型</param>
+        /// <param name="cmdAccess">对象</param>
         /// <returns>行数据</returns>
         public static async Task<DataRow> QueryDataRowAsync(this DbAccess cmdAccess)
         {
@@ -496,7 +556,7 @@ namespace zgcwkj.Util
         /// <summary>
         /// 查询数据库的首行首列数据
         /// </summary>
-        /// <param name="cmdAccess">脚本模型</param>
+        /// <param name="cmdAccess">对象</param>
         /// <returns>首行首列</returns>
         public static object QueryScalar(this DbAccess cmdAccess)
         {
@@ -516,7 +576,7 @@ namespace zgcwkj.Util
         /// <summary>
         /// 查询数据库的首行首列数据
         /// </summary>
-        /// <param name="cmdAccess">脚本模型</param>
+        /// <param name="cmdAccess">对象</param>
         /// <returns>首行首列</returns>
         public static async Task<object> QueryScalarAsync(this DbAccess cmdAccess)
         {
@@ -536,7 +596,7 @@ namespace zgcwkj.Util
         /// <summary>
         /// 查询数据库的行数
         /// </summary>
-        /// <param name="cmdAccess">脚本模型</param>
+        /// <param name="cmdAccess">对象</param>
         /// <returns>行数</returns>
         public static int QueryRowCount(this DbAccess cmdAccess)
         {
@@ -553,7 +613,7 @@ namespace zgcwkj.Util
         /// <summary>
         /// 查询数据库的行数
         /// </summary>
-        /// <param name="cmdAccess">脚本模型</param>
+        /// <param name="cmdAccess">对象</param>
         /// <returns>行数</returns>
         public static async Task<int> QueryRowCountAsync(this DbAccess cmdAccess)
         {
@@ -570,7 +630,7 @@ namespace zgcwkj.Util
         /// <summary>
         /// 修改数据库数据
         /// </summary>
-        /// <param name="cmdAccess">脚本模型</param>
+        /// <param name="cmdAccess">对象</param>
         /// <returns>影响行数</returns>
         public static int UpdateData(this DbAccess cmdAccess)
         {
@@ -582,7 +642,7 @@ namespace zgcwkj.Util
         /// <summary>
         /// 修改数据库数据
         /// </summary>
-        /// <param name="cmdAccess">脚本模型</param>
+        /// <param name="cmdAccess">对象</param>
         /// <returns>影响行数</returns>
         public static async Task<int> UpdateDataAsync(this DbAccess cmdAccess)
         {
@@ -591,48 +651,66 @@ namespace zgcwkj.Util
             return updateCount;
         }
 
+        #endregion
+
+        #region 操作数据库（核心）
+
         /// <summary>
         /// 查询数据
         /// </summary>
-        /// <param name="cmdAccess">脚本模型</param>
+        /// <param name="cmdAccess">对象</param>
         /// <param name="sqlStr">Sql脚本</param>
         /// <returns>数据</returns>
-        private static DataTable GetData(this DbAccess cmdAccess, string sqlStr)
+        internal static DataTable GetData(this DbAccess cmdAccess, string sqlStr)
         {
-            return cmdAccess.dataBase.FindTable(sqlStr);
+            var dbCommon = cmdAccess.dbCommon;
+            var dbConnection = dbCommon.Database.GetDbConnection();
+            var dbScalar = new DbScalarExtension(dbCommon, dbConnection);
+            var dataReader = dbScalar.ExecuteReade(CommandType.Text, sqlStr, null);
+            var dataTable = DbExtension.IDataReaderToDataTable(dataReader);
+            return dataTable;
         }
 
         /// <summary>
         /// 查询数据
         /// </summary>
-        /// <param name="cmdAccess">脚本模型</param>
+        /// <param name="cmdAccess">对象</param>
         /// <param name="sqlStr">Sql脚本</param>
         /// <returns>数据</returns>
-        private static async Task<DataTable> GetDataAsync(this DbAccess cmdAccess, string sqlStr)
+        internal static async Task<DataTable> GetDataAsync(this DbAccess cmdAccess, string sqlStr)
         {
-            return await cmdAccess.dataBase.FindTableAsync(sqlStr);
+            var dbCommon = cmdAccess.dbCommon;
+            var dbConnection = dbCommon.Database.GetDbConnection();
+            var dbScalar = new DbScalarExtension(dbCommon, dbConnection);
+            var dataReader = await dbScalar.ExecuteReadeAsync(CommandType.Text, sqlStr, null);
+            var dataTable = DbExtension.IDataReaderToDataTable(dataReader);
+            return dataTable;
         }
 
         /// <summary>
         /// 修改数据
         /// </summary>
-        /// <param name="cmdAccess">脚本模型</param>
+        /// <param name="cmdAccess">对象</param>
         /// <param name="sqlStr">Sql脚本</param>
         /// <returns>影响行数</returns>
-        private static int SetData(this DbAccess cmdAccess, string sqlStr)
+        internal static int SetData(this DbAccess cmdAccess, string sqlStr)
         {
-            return cmdAccess.dataBase.ExecuteSqlRaw(sqlStr);
+            var dbCommon = cmdAccess.dbCommon;
+            var count = dbCommon.Database.ExecuteSqlRaw(sqlStr, null);
+            return count;
         }
 
         /// <summary>
         /// 修改数据
         /// </summary>
-        /// <param name="cmdAccess">脚本模型</param>
+        /// <param name="cmdAccess">对象</param>
         /// <param name="sqlStr">Sql脚本</param>
         /// <returns>影响行数</returns>
-        private static async Task<int> SetDataAsync(this DbAccess cmdAccess, string sqlStr)
+        internal static async Task<int> SetDataAsync(this DbAccess cmdAccess, string sqlStr)
         {
-            return await cmdAccess.dataBase.ExecuteSqlRawAsync(sqlStr);
+            var dbCommon = cmdAccess.dbCommon;
+            var count = await dbCommon.Database.ExecuteSqlRawAsync(sqlStr, null);
+            return count;
         }
 
         #endregion

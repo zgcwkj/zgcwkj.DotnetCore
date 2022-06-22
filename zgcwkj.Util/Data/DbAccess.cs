@@ -1,29 +1,37 @@
-﻿using System;
+﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Storage;
+using System;
 using System.Data;
+using System.Data.Common;
 using System.Threading.Tasks;
 using zgcwkj.Util.Data;
-using zgcwkj.Util.Interface;
+using zgcwkj.Util.Data.Extension;
 
 namespace zgcwkj.Util
 {
     /// <summary>
     /// <b>数据库操作对象</b>
     /// 
-    /// <para>常规使用：DbProvider.Create()</para>
+    /// <para>常规使用：using var cmd = DbProvider.Create()</para>
     /// <para>注入使用：services.AddTransient&lt;DbAccess&gt;()</para>
-    /// <para>建议使用<b>EF</b>操作数据库，打代码更爽！by zgcwkj</para>
+    /// <para>建议使用<b>EF</b>操作数据库</para>
     /// </summary>
-    public class DbAccess
+    public class DbAccess : IDisposable
     {
         /// <summary>
         /// SQL实体
         /// </summary>
-        internal SqlModel dbModel;
+        internal SqlModel dbModel { get; set; }
 
         /// <summary>
         /// 数据操作对象
         /// </summary>
-        internal IDataBase dataBase;
+        internal DbCommon dbCommon { get; set; }
+
+        /// <summary>
+        /// 事务对象
+        /// </summary>
+        internal IDbContextTransaction dbTrans { get; set; }
 
         /// <summary>
         /// 实例对象时
@@ -31,37 +39,46 @@ namespace zgcwkj.Util
         public DbAccess()
         {
             dbModel = new SqlModel();
-            dataBase = DataFactory.Db;
+            dbCommon = new DbCommon();
+        }
+
+        /// <summary>
+        /// 释放对象
+        /// </summary>
+        public void Dispose()
+        {
+            dbCommon?.Dispose();
+            dbTrans?.Dispose();
         }
 
         /// <summary>
         /// 查询数据库数据
         /// </summary>
-        /// <param name="cmdAccess">脚本模型</param>
+        /// <param name="cmdAccess">对象</param>
         /// <returns>数据</returns>
         [Obsolete]
         public static DataTable QueryDataTable(DbAccess cmdAccess)
         {
             string sqlStr = cmdAccess.GetSql();
-            return GetData(cmdAccess, sqlStr);
+            return cmdAccess.GetData(sqlStr);
         }
 
         /// <summary>
         /// 查询数据库数据
         /// </summary>
-        /// <param name="cmdAccess">脚本模型</param>
+        /// <param name="cmdAccess">对象</param>
         /// <returns>数据</returns>
         [Obsolete]
         public static async Task<DataTable> QueryDataTableAsync(DbAccess cmdAccess)
         {
             string sqlStr = cmdAccess.GetSql();
-            return await GetDataAsync(cmdAccess, sqlStr);
+            return await cmdAccess.GetDataAsync(sqlStr);
         }
 
         /// <summary>
         /// 查询数据库的第一行数据
         /// </summary>
-        /// <param name="cmdAccess">脚本模型</param>
+        /// <param name="cmdAccess">对象</param>
         /// <returns>行数据</returns>
         [Obsolete]
         public static DataRow QueryDataRow(DbAccess cmdAccess)
@@ -71,7 +88,7 @@ namespace zgcwkj.Util
                 cmdAccess.dbModel.EndSql = "limit 1";
             }
             string sqlStr = cmdAccess.GetSql();
-            DataTable dataTable = GetData(cmdAccess, sqlStr);
+            DataTable dataTable = cmdAccess.GetData(sqlStr);
             if (dataTable.Rows.Count > 0)
             {
                 return dataTable.Rows[0];
@@ -82,7 +99,7 @@ namespace zgcwkj.Util
         /// <summary>
         /// 查询数据库的第一行数据
         /// </summary>
-        /// <param name="cmdAccess">脚本模型</param>
+        /// <param name="cmdAccess">对象</param>
         /// <returns>行数据</returns>
         [Obsolete]
         public static async Task<DataRow> QueryDataRowAsync(DbAccess cmdAccess)
@@ -92,7 +109,7 @@ namespace zgcwkj.Util
                 cmdAccess.dbModel.EndSql = "limit 1";
             }
             string sqlStr = cmdAccess.GetSql();
-            DataTable dataTable = await GetDataAsync(cmdAccess, sqlStr);
+            DataTable dataTable = await cmdAccess.GetDataAsync(sqlStr);
             if (dataTable.Rows.Count > 0)
             {
                 return dataTable.Rows[0];
@@ -103,7 +120,7 @@ namespace zgcwkj.Util
         /// <summary>
         /// 查询数据库的首行首列数据
         /// </summary>
-        /// <param name="cmdAccess">脚本模型</param>
+        /// <param name="cmdAccess">对象</param>
         /// <returns>首行首列</returns>
         [Obsolete]
         public static object QueryScalar(DbAccess cmdAccess)
@@ -113,7 +130,7 @@ namespace zgcwkj.Util
                 cmdAccess.dbModel.EndSql = "limit 1";
             }
             string sqlStr = cmdAccess.GetSql();
-            DataTable dataTable = GetData(cmdAccess, sqlStr);
+            DataTable dataTable = cmdAccess.GetData(sqlStr);
             if (dataTable.Rows.Count > 0)
             {
                 return dataTable.Rows[0][0];
@@ -124,7 +141,7 @@ namespace zgcwkj.Util
         /// <summary>
         /// 查询数据库的首行首列数据
         /// </summary>
-        /// <param name="cmdAccess">脚本模型</param>
+        /// <param name="cmdAccess">对象</param>
         /// <returns>首行首列</returns>
         [Obsolete]
         public static async Task<object> QueryScalarAsync(DbAccess cmdAccess)
@@ -134,7 +151,7 @@ namespace zgcwkj.Util
                 cmdAccess.dbModel.EndSql = "limit 1";
             }
             string sqlStr = cmdAccess.GetSql();
-            DataTable dataTable = await GetDataAsync(cmdAccess, sqlStr);
+            DataTable dataTable = await cmdAccess.GetDataAsync(sqlStr);
             if (dataTable.Rows.Count > 0)
             {
                 return dataTable.Rows[0][0];
@@ -145,17 +162,14 @@ namespace zgcwkj.Util
         /// <summary>
         /// 查询数据库的行数
         /// </summary>
-        /// <param name="cmdAccess">脚本模型</param>
+        /// <param name="cmdAccess">对象</param>
         /// <returns>行数</returns>
         [Obsolete]
         public static int QueryRowCount(DbAccess cmdAccess)
         {
             string sqlStr = cmdAccess.GetSql();
-            int fromIndex = sqlStr.ToLower().IndexOf("from");
-            //sqlStr.Substring(fromIndex, sqlStr.Length - fromIndex);
-            string strFrom = sqlStr[fromIndex..];//找出主脚本
-            strFrom = $"select count(0) as counts {strFrom}";
-            DataTable dataTable = GetData(cmdAccess, strFrom);
+            string strFrom = $"select count(0) as counts from ({sqlStr}) tables";
+            DataTable dataTable = cmdAccess.GetData(strFrom);
             if (dataTable.Rows.Count > 0)
             {
                 return dataTable.Rows[0][0].ToInt();
@@ -166,17 +180,14 @@ namespace zgcwkj.Util
         /// <summary>
         /// 查询数据库的行数
         /// </summary>
-        /// <param name="cmdAccess">脚本模型</param>
+        /// <param name="cmdAccess">对象</param>
         /// <returns>行数</returns>
         [Obsolete]
         public static async Task<int> QueryRowCountAsync(DbAccess cmdAccess)
         {
             string sqlStr = cmdAccess.GetSql();
-            int fromIndex = sqlStr.ToLower().IndexOf("from");
-            //sqlStr.Substring(fromIndex, sqlStr.Length - fromIndex);
-            string strFrom = sqlStr[fromIndex..];//找出主脚本
-            strFrom = $"select count(0) as counts {strFrom}";
-            DataTable dataTable = await GetDataAsync(cmdAccess, strFrom);
+            string strFrom = $"select count(0) as counts from ({sqlStr}) tables";
+            DataTable dataTable = await cmdAccess.GetDataAsync(strFrom);
             if (dataTable.Rows.Count > 0)
             {
                 return dataTable.Rows[0][0].ToInt();
@@ -187,75 +198,27 @@ namespace zgcwkj.Util
         /// <summary>
         /// 修改数据库数据
         /// </summary>
-        /// <param name="cmdAccess">脚本模型</param>
+        /// <param name="cmdAccess">对象</param>
         /// <returns>影响行数</returns>
         [Obsolete]
         public static int UpdateData(DbAccess cmdAccess)
         {
             string sqlStr = cmdAccess.GetSql();
-            int updateCount = SetData(cmdAccess, sqlStr);
+            int updateCount = cmdAccess.SetData(sqlStr);
             return updateCount;
         }
 
         /// <summary>
         /// 修改数据库数据
         /// </summary>
-        /// <param name="cmdAccess">脚本模型</param>
+        /// <param name="cmdAccess">对象</param>
         /// <returns>影响行数</returns>
         [Obsolete]
         public static async Task<int> UpdateDataAsync(DbAccess cmdAccess)
         {
             string sqlStr = cmdAccess.GetSql();
-            int updateCount = await SetDataAsync(cmdAccess, sqlStr);
+            int updateCount = await cmdAccess.SetDataAsync(sqlStr);
             return updateCount;
-        }
-
-        /// <summary>
-        /// 查询数据
-        /// </summary>
-        /// <param name="cmdAccess">脚本模型</param>
-        /// <param name="sqlStr">Sql脚本</param>
-        /// <returns>数据</returns>
-        [Obsolete]
-        private static DataTable GetData(DbAccess cmdAccess, string sqlStr)
-        {
-            return cmdAccess.dataBase.FindTable(sqlStr);
-        }
-
-        /// <summary>
-        /// 查询数据
-        /// </summary>
-        /// <param name="cmdAccess">脚本模型</param>
-        /// <param name="sqlStr">Sql脚本</param>
-        /// <returns>数据</returns>
-        [Obsolete]
-        private static async Task<DataTable> GetDataAsync(DbAccess cmdAccess, string sqlStr)
-        {
-            return await cmdAccess.dataBase.FindTableAsync(sqlStr);
-        }
-
-        /// <summary>
-        /// 修改数据
-        /// </summary>
-        /// <param name="cmdAccess">脚本模型</param>
-        /// <param name="sqlStr">Sql脚本</param>
-        /// <returns>影响行数</returns>
-        [Obsolete]
-        private static int SetData(DbAccess cmdAccess, string sqlStr)
-        {
-            return cmdAccess.dataBase.ExecuteSqlRaw(sqlStr);
-        }
-
-        /// <summary>
-        /// 修改数据
-        /// </summary>
-        /// <param name="cmdAccess">脚本模型</param>
-        /// <param name="sqlStr">Sql脚本</param>
-        /// <returns>影响行数</returns>
-        [Obsolete]
-        private static async Task<int> SetDataAsync(DbAccess cmdAccess, string sqlStr)
-        {
-            return await cmdAccess.dataBase.ExecuteSqlRawAsync(sqlStr);
         }
     }
 }

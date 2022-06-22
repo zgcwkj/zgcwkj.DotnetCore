@@ -6,7 +6,6 @@ using System.Data;
 using System.Data.Common;
 using System.Diagnostics;
 using System.Threading.Tasks;
-using zgcwkj.Util.Data.DataBase;
 
 namespace zgcwkj.Util.Data.Extension
 {

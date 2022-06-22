@@ -66,8 +66,8 @@ namespace zgcwkj.Web.Controllers
         [HttpPost]
         public IActionResult TestCache()
         {
-            int testCache = DataFactory.Cache.Get<int>("TestCache");
-            DataFactory.Cache.Set("TestCache", testCache + 1);
+            int testCache = CacheAccess.Get<int>("TestCache");
+            CacheAccess.Set("TestCache", testCache + 1);
             return Json(testCache);
         }
 

@@ -16,8 +16,8 @@ namespace zgcwkj.Demo
 
             //Cache
             Console.WriteLine("Cache >");
-            DataFactory.Cache.Set("zgcwkj", userID,0);
-            Console.WriteLine(DataFactory.Cache.Get<string>("zgcwkj"));
+            CacheAccess.Set("zgcwkj", userID,0);
+            Console.WriteLine(CacheAccess.Get<string>("zgcwkj"));
 
             //DbContext
             using var myDbContext = new MyDbContext();

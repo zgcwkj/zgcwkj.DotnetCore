@@ -4,7 +4,6 @@ using Microsoft.Data.SqlClient;
 using Microsoft.Data.Sqlite;
 using MySqlConnector;
 using Npgsql;
-using zgcwkj.Util.Data.DataBase;
 
 namespace zgcwkj.Util.Data.Extension
 {

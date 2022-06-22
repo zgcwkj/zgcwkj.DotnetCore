@@ -1,8 +1,4 @@
 ﻿using System;
-using zgcwkj.Util.Data.DataBase.MySql;
-using zgcwkj.Util.Data.DataBase.PostgreSql;
-using zgcwkj.Util.Data.DataBase.SQLite;
-using zgcwkj.Util.Data.DataBase.SqlServer;
 using zgcwkj.Util.Enum;
 using zgcwkj.Util.Interface;
 
@@ -11,7 +7,7 @@ namespace zgcwkj.Util.Data
     /// <summary>
     /// 数据库工厂
     /// </summary>
-    public class DbFactory
+    internal class DbFactory
     {
         /// <summary>
         /// 数据库类型
@@ -61,25 +57,6 @@ namespace zgcwkj.Util.Data
             {
                 string dbTimeoutStr = ConfigHelp.Get("DbTimeout");
                 return dbTimeoutStr.IsNullOrZero() ? 10 : dbTimeoutStr.ToInt();
-            }
-        }
-
-        /// <summary>
-        /// 数据库对象
-        /// </summary>
-        public static IDataBase Db
-        {
-            get
-            {
-                IDataBase dataBase = Type switch
-                {
-                    DbType.SQLite => new SQLiteDB(),
-                    DbType.PostgreSql => new PostgreSqlDB(),
-                    DbType.SqlServer => new SqlServerDB(),
-                    DbType.MySql => new MySqlDB(),
-                    _ => throw new Exception("未找到数据库配置"),
-                };
-                return dataBase;
             }
         }
     }

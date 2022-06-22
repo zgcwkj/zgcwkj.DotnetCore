@@ -13,7 +13,9 @@ namespace zgcwkj.Util.Data
     /// <summary>
     /// <b>数据库连接对象</b>
     /// 
-    /// <para>继承此对象可以实现原生操作</para>
+    /// <para>常规使用：using var dbComm = new DbContext()</para>
+    /// <para>注入使用：services.AddDbContext&lt;DbContext&gt;()</para>
+    /// <para>继承此对象可以实现原生操作！by zgcwkj</para>
     /// </summary>
     public class DbCommon : DbContext, IDisposable
     {
