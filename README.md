@@ -7,7 +7,7 @@
 ## Import Package
 
 ```
-dotnet add package zgcwkj.Util --version 1.2.2
+dotnet add package zgcwkj.Util
 ```
 
 ## Contact me
