@@ -84,12 +84,12 @@ namespace zgcwkj.Util
         [Obsolete]
         public static DataRow QueryDataRow(DbAccess cmdAccess)
         {
-            if (!cmdAccess.dbModel.Sql.ToLower().Contains("limit"))
-            {
-                cmdAccess.dbModel.EndSql = "limit 1";
-            }
             string sqlStr = cmdAccess.GetSql();
-            DataTable dataTable = cmdAccess.GetData(sqlStr);
+            var strFrom = $" {sqlStr}";
+            var strLimit = strFrom.RemoveEnter().ToLower();
+            strLimit = Regex.Match(strLimit, @".+limit").Value;
+            if (strLimit.IsNull()) strFrom = $"{strFrom} limit 1";
+            DataTable dataTable = cmdAccess.GetData(strFrom);
             if (dataTable.Rows.Count > 0)
             {
                 return dataTable.Rows[0];
@@ -105,12 +105,12 @@ namespace zgcwkj.Util
         [Obsolete]
         public static async Task<DataRow> QueryDataRowAsync(DbAccess cmdAccess)
         {
-            if (!cmdAccess.dbModel.Sql.ToLower().Contains("limit"))
-            {
-                cmdAccess.dbModel.EndSql = "limit 1";
-            }
             string sqlStr = cmdAccess.GetSql();
-            DataTable dataTable = await cmdAccess.GetDataAsync(sqlStr);
+            var strFrom = $" {sqlStr}";
+            var strLimit = strFrom.RemoveEnter().ToLower();
+            strLimit = Regex.Match(strLimit, @".+limit").Value;
+            if (strLimit.IsNull()) strFrom = $"{strFrom} limit 1";
+            DataTable dataTable = await cmdAccess.GetDataAsync(strFrom);
             if (dataTable.Rows.Count > 0)
             {
                 return dataTable.Rows[0];
@@ -126,12 +126,12 @@ namespace zgcwkj.Util
         [Obsolete]
         public static object QueryScalar(DbAccess cmdAccess)
         {
-            if (!cmdAccess.dbModel.Sql.ToLower().Contains("limit"))
-            {
-                cmdAccess.dbModel.EndSql = "limit 1";
-            }
             string sqlStr = cmdAccess.GetSql();
-            DataTable dataTable = cmdAccess.GetData(sqlStr);
+            var strFrom = $" {sqlStr}";
+            var strLimit = strFrom.RemoveEnter().ToLower();
+            strLimit = Regex.Match(strLimit, @".+limit").Value;
+            if (strLimit.IsNull()) strFrom = $"{strFrom} limit 1";
+            DataTable dataTable = cmdAccess.GetData(strFrom);
             if (dataTable.Rows.Count > 0)
             {
                 return dataTable.Rows[0][0];
@@ -147,12 +147,12 @@ namespace zgcwkj.Util
         [Obsolete]
         public static async Task<object> QueryScalarAsync(DbAccess cmdAccess)
         {
-            if (!cmdAccess.dbModel.Sql.ToLower().Contains("limit"))
-            {
-                cmdAccess.dbModel.EndSql = "limit 1";
-            }
             string sqlStr = cmdAccess.GetSql();
-            DataTable dataTable = await cmdAccess.GetDataAsync(sqlStr);
+            var strFrom = $" {sqlStr}";
+            var strLimit= strFrom.RemoveEnter().ToLower();
+            strLimit = Regex.Match(strLimit, @".+limit").Value;
+            if (strLimit.IsNull()) strFrom = $"{strFrom} limit 1";
+            DataTable dataTable = await cmdAccess.GetDataAsync(strFrom);
             if (dataTable.Rows.Count > 0)
             {
                 return dataTable.Rows[0][0];
@@ -170,7 +170,7 @@ namespace zgcwkj.Util
         {
             string sqlStr = cmdAccess.GetSql();
             var strFrom = $" {sqlStr}";
-            var strCount = strFrom.Replace("\r", "").Replace("\n", "").ToLower();
+            var strCount = strFrom.RemoveEnter().ToLower();
             strCount = Regex.Match(strCount, @".+select.+count").Value;
             if (strCount.IsNull()) strFrom = $"select count(0) as counts from ({sqlStr}) tables";
             DataTable dataTable = cmdAccess.GetData(strFrom);
@@ -191,7 +191,7 @@ namespace zgcwkj.Util
         {
             string sqlStr = cmdAccess.GetSql();
             var strFrom = $" {sqlStr}";
-            var strCount = strFrom.Replace("\r", "").Replace("\n", "").ToLower();
+            var strCount = strFrom.RemoveEnter().ToLower();
             strCount = Regex.Match(strCount, @".+select.+count").Value;
             if (strCount.IsNull()) strFrom = $"select count(0) as counts from ({sqlStr}) tables";
             DataTable dataTable = await cmdAccess.GetDataAsync(strFrom);

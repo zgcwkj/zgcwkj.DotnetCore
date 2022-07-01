@@ -497,7 +497,7 @@ namespace zgcwkj.Util
         public static DataTable QueryDataTable(this DbAccess cmdAccess)
         {
             var sqlStr = cmdAccess.GetSql();
-            return GetData(cmdAccess, sqlStr);
+            return cmdAccess.GetData(sqlStr);
         }
 
         /// <summary>
@@ -508,7 +508,7 @@ namespace zgcwkj.Util
         public static async Task<DataTable> QueryDataTableAsync(this DbAccess cmdAccess)
         {
             var sqlStr = cmdAccess.GetSql();
-            return await GetDataAsync(cmdAccess, sqlStr);
+            return await cmdAccess.GetDataAsync(sqlStr);
         }
 
         /// <summary>
@@ -519,7 +519,7 @@ namespace zgcwkj.Util
         public static List<T> QueryDataList<T>(this DbAccess cmdAccess)
         {
             var sqlStr = cmdAccess.GetSql();
-            return GetList<T>(cmdAccess, sqlStr);
+            return cmdAccess.GetList<T>(sqlStr);
         }
 
         /// <summary>
@@ -530,7 +530,7 @@ namespace zgcwkj.Util
         public static async Task<List<T>> QueryDataListAsync<T>(this DbAccess cmdAccess)
         {
             var sqlStr = cmdAccess.GetSql();
-            return await GetListAsync<T>(cmdAccess, sqlStr);
+            return await cmdAccess.GetListAsync<T>(sqlStr);
         }
 
         /// <summary>
@@ -540,12 +540,12 @@ namespace zgcwkj.Util
         /// <returns>行数据</returns>
         public static DataRow QueryDataRow(this DbAccess cmdAccess)
         {
-            if (!cmdAccess.dbModel.Sql.ToLower().Contains("limit"))
-            {
-                cmdAccess.dbModel.EndSql = "limit 1";
-            }
             var sqlStr = cmdAccess.GetSql();
-            var dataTable = GetData(cmdAccess, sqlStr);
+            var strFrom = $" {sqlStr}";
+            var strLimit = strFrom.RemoveEnter().ToLower();
+            strLimit = Regex.Match(strLimit, @".+limit").Value;
+            if (strLimit.IsNull()) strFrom = $"{strFrom} limit 1";
+            var dataTable = cmdAccess.GetData(strFrom);
             if (dataTable.Rows.Count > 0)
             {
                 return dataTable.Rows[0];
@@ -560,12 +560,12 @@ namespace zgcwkj.Util
         /// <returns>行数据</returns>
         public static async Task<DataRow> QueryDataRowAsync(this DbAccess cmdAccess)
         {
-            if (!cmdAccess.dbModel.Sql.ToLower().Contains("limit"))
-            {
-                cmdAccess.dbModel.EndSql = "limit 1";
-            }
             var sqlStr = cmdAccess.GetSql();
-            var dataTable = await GetDataAsync(cmdAccess, sqlStr);
+            var strFrom = $" {sqlStr}";
+            var strLimit = strFrom.RemoveEnter().ToLower();
+            strLimit = Regex.Match(strLimit, @".+limit").Value;
+            if (strLimit.IsNull()) strFrom = $"{strFrom} limit 1";
+            var dataTable = await cmdAccess.GetDataAsync(strFrom);
             if (dataTable.Rows.Count > 0)
             {
                 return dataTable.Rows[0];
@@ -580,12 +580,12 @@ namespace zgcwkj.Util
         /// <returns>数据对象</returns>
         public static T QueryObj<T>(this DbAccess cmdAccess)
         {
-            if (!cmdAccess.dbModel.Sql.ToLower().Contains("limit"))
-            {
-                cmdAccess.dbModel.EndSql = "limit 1";
-            }
             var sqlStr = cmdAccess.GetSql();
-            var dataList = GetList<T>(cmdAccess, sqlStr);
+            var strFrom = $" {sqlStr}";
+            var strLimit = strFrom.RemoveEnter().ToLower();
+            strLimit = Regex.Match(strLimit, @".+limit").Value;
+            if (strLimit.IsNull()) strFrom = $"{strFrom} limit 1";
+            var dataList = cmdAccess.GetList<T>(strFrom);
             return dataList.FirstOrDefault();
         }
 
@@ -596,12 +596,12 @@ namespace zgcwkj.Util
         /// <returns>数据对象</returns>
         public static async Task<T> QueryObjAsync<T>(this DbAccess cmdAccess)
         {
-            if (!cmdAccess.dbModel.Sql.ToLower().Contains("limit"))
-            {
-                cmdAccess.dbModel.EndSql = "limit 1";
-            }
             var sqlStr = cmdAccess.GetSql();
-            var dataList = await GetListAsync<T>(cmdAccess, sqlStr);
+            var strFrom = $" {sqlStr}";
+            var strLimit = strFrom.RemoveEnter().ToLower();
+            strLimit = Regex.Match(strLimit, @".+limit").Value;
+            if (strLimit.IsNull()) strFrom = $"{strFrom} limit 1";
+            var dataList = await cmdAccess.GetListAsync<T>(strFrom);
             return dataList.FirstOrDefault();
         }
 
@@ -612,12 +612,12 @@ namespace zgcwkj.Util
         /// <returns>首行首列</returns>
         public static object QueryScalar(this DbAccess cmdAccess)
         {
-            if (!cmdAccess.dbModel.Sql.ToLower().Contains("limit"))
-            {
-                cmdAccess.dbModel.EndSql = "limit 1";
-            }
             var sqlStr = cmdAccess.GetSql();
-            var dataTable = GetData(cmdAccess, sqlStr);
+            var strFrom = $" {sqlStr}";
+            var strLimit = strFrom.RemoveEnter().ToLower();
+            strLimit = Regex.Match(strLimit, @".+limit").Value;
+            if (strLimit.IsNull()) strFrom = $"{strFrom} limit 1";
+            var dataTable = cmdAccess.GetData(strFrom);
             if (dataTable.Rows.Count > 0)
             {
                 return dataTable.Rows[0][0];
@@ -632,12 +632,12 @@ namespace zgcwkj.Util
         /// <returns>首行首列</returns>
         public static async Task<object> QueryScalarAsync(this DbAccess cmdAccess)
         {
-            if (!cmdAccess.dbModel.Sql.ToLower().Contains("limit"))
-            {
-                cmdAccess.dbModel.EndSql = "limit 1";
-            }
             var sqlStr = cmdAccess.GetSql();
-            var dataTable = await GetDataAsync(cmdAccess, sqlStr);
+            var strFrom = $" {sqlStr}";
+            var strLimit = strFrom.RemoveEnter().ToLower();
+            strLimit = Regex.Match(strLimit, @".+limit").Value;
+            if (strLimit.IsNull()) strFrom = $"{strFrom} limit 1";
+            var dataTable = await cmdAccess.GetDataAsync(strFrom);
             if (dataTable.Rows.Count > 0)
             {
                 return dataTable.Rows[0][0];
@@ -654,10 +654,10 @@ namespace zgcwkj.Util
         {
             var sqlStr = cmdAccess.GetSql();
             var strFrom = $" {sqlStr}";
-            var strCount = strFrom.Replace("\r", "").Replace("\n", "").ToLower();
+            var strCount = strFrom.RemoveEnter().ToLower();
             strCount = Regex.Match(strCount, @".+select.+count").Value;
             if (strCount.IsNull()) strFrom = $"select count(0) as counts from ({sqlStr}) tables";
-            var dataTable = GetData(cmdAccess, strFrom);
+            var dataTable = cmdAccess.GetData(strFrom);
             if (dataTable.Rows.Count > 0)
             {
                 return dataTable.Rows[0][0].ToInt();
@@ -674,10 +674,10 @@ namespace zgcwkj.Util
         {
             var sqlStr = cmdAccess.GetSql();
             var strFrom = $" {sqlStr}";
-            var strCount = strFrom.Replace("\r", "").Replace("\n", "").ToLower();
+            var strCount = strFrom.RemoveEnter().ToLower();
             strCount = Regex.Match(strCount, @".+select.+count").Value;
             if (strCount.IsNull()) strFrom = $"select count(0) as counts from ({sqlStr}) tables";
-            var dataTable = await GetDataAsync(cmdAccess, strFrom);
+            var dataTable = await cmdAccess.GetDataAsync(strFrom);
             if (dataTable.Rows.Count > 0)
             {
                 return dataTable.Rows[0][0].ToInt();
@@ -693,7 +693,7 @@ namespace zgcwkj.Util
         public static int UpdateData(this DbAccess cmdAccess)
         {
             var sqlStr = cmdAccess.GetSql();
-            var updateCount = SetData(cmdAccess, sqlStr);
+            var updateCount = cmdAccess.SetData(sqlStr);
             return updateCount;
         }
 
@@ -705,7 +705,7 @@ namespace zgcwkj.Util
         public static async Task<int> UpdateDataAsync(this DbAccess cmdAccess)
         {
             var sqlStr = cmdAccess.GetSql();
-            var updateCount = await SetDataAsync(cmdAccess, sqlStr);
+            var updateCount = await cmdAccess.SetDataAsync(sqlStr);
             return updateCount;
         }
 
@@ -801,6 +801,23 @@ namespace zgcwkj.Util
             var dbCommon = cmdAccess.dbCommon;
             var count = await dbCommon.Database.ExecuteSqlRawAsync(sqlStr, null);
             return count;
+        }
+
+        #endregion
+
+        #region 其他
+
+        /// <summary>
+        /// 删除回车
+        /// </summary>
+        /// <param name="content">要删除的字符串</param>
+        /// <returns>删除后的字符串</returns>
+        internal static string RemoveEnter(this string content)
+        {
+            var okStr = content;
+            okStr = okStr.Replace("\r", "");
+            okStr = okStr.Replace("\n", "");
+            return okStr;
         }
 
         #endregion
