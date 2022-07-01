@@ -653,7 +653,10 @@ namespace zgcwkj.Util
         public static int QueryRowCount(this DbAccess cmdAccess)
         {
             var sqlStr = cmdAccess.GetSql();
-            var strFrom = $"select count(0) as counts from ({sqlStr}) tables";
+            var strFrom = $" {sqlStr}";
+            var strCount = strFrom.Replace("\r", "").Replace("\n", "").ToLower();
+            strCount = Regex.Match(strCount, @".+select.+count").Value;
+            if (strCount.IsNull()) strFrom = $"select count(0) as counts from ({sqlStr}) tables";
             var dataTable = GetData(cmdAccess, strFrom);
             if (dataTable.Rows.Count > 0)
             {
@@ -670,7 +673,10 @@ namespace zgcwkj.Util
         public static async Task<int> QueryRowCountAsync(this DbAccess cmdAccess)
         {
             var sqlStr = cmdAccess.GetSql();
-            var strFrom = $"select count(0) as counts from ({sqlStr}) tables";
+            var strFrom = $" {sqlStr}";
+            var strCount = strFrom.Replace("\r", "").Replace("\n", "").ToLower();
+            strCount = Regex.Match(strCount, @".+select.+count").Value;
+            if (strCount.IsNull()) strFrom = $"select count(0) as counts from ({sqlStr}) tables";
             var dataTable = await GetDataAsync(cmdAccess, strFrom);
             if (dataTable.Rows.Count > 0)
             {

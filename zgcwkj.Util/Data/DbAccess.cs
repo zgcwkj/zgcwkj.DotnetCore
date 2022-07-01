@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore.Storage;
 using System;
 using System.Data;
 using System.Data.Common;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using zgcwkj.Util.Data;
 using zgcwkj.Util.Data.Extension;
@@ -168,7 +169,10 @@ namespace zgcwkj.Util
         public static int QueryRowCount(DbAccess cmdAccess)
         {
             string sqlStr = cmdAccess.GetSql();
-            string strFrom = $"select count(0) as counts from ({sqlStr}) tables";
+            var strFrom = $" {sqlStr}";
+            var strCount = strFrom.Replace("\r", "").Replace("\n", "").ToLower();
+            strCount = Regex.Match(strCount, @".+select.+count").Value;
+            if (strCount.IsNull()) strFrom = $"select count(0) as counts from ({sqlStr}) tables";
             DataTable dataTable = cmdAccess.GetData(strFrom);
             if (dataTable.Rows.Count > 0)
             {
@@ -186,7 +190,10 @@ namespace zgcwkj.Util
         public static async Task<int> QueryRowCountAsync(DbAccess cmdAccess)
         {
             string sqlStr = cmdAccess.GetSql();
-            string strFrom = $"select count(0) as counts from ({sqlStr}) tables";
+            var strFrom = $" {sqlStr}";
+            var strCount = strFrom.Replace("\r", "").Replace("\n", "").ToLower();
+            strCount = Regex.Match(strCount, @".+select.+count").Value;
+            if (strCount.IsNull()) strFrom = $"select count(0) as counts from ({sqlStr}) tables";
             DataTable dataTable = await cmdAccess.GetDataAsync(strFrom);
             if (dataTable.Rows.Count > 0)
             {
