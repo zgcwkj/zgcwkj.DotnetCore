@@ -28,7 +28,7 @@ namespace zgcwkj.Util
         /// <returns>存在</returns>
         public static bool Exists(this CacheAccess cacheAccess, string key, int db = -1)
         {
-            return cacheAccess.Exists(key, db);
+            return cacheAccess.Cache.Exists(key, db);
         }
 
         /// <summary>
@@ -43,7 +43,7 @@ namespace zgcwkj.Util
         /// <returns>状态</returns>
         public static bool Set<T>(this CacheAccess cacheAccess, string key, T value, int db = -1, TimeSpan timeSpan = default)
         {
-            return cacheAccess.Set(key, value, db);
+            return cacheAccess.Cache.Set(key, value, db);
         }
 
         /// <summary>
@@ -56,7 +56,7 @@ namespace zgcwkj.Util
         /// <returns>数据</returns>
         public static T Get<T>(this CacheAccess cacheAccess, string key, int db = -1)
         {
-            return cacheAccess.Get<T>(key, db);
+            return cacheAccess.Cache.Get<T>(key, db);
         }
 
         /// <summary>
@@ -68,7 +68,7 @@ namespace zgcwkj.Util
         /// <returns>状态</returns>
         public static bool Remove(this CacheAccess cacheAccess, string key, int db = -1)
         {
-            return cacheAccess.Remove(key, db);
+            return cacheAccess.Cache.Remove(key, db);
         }
 
         /// <summary>
@@ -81,7 +81,7 @@ namespace zgcwkj.Util
         /// <returns>存在</returns>
         public static bool HashExists(this CacheAccess cacheAccess, string key, string hashKey, int db = -1)
         {
-            return cacheAccess.HashExists(key, hashKey, db);
+            return cacheAccess.Cache.HashExists(key, hashKey, db);
         }
 
         /// <summary>
@@ -95,7 +95,7 @@ namespace zgcwkj.Util
         /// <returns>状态</returns>
         public static bool HashSet<T>(this CacheAccess cacheAccess, string key, string hashKey, T hashValue, int db = -1)
         {
-            return cacheAccess.HashSet(key, hashKey, hashValue, db);
+            return cacheAccess.Cache.HashSet(key, hashKey, hashValue, db);
         }
 
         /// <summary>
@@ -109,7 +109,7 @@ namespace zgcwkj.Util
         /// <returns>数据</returns>
         public static T HashGet<T>(this CacheAccess cacheAccess, string key, string hashKey, int db = -1)
         {
-            return cacheAccess.HashGet<T>(key, hashKey, db);
+            return cacheAccess.Cache.HashGet<T>(key, hashKey, db);
         }
 
         /// <summary>
@@ -122,7 +122,7 @@ namespace zgcwkj.Util
         /// <returns>状态</returns>
         public static long HashRemove(this CacheAccess cacheAccess, string key, string hashKey, int db = -1)
         {
-            return cacheAccess.HashRemove(key, hashKey, db);
+            return cacheAccess.Cache.HashRemove(key, hashKey, db);
         }
     }
 }
