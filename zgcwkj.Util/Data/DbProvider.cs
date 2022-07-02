@@ -724,7 +724,7 @@ namespace zgcwkj.Util
             var dbCommon = cmdAccess.dbCommon;
             var dbConnection = dbCommon.Database.GetDbConnection();
             var dbScalar = new DbScalarExtension(dbCommon, dbConnection);
-            var dataReader = dbScalar.ExecuteReade(CommandType.Text, sqlStr, null);
+            var dataReader = dbScalar.ExecuteReade(CommandType.Text, sqlStr);
             var dataTable = DbExtension.IDataReaderToDataTable(dataReader);
             return dataTable;
         }
@@ -740,7 +740,7 @@ namespace zgcwkj.Util
             var dbCommon = cmdAccess.dbCommon;
             var dbConnection = dbCommon.Database.GetDbConnection();
             var dbScalar = new DbScalarExtension(dbCommon, dbConnection);
-            var dataReader = await dbScalar.ExecuteReadeAsync(CommandType.Text, sqlStr, null);
+            var dataReader = await dbScalar.ExecuteReadeAsync(CommandType.Text, sqlStr);
             var dataTable = DbExtension.IDataReaderToDataTable(dataReader);
             return dataTable;
         }
@@ -756,7 +756,7 @@ namespace zgcwkj.Util
             var dbCommon = cmdAccess.dbCommon;
             var dbConnection = dbCommon.Database.GetDbConnection();
             var dbScalar = new DbScalarExtension(dbCommon, dbConnection);
-            var dataReader = dbScalar.ExecuteReade(CommandType.Text, sqlStr, null);
+            var dataReader = dbScalar.ExecuteReade(CommandType.Text, sqlStr);
             var dataList = DbExtension.IDataReaderToList<T>(dataReader);
             return dataList;
         }
@@ -772,7 +772,7 @@ namespace zgcwkj.Util
             var dbCommon = cmdAccess.dbCommon;
             var dbConnection = dbCommon.Database.GetDbConnection();
             var dbScalar = new DbScalarExtension(dbCommon, dbConnection);
-            var dataReader = await dbScalar.ExecuteReadeAsync(CommandType.Text, sqlStr, null);
+            var dataReader = await dbScalar.ExecuteReadeAsync(CommandType.Text, sqlStr);
             var dataList = DbExtension.IDataReaderToList<T>(dataReader);
             return dataList;
         }
@@ -786,7 +786,7 @@ namespace zgcwkj.Util
         internal static int SetData(this DbAccess cmdAccess, string sqlStr)
         {
             var dbCommon = cmdAccess.dbCommon;
-            var count = dbCommon.Database.ExecuteSqlRaw(sqlStr, null);
+            var count = dbCommon.Database.ExecuteSqlRaw(sqlStr);
             return count;
         }
 
@@ -799,7 +799,7 @@ namespace zgcwkj.Util
         internal static async Task<int> SetDataAsync(this DbAccess cmdAccess, string sqlStr)
         {
             var dbCommon = cmdAccess.dbCommon;
-            var count = await dbCommon.Database.ExecuteSqlRawAsync(sqlStr, null);
+            var count = await dbCommon.Database.ExecuteSqlRawAsync(sqlStr);
             return count;
         }
 
