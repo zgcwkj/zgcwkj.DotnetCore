@@ -104,15 +104,18 @@ namespace zgcwkj.Util
         /// </summary>
         /// <param name="app">应用</param>
         /// <param name="url">地址</param>
+        /// <param name="api">接口</param>
         /// <param name="name">名称</param>
-        public static void AddSwagger(this IApplicationBuilder app, string url = "/swagger/v1/swagger.json", string name = "Web API")
+        public static void AddSwagger(this IApplicationBuilder app, string url = "Swagger", string api = "/swagger/v1/swagger.json", string name = "Web API")
         {
             if (app == null) throw new ArgumentNullException(nameof(app));
 
             app.UseSwagger();
             app.UseSwaggerUI(options =>
             {
-                options.SwaggerEndpoint(url, name);
+                options.SwaggerEndpoint(api, name);
+                //访问地址
+                options.RoutePrefix = url;
                 //修改界面打开时自动折叠
                 options.DocExpansion(DocExpansion.None);
             });
