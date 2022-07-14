@@ -16,7 +16,7 @@ namespace zgcwkj.Util.Data
         {
             get
             {
-                string dbTypeStr = ConfigHelp.Get("DbType") ?? "sqlite";
+                var dbTypeStr = ConfigHelp.Get("DbType") ?? "sqlite";
                 var dbType = dbTypeStr.ToLower() switch
                 {
                     "sqlite" => DbType.SQLite,
@@ -36,7 +36,7 @@ namespace zgcwkj.Util.Data
         {
             get
             {
-                string dbConnect = Type switch
+                var dbConnect = Type switch
                 {
                     DbType.SQLite => ConfigHelp.Get("SQLiteConnect"),
                     DbType.PostgreSql => ConfigHelp.Get("PgsqlConnect"),
@@ -55,7 +55,7 @@ namespace zgcwkj.Util.Data
         {
             get
             {
-                string dbTimeoutStr = ConfigHelp.Get("DbTimeout");
+                var dbTimeoutStr = ConfigHelp.Get("DbTimeout");
                 return dbTimeoutStr.IsNullOrZero() ? 10 : dbTimeoutStr.ToInt();
             }
         }

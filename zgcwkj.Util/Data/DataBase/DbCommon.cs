@@ -22,22 +22,22 @@ namespace zgcwkj.Util.Data
         /// <summary>
         /// 数据库类型
         /// </summary>
-        private readonly DbType dbType;
+        private DbType dbType { get; }
 
         /// <summary>
         /// 连接命令超时
         /// </summary>
-        private readonly int dbTimeout;
+        private int dbTimeout { get; }
 
         /// <summary>
         /// 连接字符
         /// </summary>
-        private readonly string dbConnect;
+        private string dbConnect { get; }
 
         /// <summary>
         /// 数据库版本
         /// </summary>
-        private readonly int dbVersion;
+        private int dbVersion { get; }
 
         /// <summary>
         /// <para>数据库连接对象</para>
@@ -155,31 +155,28 @@ namespace zgcwkj.Util.Data
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             //提取所有模型
-            string filePath = GlobalConstant.GetRunPath;
-            DirectoryInfo root = new DirectoryInfo(filePath);
-            FileInfo[] files = root.GetFiles();
+            var filePath = GlobalConstant.GetRunPath;
+            var root = new DirectoryInfo(filePath);
+            var files = root.GetFiles("*.dll");
             foreach (var file in files)
             {
                 if (file.FullName.Contains("Microsoft")) continue;
                 if (file.FullName.Contains("System")) continue;
-                if (file.Extension == ".dll")
+                try
                 {
-                    try
+                    var fileName = file.Name.Replace(file.Extension, "");
+                    var assemblyName = new AssemblyName(fileName);
+                    var entityAssembly = Assembly.Load(assemblyName);
+                    var typesToRegister = entityAssembly.GetTypes()
+                        .Where(p => !string.IsNullOrEmpty(p.Namespace))
+                        .Where(p => !string.IsNullOrEmpty(p.GetCustomAttribute<TableAttribute>()?.Name));
+                    foreach (var type in typesToRegister)
                     {
-                        string fileName = file.Name.Replace(file.Extension, "");
-                        AssemblyName assemblyName = new AssemblyName(fileName);
-                        Assembly entityAssembly = Assembly.Load(assemblyName);
-                        IEnumerable<Type> typesToRegister = entityAssembly.GetTypes()
-                            .Where(p => !string.IsNullOrEmpty(p.Namespace))
-                            .Where(p => !string.IsNullOrEmpty(p.GetCustomAttribute<TableAttribute>()?.Name));
-                        foreach (Type type in typesToRegister)
-                        {
-                            dynamic configurationInstance = Activator.CreateInstance(type);
-                            modelBuilder.Model.AddEntityType(type);
-                        }
+                        dynamic configurationInstance = Activator.CreateInstance(type);
+                        modelBuilder.Model.AddEntityType(type);
                     }
-                    catch { }
                 }
+                catch { }
             }
             base.OnModelCreating(modelBuilder);
         }
