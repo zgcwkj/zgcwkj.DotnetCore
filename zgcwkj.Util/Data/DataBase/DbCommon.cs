@@ -154,6 +154,17 @@ namespace zgcwkj.Util.Data
         /// <param name="modelBuilder">模型制作者</param>
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            ////排除以实现的
+            //var dbsetNames = new List<string>();
+            //var inheritType = GetType();
+            //foreach (var property in inheritType.GetProperties())
+            //{
+            //    var pName = property.PropertyType.Name;
+            //    if (pName.ToLower().Contains("dbset"))
+            //    {
+            //        dbsetNames.Add(property.Name);
+            //    }
+            //}
             //提取所有模型
             var filePath = GlobalConstant.GetRunPath;
             var root = new DirectoryInfo(filePath);

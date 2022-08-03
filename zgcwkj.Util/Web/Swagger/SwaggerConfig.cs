@@ -40,10 +40,11 @@ namespace zgcwkj.Util
                 var xmlFilesPath = Directory.GetFiles(basePath, "*.xml");
                 foreach (var xmlPath in xmlFilesPath)
                 {
-                    options.IncludeXmlComments(xmlPath);
+                    options.IncludeXmlComments(xmlPath, true);
                 }
             });
         }
+
         /// <summary>
         /// Swagger 和 Jwt 配置
         /// </summary>
