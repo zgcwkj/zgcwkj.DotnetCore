@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace zgcwkj.Util
+﻿namespace zgcwkj.Util
 {
     /// <summary>
     /// 配置文件数据映射

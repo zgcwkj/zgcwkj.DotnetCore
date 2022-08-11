@@ -1,6 +1,5 @@
-﻿using System;
-using Microsoft.Extensions.Configuration;
-using zgcwkj.Util.Log;
+﻿using Microsoft.Extensions.Configuration;
+using System;
 using zgcwkj.Util.Common;
 
 namespace zgcwkj.Util

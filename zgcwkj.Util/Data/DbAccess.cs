@@ -1,12 +1,9 @@
-﻿using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Storage;
+﻿using Microsoft.EntityFrameworkCore.Storage;
 using System;
 using System.Data;
-using System.Data.Common;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using zgcwkj.Util.Data;
-using zgcwkj.Util.Data.Extension;
 
 namespace zgcwkj.Util
 {
@@ -149,7 +146,7 @@ namespace zgcwkj.Util
         {
             string sqlStr = cmdAccess.GetSql();
             var strFrom = $" {sqlStr}";
-            var strLimit= strFrom.RemoveEnter().ToLower();
+            var strLimit = strFrom.RemoveEnter().ToLower();
             strLimit = Regex.Match(strLimit, @".+limit").Value;
             if (strLimit.IsNull()) strFrom = $"{strFrom} limit 1";
             DataTable dataTable = await cmdAccess.GetDataAsync(strFrom);

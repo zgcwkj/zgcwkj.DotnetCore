@@ -1,7 +1,6 @@
-﻿using System;
+﻿using Microsoft.Extensions.Hosting;
+using System;
 using System.IO;
-using Microsoft.Extensions.Hosting;
-using zgcwkj.Util.Common;
 
 namespace zgcwkj.Util
 {

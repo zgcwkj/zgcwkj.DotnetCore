@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace zgcwkj.Util.Interface
+﻿namespace zgcwkj.Util.Interface
 {
     /// <summary>
     /// 日志工具抽象

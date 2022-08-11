@@ -1,11 +1,10 @@
-﻿using System;
+﻿using Microsoft.EntityFrameworkCore;
+using System;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.IO;
 using System.Linq;
 using System.Reflection;
-using System.Collections.Generic;
 using System.Text.RegularExpressions;
-using System.ComponentModel.DataAnnotations.Schema;
-using Microsoft.EntityFrameworkCore;
 using zgcwkj.Util.Enum;
 
 namespace zgcwkj.Util.Data
@@ -13,8 +12,8 @@ namespace zgcwkj.Util.Data
     /// <summary>
     /// <b>数据库连接对象</b>
     /// 
-    /// <para>常规使用：using var dbComm = new DbContext()</para>
-    /// <para>注入使用：services.AddDbContext&lt;DbContext&gt;()</para>
+    /// <para>常规使用：using var dbComm = new DbCommon()</para>
+    /// <para>注入使用：services.AddDbContext&lt;DbCommon&gt;()</para>
     /// <para>继承此对象可以实现原生操作！by zgcwkj</para>
     /// </summary>
     public class DbCommon : DbContext, IDisposable
@@ -25,14 +24,14 @@ namespace zgcwkj.Util.Data
         private DbType dbType { get; }
 
         /// <summary>
-        /// 连接命令超时
-        /// </summary>
-        private int dbTimeout { get; }
-
-        /// <summary>
         /// 连接字符
         /// </summary>
         private string dbConnect { get; }
+
+        /// <summary>
+        /// 连接命令超时
+        /// </summary>
+        private int dbTimeout { get; }
 
         /// <summary>
         /// 数据库版本
@@ -46,8 +45,8 @@ namespace zgcwkj.Util.Data
         public DbCommon()
         {
             this.dbType = DbFactory.Type;
-            this.dbTimeout = DbFactory.Timeout;
             this.dbConnect = DbFactory.Connect;
+            this.dbTimeout = DbFactory.Timeout;
             this.dbVersion = 0;
             if (Regex.Match(DbFactory.Connect, "version=.+?;").Value.IsNotNull())
             {
@@ -67,8 +66,8 @@ namespace zgcwkj.Util.Data
         public DbCommon(DbType dbType, string dbConnect, int dbTimeout = 10)
         {
             this.dbType = dbType;
-            this.dbTimeout = dbTimeout == 10 ? dbTimeout : DbFactory.Timeout;
             this.dbConnect = dbConnect;
+            this.dbTimeout = dbTimeout == 10 ? dbTimeout : DbFactory.Timeout;
             this.dbVersion = 0;
             if (Regex.Match(dbConnect, "version=.+?;").Value.IsNotNull())
             {
@@ -87,8 +86,8 @@ namespace zgcwkj.Util.Data
         public DbCommon(string dbConnect, int dbTimeout = 10)
         {
             this.dbType = DbFactory.Type;
-            this.dbTimeout = dbTimeout == 10 ? dbTimeout : DbFactory.Timeout;
             this.dbConnect = dbConnect;
+            this.dbTimeout = dbTimeout == 10 ? dbTimeout : DbFactory.Timeout;
             this.dbVersion = 0;
             if (Regex.Match(dbConnect, "version=.+?;").Value.IsNotNull())
             {

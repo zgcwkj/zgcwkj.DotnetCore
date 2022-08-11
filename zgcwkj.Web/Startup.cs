@@ -1,8 +1,3 @@
-using System;
-using System.IO;
-using System.Text;
-using System.Text.Encodings.Web;
-using System.Text.Unicode;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Rewrite;
@@ -10,6 +5,11 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Hosting;
+using System;
+using System.IO;
+using System.Text;
+using System.Text.Encodings.Web;
+using System.Text.Unicode;
 using zgcwkj.Util;
 using zgcwkj.Web.Comm;
 
@@ -21,28 +21,16 @@ namespace zgcwkj.Web
     public class Startup
     {
         /// <summary>
-        /// 配置
-        /// </summary>
-        public IConfiguration Configuration { get; }
-
-        /// <summary>
-        /// Web主机环境
-        /// </summary>
-        public IWebHostEnvironment WebHostEnvironment { get; set; }
-
-        /// <summary>
         /// 启动程序
         /// </summary>
         /// <param name="configuration">配置</param>
         /// <param name="env">环境</param>
         public Startup(IConfiguration configuration, IWebHostEnvironment env)
         {
-            Configuration = configuration;
-            WebHostEnvironment = env;
-            //启动日志
-            GlobalContext.LogWhenStart(env);
             //主机环境
             GlobalContext.HostingEnvironment = env;
+            //配置对象
+            GlobalContext.Configuration = configuration;
         }
 
         /// <summary>
@@ -54,8 +42,6 @@ namespace zgcwkj.Web
         {
             //所有注册服务和类实例容器
             GlobalContext.Services = services;
-            //配置对象
-            GlobalContext.Configuration = Configuration;
             //添加单例
             services.AddSingleton(HtmlEncoder.Create(UnicodeRanges.All));
             //注册编码

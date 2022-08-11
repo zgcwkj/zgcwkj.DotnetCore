@@ -1,12 +1,10 @@
-﻿using System;
-using System.IO;
-using System.Reflection;
-using System.Text;
-using Microsoft.AspNetCore.Hosting;
+﻿using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.StaticFiles;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
+using System;
+using System.IO;
+using System.Reflection;
 
 namespace zgcwkj.Util
 {
@@ -135,26 +133,6 @@ namespace zgcwkj.Util
             }
             bool ok = GetEnvVar(key) == data;
             return ok;
-        }
-
-        /// <summary>
-        /// 程序启动时，记录目录
-        /// </summary>
-        /// <param name="env"></param>
-        public static void LogWhenStart(IWebHostEnvironment env)
-        {
-            StringBuilder sb = new StringBuilder();
-            sb.Append("程序启动完成");
-            sb.Append("\r\n");
-            sb.Append($"Version：{GetVersion()}");
-            sb.Append("\r\n");
-            sb.Append($"IsDevelopment：{env.IsDevelopment()}");
-            sb.Append("\r\n");
-            sb.Append($"ContentRootPath：{env.ContentRootPath}");
-            sb.Append("\r\n");
-            sb.Append($"WebRootPath：{env.WebRootPath}");
-            sb.Append("\r\n");
-            Console.WriteLine(sb.ToString());
         }
 
         /// <summary>

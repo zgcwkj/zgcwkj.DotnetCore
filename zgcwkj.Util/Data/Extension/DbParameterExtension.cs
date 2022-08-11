@@ -1,9 +1,9 @@
-﻿using System;
-using System.Data.Common;
-using Microsoft.Data.SqlClient;
+﻿using Microsoft.Data.SqlClient;
 using Microsoft.Data.Sqlite;
 using MySqlConnector;
 using Npgsql;
+using System;
+using System.Data.Common;
 
 namespace zgcwkj.Util.Data.Extension
 {

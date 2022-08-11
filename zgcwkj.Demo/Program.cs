@@ -1,10 +1,8 @@
 ﻿using System;
 using System.Linq;
-using zgcwkj.Model;
-using zgcwkj.Model.Models;
 using zgcwkj.Model.Context;
+using zgcwkj.Model.Models;
 using zgcwkj.Util;
-using zgcwkj.Util.Data;
 
 namespace zgcwkj.Demo
 {
@@ -16,7 +14,7 @@ namespace zgcwkj.Demo
 
             //Cache
             Console.WriteLine("Cache >");
-            CacheAccess.Set("zgcwkj", userID,0);
+            CacheAccess.Set("zgcwkj", userID, 0);
             Console.WriteLine(CacheAccess.Get<string>("zgcwkj"));
 
             //DbContext
@@ -31,7 +29,7 @@ namespace zgcwkj.Demo
             //Insert
             Console.WriteLine("Insert >");
             var newUserID = GlobalConstant.GuidMd5;
-            var sysUser2=new SysUserModel();
+            var sysUser2 = new SysUserModel();
             sysUser2.UserID = newUserID;
             sysUser2.UserName = $"MyName{newUserID}";
             sysUser2.Password = $"MyPassword{newUserID}";
@@ -58,7 +56,7 @@ namespace zgcwkj.Demo
                             where sUser.UserID == newUserID
                             select sUser).FirstOrDefault();
             myDbContext.Remove(sysUser4);
-           int deleteCount= myDbContext.SaveChanges();
+            int deleteCount = myDbContext.SaveChanges();
 
             //Query
             Console.WriteLine("Query >");

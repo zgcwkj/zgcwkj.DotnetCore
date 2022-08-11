@@ -1,6 +1,5 @@
 ﻿using System;
 using zgcwkj.Util.Enum;
-using zgcwkj.Util.Interface;
 
 namespace zgcwkj.Util.Data
 {

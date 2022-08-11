@@ -1,10 +1,10 @@
-﻿using System;
-using System.IO;
-using System.Collections.Generic;
-using Swashbuckle.AspNetCore.SwaggerUI;
-using Microsoft.OpenApi.Models;
-using Microsoft.AspNetCore.Builder;
+﻿using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.OpenApi.Models;
+using Swashbuckle.AspNetCore.SwaggerUI;
+using System;
+using System.Collections.Generic;
+using System.IO;
 
 namespace zgcwkj.Util
 {

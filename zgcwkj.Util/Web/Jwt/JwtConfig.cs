@@ -1,15 +1,14 @@
-﻿using System;
-using System.Linq;
-using System.Text;
-using System.Security.Claims;
-using System.Collections.Generic;
-using System.IdentityModel.Tokens.Jwt;
+﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Logging;
 using Microsoft.IdentityModel.Tokens;
+using System;
+using System.Collections.Generic;
+using System.IdentityModel.Tokens.Jwt;
+using System.Linq;
+using System.Security.Claims;
+using System.Text;
 using zgcwkj.Util.Common;
 
 namespace zgcwkj.Util
