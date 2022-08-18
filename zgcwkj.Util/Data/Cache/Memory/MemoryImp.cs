@@ -112,7 +112,7 @@ namespace zgcwkj.Util.Data.Cache.Memory
         /// <returns>状态</returns>
         public bool HashSet<T>(string key, string hashKey, T hashValue, int db = -1)
         {
-            int count = SetHashFieldCache(key, new Dictionary<string, T> { { hashKey, hashValue } });
+            var count = SetHashFieldCache(key, new Dictionary<string, T> { { hashKey, hashValue } });
             return count > 0;
         }
 
@@ -166,10 +166,10 @@ namespace zgcwkj.Util.Data.Cache.Memory
         /// <returns></returns>
         private int SetHashFieldCache<T>(string key, Dictionary<string, T> dict)
         {
-            int count = 0;
-            foreach (string fieldKey in dict.Keys)
+            var count = 0;
+            foreach (var fieldKey in dict.Keys)
             {
-                count += memoryCache.Set(key, dict) != null ? 1 : 0;
+                count += memoryCache.Set(key, dict[fieldKey]) != null ? 1 : 0;
             }
             return count;
         }
@@ -184,7 +184,7 @@ namespace zgcwkj.Util.Data.Cache.Memory
         private Dictionary<string, T> GetHashFieldCache<T>(string key, Dictionary<string, T> dict)
         {
             var hashFields = memoryCache.Get<Dictionary<string, T>>(key);
-            foreach (KeyValuePair<string, T> keyValuePair in hashFields.Where(p => dict.Keys.Contains(p.Key)))
+            foreach (var keyValuePair in hashFields.Where(p => dict.Keys.Contains(p.Key)))
             {
                 dict[keyValuePair.Key] = keyValuePair.Value;
             }
@@ -199,9 +199,9 @@ namespace zgcwkj.Util.Data.Cache.Memory
         /// <returns></returns>
         private bool RemoveHashFieldCache(string key, string hashKey)
         {
-            Dictionary<string, bool> dict = new Dictionary<string, bool> { { hashKey, false } };
+            var dict = new Dictionary<string, bool> { { hashKey, false } };
             var hashFields = memoryCache.Get<Dictionary<string, object>>(key);
-            foreach (string fieldKey in dict.Keys)
+            foreach (var fieldKey in dict.Keys)
             {
                 dict[fieldKey] = hashFields.Remove(fieldKey);
             }
