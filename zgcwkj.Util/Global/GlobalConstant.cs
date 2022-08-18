@@ -115,6 +115,18 @@ namespace zgcwkj.Util
         }
 
         /// <summary>
+        /// 程序运行路径（获取 Web 程序的工作目录）
+        /// </summary>
+        public static string GetRunPath5
+        {
+            get
+            {
+                string filePath = GlobalContext.HostingEnvironment.ContentRootPath;
+                return filePath;
+            }
+        }
+
+        /// <summary>
         /// 当前时间戳
         /// </summary>
         public static string TimeStamp

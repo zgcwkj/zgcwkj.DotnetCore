@@ -14,21 +14,26 @@ namespace zgcwkj.Util
     public class GlobalContext
     {
         /// <summary>
-        /// All registered service and class instance container. Which are used for dependency injection.
-        /// 所有注册服务和类实例容器。用于依赖注入。
+        /// <para>所有注册服务和类实例容器</para>
+        /// <para>用于依赖注入</para>
         /// </summary>
         public static IServiceCollection Services { get; set; }
 
         /// <summary>
-        /// Configured service provider.
-        /// 已配置的服务提供商。
+        /// <para>所有配置的服务提供商</para>
+        /// <para>用于获取依赖注入</para>
         /// </summary>
         public static IServiceProvider ServiceProvider { get; set; }
 
         /// <summary>
+        /// Web主机环境
+        /// </summary>
+        public static IWebHostEnvironment HostingEnvironment { get; set; }
+
+        /// <summary>
         /// 配置对象(私有)
         /// </summary>
-        private static IConfiguration configuration;
+        private static IConfiguration configuration { get; set; }
 
         /// <summary>
         /// 配置对象
@@ -63,6 +68,7 @@ namespace zgcwkj.Util
                 if (!File.Exists($"{currentDirectory}/{configFileName}")) currentDirectory = GlobalConstant.GetRunPath2;
                 if (!File.Exists($"{currentDirectory}/{configFileName}")) currentDirectory = GlobalConstant.GetRunPath3;
                 if (!File.Exists($"{currentDirectory}/{configFileName}")) currentDirectory = GlobalConstant.GetRunPath4;
+                if (!File.Exists($"{currentDirectory}/{configFileName}")) currentDirectory = GlobalConstant.GetRunPath5;
                 if (!File.Exists($"{currentDirectory}/{configFileName}")) throw new Exception($"找不到“{configFileName}”配置文件");
             }
             //加载配置文件
@@ -76,11 +82,6 @@ namespace zgcwkj.Util
             var config = icBuilder.Build();
             configuration = config;
         }
-
-        /// <summary>
-        /// Web主机环境
-        /// </summary>
-        public static IWebHostEnvironment HostingEnvironment { get; set; }
 
         /// <summary>
         /// 获取版本号
@@ -131,7 +132,7 @@ namespace zgcwkj.Util
             {
                 Environment.SetEnvironmentVariable(key, data, EnvironmentVariableTarget.Process);
             }
-            bool ok = GetEnvVar(key) == data;
+            var ok = GetEnvVar(key) == data;
             return ok;
         }
 
@@ -141,7 +142,7 @@ namespace zgcwkj.Util
         /// <param name="context">静态文件响应上下文</param>
         public static void SetCacheControl(StaticFileResponseContext context)
         {
-            int second = 365 * 24 * 60 * 60;
+            var second = 365 * 24 * 60 * 60;
             context.Context.Response.Headers.Add("Cache-Control", new[] { "public,max-age=" + second });
             context.Context.Response.Headers.Add("Expires", new[] { DateTime.UtcNow.AddYears(1).ToString("R") }); // Format RFC1123
         }
