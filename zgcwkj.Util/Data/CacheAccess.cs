@@ -1,7 +1,5 @@
 ﻿using System;
 using zgcwkj.Util.Data;
-using zgcwkj.Util.Data.Cache.Memory;
-using zgcwkj.Util.Data.Cache.Redis;
 using zgcwkj.Util.Enum;
 using zgcwkj.Util.Interface;
 

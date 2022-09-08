@@ -2,15 +2,16 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using zgcwkj.Util;
 using zgcwkj.Util.Interface;
 using zgcwkj.Util.Log;
 
-namespace zgcwkj.Util.Data.Cache.Memory
+namespace zgcwkj.Util.Data
 {
     /// <summary>
     /// Memory 缓存
     /// </summary>
-    public class MemoryImp : ICache
+    internal class MemoryImp : ICache
     {
         /// <summary>
         /// Memory 缓存
@@ -126,7 +127,7 @@ namespace zgcwkj.Util.Data.Cache.Memory
         /// <returns>数据</returns>
         public T HashGet<T>(string key, string hashKey, int db = -1)
         {
-            var dict = GetHashFieldCache<T>(key, new Dictionary<string, T> { { hashKey, default } });
+            var dict = GetHashFieldCache(key, new Dictionary<string, T> { { hashKey, default } });
             return dict[hashKey];
         }
 

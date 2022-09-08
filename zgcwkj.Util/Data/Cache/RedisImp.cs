@@ -4,12 +4,12 @@ using System.Text.Json;
 using zgcwkj.Util.Interface;
 using zgcwkj.Util.Log;
 
-namespace zgcwkj.Util.Data.Cache.Redis
+namespace zgcwkj.Util.Data
 {
     /// <summary>
     /// Redis 缓存
     /// </summary>
-    public class RedisImp : ICache
+    internal class RedisImp : ICache
     {
         /// <summary>
         /// Redis 缓存

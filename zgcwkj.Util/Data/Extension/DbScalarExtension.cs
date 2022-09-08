@@ -15,6 +15,21 @@ namespace zgcwkj.Util.Data.Extension
     public class DbScalarExtension
     {
         /// <summary>
+        /// 数据库上下文
+        /// </summary>
+        private DbContext MyDbContext { get; }
+
+        /// <summary>
+        /// 数据库连接对象
+        /// </summary>
+        private DbConnection MyDbConnection { get; }
+
+        /// <summary>
+        /// 执行命令对象
+        /// </summary>
+        private DbCommand MyDbCommand { get; }
+
+        /// <summary>
         /// 数据查询拓展
         /// </summary>
         public DbScalarExtension(DbConnection _dbConnection)
@@ -34,21 +49,6 @@ namespace zgcwkj.Util.Data.Extension
             MyDbConnection = _dbConnection;
             MyDbCommand = MyDbConnection.CreateCommand();
         }
-
-        /// <summary>
-        /// 数据库上下文
-        /// </summary>
-        private DbContext MyDbContext { get; set; }
-
-        /// <summary>
-        /// 数据库连接对象
-        /// </summary>
-        private DbConnection MyDbConnection { get; set; }
-
-        /// <summary>
-        /// 执行命令对象
-        /// </summary>
-        private DbCommand MyDbCommand { get; set; }
 
         /// <summary>
         /// 关闭数据库连接
