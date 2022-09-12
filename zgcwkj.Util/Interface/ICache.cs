@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace zgcwkj.Util.Interface
+﻿namespace zgcwkj.Util.Interface
 {
     /// <summary>
     /// 缓存抽象类

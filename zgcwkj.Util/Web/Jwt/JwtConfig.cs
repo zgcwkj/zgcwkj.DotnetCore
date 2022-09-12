@@ -3,10 +3,7 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Logging;
 using Microsoft.IdentityModel.Tokens;
-using System;
-using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
-using System.Linq;
 using System.Security.Claims;
 using System.Text;
 using zgcwkj.Util.Common;
@@ -113,7 +110,6 @@ namespace zgcwkj.Util
             //
             IdentityModelEventSource.ShowPII = true;
             var tokenConfig = ConfigHelp.Get<JwtConfigData>("JwtConfig");
-            jwtValidator.Password = MD5Tool.GetMd5(jwtValidator.Password);
             //Claim
             var claims = new List<Claim>();
             claims.Add(new Claim("account", jwtValidator.Account));

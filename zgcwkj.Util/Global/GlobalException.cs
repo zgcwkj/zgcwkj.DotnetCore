@@ -2,7 +2,6 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 using System.Text.Json;
-using System.Threading.Tasks;
 using zgcwkj.Util.Log;
 using zgcwkj.Util.Models;
 
@@ -34,7 +33,8 @@ namespace zgcwkj.Util
                 //定义 Json 格式
                 var serializer = new JsonSerializerOptions()
                 {
-                    IgnoreNullValues = true,
+                    //为空值时忽略，不返回数据
+                    //DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,
                     WriteIndented = true,
                 };
                 //定义返回的数据

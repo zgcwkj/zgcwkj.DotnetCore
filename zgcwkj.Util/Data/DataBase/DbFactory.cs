@@ -1,5 +1,4 @@
-﻿using System;
-using zgcwkj.Util.Enum;
+﻿using zgcwkj.Util.Enum;
 
 namespace zgcwkj.Util.Data
 {

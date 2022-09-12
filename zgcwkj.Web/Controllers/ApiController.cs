@@ -1,8 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System;
-using System.Linq;
-using System.Threading.Tasks;
+using zgcwkj.Model.Context;
 using zgcwkj.Util;
 using zgcwkj.Web.Comm;
 
@@ -15,6 +13,34 @@ namespace zgcwkj.Web.Controllers
     [Route("[controller]/[action]")]
     public class ApiController : Controller
     {
+        /// <summary>
+        /// 数据库上下文
+        /// </summary>
+        private MyDbContext _MyDb { get; }
+
+        /// <summary>
+        /// 数据库上下文
+        /// </summary>
+        private SQLiteDbContext _SQLite { get; }
+
+        /// <summary>
+        /// 缓存数据上下文
+        /// </summary>
+        private CacheAccess _Cache { get; }
+
+        /// <summary>
+        /// 实例时
+        /// </summary>
+        /// <param name="myDbContext">数据库上下文</param>
+        /// <param name="sQLiteDbContext">数据库上下文</param>
+        /// <param name="cacheAccess">缓存数据上下文</param>
+        public ApiController(MyDbContext myDbContext, SQLiteDbContext sQLiteDbContext, CacheAccess cacheAccess)
+        {
+            this._MyDb = myDbContext;
+            this._SQLite = sQLiteDbContext;
+            this._Cache = cacheAccess;
+        }
+
         /// <summary>
         /// Login
         /// </summary>
@@ -47,13 +73,24 @@ namespace zgcwkj.Web.Controllers
         /// </summary>
         /// <returns></returns>
         [HttpPost]
-        public async Task<IActionResult> GetData()
+        public IActionResult GetData()
         {
             var cmd = DbProvider.Create();
             cmd.Clear();
             cmd.SetCommandText("select * from sys_user");
-            var dataTable = await cmd.QueryDataTableAsync();
+            var dataTable = cmd.QueryDataTable();
             return Json(dataTable.ToList());
+        }
+
+        /// <summary>
+        /// GetData
+        /// </summary>
+        /// <returns></returns>
+        [HttpPost]
+        public IActionResult GetData2()
+        {
+            var linqData = _MyDb.SysUserModel;
+            return Json(linqData.ToList());
         }
 
         /// <summary>
@@ -65,6 +102,18 @@ namespace zgcwkj.Web.Controllers
         {
             int testCache = CacheAccess.Get<int>("TestCache");
             CacheAccess.Set("TestCache", testCache + 1);
+            return Json(testCache);
+        }
+
+        /// <summary>
+        /// TestCache
+        /// </summary>
+        /// <returns></returns>
+        [HttpPost]
+        public IActionResult TestCache2()
+        {
+            int testCache = _Cache.Get<int>("TestCache");
+            _Cache.Set("TestCache", testCache + 1);
             return Json(testCache);
         }
 

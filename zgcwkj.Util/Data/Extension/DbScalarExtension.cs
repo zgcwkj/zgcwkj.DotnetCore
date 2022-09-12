@@ -1,11 +1,9 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.EntityFrameworkCore.Storage;
-using System;
 using System.Data;
 using System.Data.Common;
 using System.Diagnostics;
-using System.Threading.Tasks;
 
 namespace zgcwkj.Util.Data.Extension
 {
@@ -105,7 +103,8 @@ namespace zgcwkj.Util.Data.Extension
                            MyDbContext,
                            Guid.NewGuid(),
                            connection.ConnectionId,
-                           startTime);
+                           startTime,
+                           CommandSource.Unknown);
 
                     var reader = interceptionResult.HasResult ? interceptionResult.Result : MyDbCommand.ExecuteReader(CommandBehavior.CloseConnection);
 
@@ -119,15 +118,16 @@ namespace zgcwkj.Util.Data.Extension
                             connection.ConnectionId,
                             reader,
                             startTime,
-                            stopwatch.Elapsed);
+                            stopwatch.Elapsed,
+                            CommandSource.Unknown);
                     }
                     return reader;
                 }
             }
-            catch (Exception ex)
+            catch
             {
                 Close();
-                throw ex;
+                throw;
             }
         }
 
@@ -170,7 +170,8 @@ namespace zgcwkj.Util.Data.Extension
                            MyDbContext,
                            Guid.NewGuid(),
                            connection.ConnectionId,
-                           startTime);
+                           startTime,
+                           CommandSource.Unknown);
 
                     var reader = interceptionResult.HasResult ? interceptionResult.Result : await MyDbCommand.ExecuteReaderAsync(CommandBehavior.CloseConnection);
 
@@ -184,15 +185,16 @@ namespace zgcwkj.Util.Data.Extension
                             connection.ConnectionId,
                             reader,
                             startTime,
-                            stopwatch.Elapsed);
+                            stopwatch.Elapsed,
+                            CommandSource.Unknown);
                     }
                     return reader;
                 }
             }
-            catch (Exception ex)
+            catch
             {
                 Close();
-                throw ex;
+                throw;
             }
         }
 
@@ -236,7 +238,8 @@ namespace zgcwkj.Util.Data.Extension
                            MyDbContext,
                            Guid.NewGuid(),
                            connection.ConnectionId,
-                           startTime);
+                           startTime,
+                           CommandSource.Unknown);
 
                     var obj = interceptionResult.HasResult ? interceptionResult.Result : MyDbCommand.ExecuteScalar();
 
@@ -250,15 +253,16 @@ namespace zgcwkj.Util.Data.Extension
                             connection.ConnectionId,
                             obj,
                             startTime,
-                            stopwatch.Elapsed);
+                            stopwatch.Elapsed,
+                            CommandSource.Unknown);
                     }
                     return obj;
                 }
             }
-            catch (Exception ex)
+            catch
             {
                 Close();
-                throw ex;
+                throw;
             }
         }
 
@@ -302,7 +306,8 @@ namespace zgcwkj.Util.Data.Extension
                            MyDbContext,
                            Guid.NewGuid(),
                            connection.ConnectionId,
-                           startTime);
+                           startTime,
+                           CommandSource.Unknown);
 
                     var obj = interceptionResult.HasResult ? interceptionResult.Result : await MyDbCommand.ExecuteScalarAsync();
 
@@ -316,15 +321,16 @@ namespace zgcwkj.Util.Data.Extension
                             connection.ConnectionId,
                             obj,
                             startTime,
-                            stopwatch.Elapsed);
+                            stopwatch.Elapsed,
+                            CommandSource.Unknown);
                     }
                     return obj;
                 }
             }
-            catch (Exception ex)
+            catch
             {
                 Close();
-                throw ex;
+                throw;
             }
         }
 

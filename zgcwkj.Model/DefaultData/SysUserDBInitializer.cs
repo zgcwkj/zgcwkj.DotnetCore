@@ -14,7 +14,7 @@ namespace zgcwkj.Model.DefaultData
         {
             get
             {
-                List<SysUserModel> lists = new List<SysUserModel>();
+                var lists = new List<SysUserModel>();
 
                 lists.Add(new SysUserModel
                 {

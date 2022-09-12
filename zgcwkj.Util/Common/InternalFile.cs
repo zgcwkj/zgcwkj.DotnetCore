@@ -1,6 +1,4 @@
-﻿using System;
-using System.IO;
-using zgcwkj.Util.Log;
+﻿using zgcwkj.Util.Log;
 
 namespace zgcwkj.Util.Common
 {

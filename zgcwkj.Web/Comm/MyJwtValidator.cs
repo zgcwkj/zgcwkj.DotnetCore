@@ -10,12 +10,12 @@ namespace zgcwkj.Web.Comm
         /// <summary>
         /// 账号
         /// </summary>
-        public override string Account { get; set; }
+        public override string? Account { get; set; }
 
         /// <summary>
         /// 密码
         /// </summary>
-        public override string Password { get; set; }
+        public override string? Password { get; set; }
 
         /// <summary>
         /// 登录时验证

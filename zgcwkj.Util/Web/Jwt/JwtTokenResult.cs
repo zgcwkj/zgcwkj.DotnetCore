@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace zgcwkj.Util
+﻿namespace zgcwkj.Util
 {
     /// <summary>
     /// 获取 Token 结果

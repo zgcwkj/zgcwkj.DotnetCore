@@ -1,15 +1,12 @@
 ﻿using Microsoft.EntityFrameworkCore.Query;
 using Microsoft.EntityFrameworkCore.Query.SqlExpressions;
-using System;
 using System.Collections;
 using System.Collections.Concurrent;
-using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Data;
 using System.Data.Common;
 using System.Dynamic;
-using System.Linq;
 using System.Reflection;
 
 namespace zgcwkj.Util.Data.Extension
@@ -288,9 +285,9 @@ namespace zgcwkj.Util.Data.Extension
                     }
                     sql = sql.Replace(parameter.ParameterName, value);
                 }
-                catch (Exception ex)
+                catch
                 {
-                    throw ex;
+                    throw;
                 }
             }
             return sql;

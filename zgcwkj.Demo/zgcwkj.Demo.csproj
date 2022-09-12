@@ -1,20 +1,22 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-    <OutputType>Exe</OutputType>
-    <TargetFramework>netcoreapp3.1</TargetFramework>
-    <IncludeSymbolsInSingleFile>true</IncludeSymbolsInSingleFile>
-  </PropertyGroup>
+	<PropertyGroup>
+		<OutputType>Exe</OutputType>
+		<TargetFramework>net6.0</TargetFramework>
+		<Nullable>enable</Nullable>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<IncludeSymbolsInSingleFile>true</IncludeSymbolsInSingleFile>
+	</PropertyGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\zgcwkj.Model\zgcwkj.Model.csproj" />
-    <ProjectReference Include="..\zgcwkj.Util\zgcwkj.Util.csproj" />
-  </ItemGroup>
+	<ItemGroup>
+		<ProjectReference Include="..\zgcwkj.Model\zgcwkj.Model.csproj" />
+		<ProjectReference Include="..\zgcwkj.Util\zgcwkj.Util.csproj" />
+	</ItemGroup>
 
-  <ItemGroup>
-    <None Update="appsettings.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-  </ItemGroup>
+	<ItemGroup>
+		<None Update="appsettings.json">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
+	</ItemGroup>
 
 </Project>

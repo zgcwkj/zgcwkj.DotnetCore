@@ -1,7 +1,4 @@
-﻿using System;
-using System.IO;
-using System.Threading;
-using zgcwkj.Util.Enum;
+﻿using zgcwkj.Util.Enum;
 
 namespace zgcwkj.Util.Log
 {
@@ -75,7 +72,7 @@ namespace zgcwkj.Util.Log
                 }
                 catch (Exception ex)
                 {
-                    if (GlobalConstant.IsDevelopment) throw ex;
+                    if (GlobalConstant.IsDevelopment) throw;
                     string msg = ex.Message;
                     index++;
                     type += $"{index}";

@@ -13,7 +13,7 @@ namespace zgcwkj.Model.DefaultData
         {
             get
             {
-                List<SysInfoModel> lists = new List<SysInfoModel>();
+                var lists = new List<SysInfoModel>();
 
                 lists.Add(new SysInfoModel
                 {

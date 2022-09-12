@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace zgcwkj.Util.Common
+﻿namespace zgcwkj.Util.Common
 {
     /// <summary>
     /// 随机字符工具

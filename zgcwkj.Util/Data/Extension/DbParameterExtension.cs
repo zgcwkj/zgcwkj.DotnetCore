@@ -2,7 +2,6 @@
 using Microsoft.Data.Sqlite;
 using MySqlConnector;
 using Npgsql;
-using System;
 using System.Data.Common;
 
 namespace zgcwkj.Util.Data.Extension

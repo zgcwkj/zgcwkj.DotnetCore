@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace zgcwkj.Util
+﻿namespace zgcwkj.Util
 {
     /// <summary>
     /// <b>缓存操作提供者</b>
