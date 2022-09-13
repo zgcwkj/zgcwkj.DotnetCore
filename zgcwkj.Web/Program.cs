@@ -40,8 +40,6 @@ namespace zgcwkj.Web
         {
             //所有注册服务和类实例容器
             GlobalContext.Services = services;
-            //添加单例
-            services.AddSingleton(HtmlEncoder.Create(UnicodeRanges.All));
             //返回数据首字母不小写
             services.AddMvc().AddJsonOptions(options =>
             {
