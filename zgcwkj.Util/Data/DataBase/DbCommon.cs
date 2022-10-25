@@ -110,7 +110,7 @@ namespace zgcwkj.Util.Data
             //PostgreSql
             else if (dbType == DbType.PostgreSql)
             {
-                //PostgreSql 时间兼容
+                //时间兼容
                 AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
                 AppContext.SetSwitch("Npgsql.DisableDateTimeInfinityConversions", true);
                 //
