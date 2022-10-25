@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Runtime.CompilerServices;
 using zgcwkj.Util;
 
 namespace zgcwkj.Model.Models
@@ -39,5 +40,11 @@ namespace zgcwkj.Model.Models
         /// </summary>
         [Column("sys_status")]
         public bool SysStatus { get; set; } = true;
+
+        /// <summary>
+        /// 系统创建时间
+        /// </summary>
+        [Column("create_time")]
+        public DateTime CreateTime { get; set; } = DateTime.Now;
     }
 }

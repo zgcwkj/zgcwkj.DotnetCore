@@ -22,6 +22,7 @@ namespace zgcwkj.Model.DefaultData
                     SysIP = "127.0.0.1",
                     SysUrl = "http://127.0.0.1",
                     SysStatus = true,
+                    CreateTime = DateTime.Now,
                 });
 
                 return lists;

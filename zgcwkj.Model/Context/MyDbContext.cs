@@ -25,11 +25,17 @@ namespace zgcwkj.Model.Context
         /// <param name="modelBuilder">模型制作者</param>
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            //初始化用户数据
+            //初始化数据
+            modelBuilder.Entity<SysInfoModel>().HasData(SysInfoDBInitializer.GetData);
             modelBuilder.Entity<SysUserModel>().HasData(SysUserDBInitializer.GetData);
 
             base.OnModelCreating(modelBuilder);
         }
+
+        /// <summary>
+        /// 系统信息表
+        /// </summary>
+        public DbSet<SysInfoModel> SysInfoModel { get; set; }
 
         /// <summary>
         /// 系统用户表

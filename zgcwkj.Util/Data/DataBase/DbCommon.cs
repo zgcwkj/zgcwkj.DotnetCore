@@ -110,6 +110,10 @@ namespace zgcwkj.Util.Data
             //PostgreSql
             else if (dbType == DbType.PostgreSql)
             {
+                //PostgreSql 时间兼容
+                AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
+                AppContext.SetSwitch("Npgsql.DisableDateTimeInfinityConversions", true);
+                //
                 optionsBuilder.UseNpgsql(dbConnect, p =>
                 {
                     p.CommandTimeout(dbTimeout);
@@ -161,32 +165,33 @@ namespace zgcwkj.Util.Data
             //        dbsetNames.Add(property.Name);
             //    }
             //}
-            //提取所有模型
+            //注册所有可能会用到的对象
             var filePath = GlobalConstant.GetRunPath;
             var root = new DirectoryInfo(filePath);
             var files = root.GetFiles("*.dll");
             foreach (var file in files)
             {
-                if (file.FullName.Contains("Microsoft")) continue;
-                if (file.FullName.Contains("System")) continue;
                 try
                 {
+                    if (file.FullName.Contains("Microsoft")) continue;
+                    if (file.FullName.Contains("System")) continue;
                     var fileName = file.Name.Replace(file.Extension, "");
                     var assemblyName = new AssemblyName(fileName);
                     var entityAssembly = Assembly.Load(assemblyName);
                     var entityAssemblyType = entityAssembly.GetTypes();
                     var typesToRegister = entityAssemblyType
                         .Where(p => p.Namespace != null)//排除没有 命名空间
-                        .Where(p => p.GetCustomAttribute<TableAttribute>()?.Name != null)//排除没有 TableName
+                        .Where(p => p.GetCustomAttribute<TableAttribute>() != null)//排除没有 Table
                         .Where(p => p.GetCustomAttribute<NotMappedAttribute>() == null);//排除标记 NotMapped
                     foreach (var type in typesToRegister)
                     {
-                        dynamic configurationInstance = Activator.CreateInstance(type);
+                        var createInstance = Activator.CreateInstance(type);
                         modelBuilder.Model.AddEntityType(type);
                     }
                 }
                 catch { }
             }
+            //
             base.OnModelCreating(modelBuilder);
         }
     }
