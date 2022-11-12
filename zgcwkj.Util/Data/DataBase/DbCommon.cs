@@ -21,7 +21,7 @@ namespace zgcwkj.Util.Data
         private DbType dbType { get; }
 
         /// <summary>
-        /// 连接字符
+        /// 连接字符串
         /// </summary>
         private string dbConnect { get; }
 
@@ -31,9 +31,9 @@ namespace zgcwkj.Util.Data
         private int dbTimeout { get; }
 
         /// <summary>
-        /// 数据库版本
+        /// 数据库自定义参数
         /// </summary>
-        private int dbVersion { get; }
+        private Dictionary<string, string> dbParameters { get; set; } = new();
 
         /// <summary>
         /// <para>数据库连接对象</para>
@@ -42,14 +42,8 @@ namespace zgcwkj.Util.Data
         public DbCommon()
         {
             this.dbType = DbFactory.Type;
-            this.dbConnect = DbFactory.Connect;
+            this.dbConnect = InitParameters(DbFactory.Connect);
             this.dbTimeout = DbFactory.Timeout;
-            this.dbVersion = 0;
-            if (Regex.Match(DbFactory.Connect, "version=.+?;").Value.IsNotNull())
-            {
-                this.dbConnect = DbFactory.Connect.Replace(Regex.Match(DbFactory.Connect, "version=.+?;").Value, "");
-                this.dbVersion = Regex.Match(DbFactory.Connect, "(?<=version=).+?(?=;)").Value.ToInt();
-            }
         }
 
         /// <summary>
@@ -63,17 +57,11 @@ namespace zgcwkj.Util.Data
         public DbCommon(DbType dbType, string dbConnect, int dbTimeout = 10)
         {
             this.dbType = dbType;
-            this.dbConnect = dbConnect;
+            this.dbConnect = InitParameters(dbConnect);
             this.dbTimeout = dbTimeout == 10 ? dbTimeout : DbFactory.Timeout;
-            this.dbVersion = 0;
-            if (Regex.Match(dbConnect, "version=.+?;").Value.IsNotNull())
-            {
-                this.dbConnect = dbConnect.Replace(Regex.Match(dbConnect, "version=.+?;").Value, "");
-                this.dbVersion = Regex.Match(dbConnect, "(?<=version=).+?(?=;)").Value.ToInt();
-            }
         }
 
-        /// <summary>-
+        /// <summary>
         /// <para>数据库连接对象</para>
         /// <para><b>使用自定义配置来连接，数据库类型相同</b></para>
         /// <para>用法：base("SQLConnect")</para>
@@ -83,14 +71,37 @@ namespace zgcwkj.Util.Data
         public DbCommon(string dbConnect, int dbTimeout = 10)
         {
             this.dbType = DbFactory.Type;
-            this.dbConnect = dbConnect;
+            this.dbConnect = InitParameters(dbConnect);
             this.dbTimeout = dbTimeout == 10 ? dbTimeout : DbFactory.Timeout;
-            this.dbVersion = 0;
-            if (Regex.Match(dbConnect, "version=.+?;").Value.IsNotNull())
+        }
+
+        /// <summary>
+        /// 初始化参数
+        /// </summary>
+        /// <param name="connect">连接字符串（含自定义参数）</param>
+        /// <returns>连接字符串</returns>
+        private string InitParameters(string connect)
+        {
+            //自定义参数
+            var paramKeys = new List<string>()
             {
-                this.dbConnect = dbConnect.Replace(Regex.Match(dbConnect, "version=.+?;").Value, "");
-                this.dbVersion = Regex.Match(dbConnect, "(?<=version=).+?(?=;)").Value.ToInt();
+                "version",
+                "olddatetimebehavior",
+            };
+            //取出自定义参数
+            foreach (var paramKey in paramKeys)
+            {
+                var dataStr = Regex.Match(connect, $"{paramKey}=.+?;").Value;
+                var dataValue = Regex.Match(connect, $"(?<={paramKey}=).+?(?=;)").Value;
+                if (dataStr.IsNotNull())
+                {
+                    //清除连接字符串
+                    connect = connect.Replace(dataStr, "");
+                    //存储自定义参数
+                    dbParameters.Add(paramKey, dataValue);
+                }
             }
+            return connect;
         }
 
         /// <summary>
@@ -110,17 +121,21 @@ namespace zgcwkj.Util.Data
             //PostgreSql
             else if (dbType == DbType.PostgreSql)
             {
-                //时间兼容
-                AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
-                AppContext.SetSwitch("Npgsql.DisableDateTimeInfinityConversions", true);
                 //
                 optionsBuilder.UseNpgsql(dbConnect, p =>
                 {
                     p.CommandTimeout(dbTimeout);
                     //指定数据库版本
-                    if (this.dbVersion > 0)
+                    if (dbParameters.ContainsKey("version"))
                     {
-                        p.SetPostgresVersion(this.dbVersion, 0);
+                        p.SetPostgresVersion(dbParameters["version"].ToInt(), 0);
+                    }
+                    //时间兼容（旧的时间行为）
+                    if (dbParameters.ContainsKey("olddatetimebehavior"))
+                    {
+                        var oldDateTimeBehavior = dbParameters["olddatetimebehavior"].ToBool();
+                        AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", oldDateTimeBehavior);
+                        AppContext.SetSwitch("Npgsql.DisableDateTimeInfinityConversions", oldDateTimeBehavior);
                     }
                 });
             }
