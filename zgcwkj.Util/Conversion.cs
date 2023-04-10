@@ -341,6 +341,71 @@ namespace zgcwkj.Util
         }
 
         /// <summary>
+        /// 判断是否为空
+        /// </summary>
+        /// <param name="value">值</param>
+        /// <returns></returns>
+        public static bool IsNull(this object value)
+        {
+            try
+            {
+                if (value == null)
+                {
+                    return true;
+                }
+                else if (string.IsNullOrEmpty(value.ToString()))
+                {
+                    return true;
+                }
+                else if (value?.ToString() == "undefined")
+                {
+                    return true;
+                }
+                else if (value.ToString().Length > 0)
+                {
+                    return false;
+                }
+            }
+            catch (Exception ex)
+            {
+                string meg = ex.Message;
+                if (GlobalConstant.IsDevelopment) Logger.Error(meg);
+            }
+            return true;
+        }
+
+        /// <summary>
+        /// 判断是否不为空
+        /// </summary>
+        /// <param name="value">值</param>
+        /// <returns></returns>
+        public static bool IsNotNull(this object value)
+        {
+            return !value.IsNull();
+        }
+
+        /// <summary>
+        /// 判断是否为空或零
+        /// </summary>
+        /// <param name="value">值</param>
+        /// <returns></returns>
+        public static bool IsNullOrZero(this object value)
+        {
+            if (IsNull(value))
+            {
+                return true;
+            }
+            else if (value.ToStr() == "0")
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+
+        /// <summary>
         /// 编码 Base64
         /// </summary>
         /// <param name="value">Data</param>
@@ -466,67 +531,6 @@ namespace zgcwkj.Util
                 }
             }
             return dataTable;
-        }
-
-        /// <summary>
-        /// 判断是否为空
-        /// </summary>
-        /// <param name="value">值</param>
-        /// <returns></returns>
-        public static bool IsNull(this object value)
-        {
-            try
-            {
-                if (value == null)
-                {
-                    return true;
-                }
-                else if (string.IsNullOrEmpty(value.ToString()))
-                {
-                    return true;
-                }
-                else if (value.ToString().Length > 0)
-                {
-                    return false;
-                }
-            }
-            catch (Exception ex)
-            {
-                string meg = ex.Message;
-                if (GlobalConstant.IsDevelopment) Logger.Error(meg);
-            }
-            return true;
-        }
-
-        /// <summary>
-        /// 判断是否不为空
-        /// </summary>
-        /// <param name="value">值</param>
-        /// <returns></returns>
-        public static bool IsNotNull(this object value)
-        {
-            return !value.IsNull();
-        }
-
-        /// <summary>
-        /// 判断是否为空或零
-        /// </summary>
-        /// <param name="value">值</param>
-        /// <returns></returns>
-        public static bool IsNullOrZero(this object value)
-        {
-            if (IsNull(value))
-            {
-                return true;
-            }
-            else if (value.ToStr() == "0")
-            {
-                return true;
-            }
-            else
-            {
-                return false;
-            }
         }
     }
 }

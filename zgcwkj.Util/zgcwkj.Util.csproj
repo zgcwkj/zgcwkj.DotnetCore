@@ -11,10 +11,10 @@
 		<PackageTags>Core,Util,Data,Cache</PackageTags>
 		<PackageReleaseNotes></PackageReleaseNotes>
 		<NeutralLanguage>zh-Hans</NeutralLanguage>
-		<Version>6.0.0</Version>
+		<Version>6.0.1</Version>
 		<Description>为 Core 提供一套数据相关的服务，Data、Cache、Log</Description>
-		<AssemblyVersion>6.0.0.0</AssemblyVersion>
-		<FileVersion>6.0.0.0</FileVersion>
+		<AssemblyVersion>6.0.1.0</AssemblyVersion>
+		<FileVersion>6.0.1.0</FileVersion>
 		<RepositoryUrl>https://www.nuget.org/packages/zgcwkj.Util</RepositoryUrl>
 		<PackageLicenseFile>LICENSE</PackageLicenseFile>
 		<RepositoryType>Util</RepositoryType>
@@ -37,14 +37,14 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="6.0.12" />
-		<PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="6.0.12" />
-		<PackageReference Include="Microsoft.Extensions.Caching.StackExchangeRedis" Version="6.0.12" />
+		<PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="6.0.15" />
+		<PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="6.0.15" />
+		<PackageReference Include="Microsoft.Extensions.Caching.StackExchangeRedis" Version="6.0.15" />
 		<PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="6.0.8" />
 		<PackageReference Include="Pomelo.EntityFrameworkCore.MySql" Version="6.0.2" />
 		<PackageReference Include="Microsoft.Extensions.Caching.Memory" Version="6.0.1" />
-		<PackageReference Include="Swashbuckle.AspNetCore" Version="6.4.0" />
-		<PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="6.0.12" />
+		<PackageReference Include="Swashbuckle.AspNetCore" Version="6.5.0" />
+		<PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="6.0.15" />
 	</ItemGroup>
 
 	<ItemGroup>

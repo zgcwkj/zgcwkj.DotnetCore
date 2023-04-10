@@ -21,12 +21,12 @@ namespace zgcwkj.Web
         {
             var builder = WebApplication.CreateBuilder(args);
             //Service
-            builder.Services.ConfigureServices();
+            builder.Services.ConfigureServices(builder);
             //Injection
-            builder.Services.AddInjection();
+            builder.Services.AddInjection(builder);
             //App
             var app = builder.Build();
-            app.Configure();
+            app.Configure(builder);
             //Run
             app.Run();
         }
@@ -36,7 +36,8 @@ namespace zgcwkj.Web
         /// 使用此方法将服务添加到容器中
         /// </summary>
         /// <param name="services">服务</param>
-        public static void ConfigureServices(this IServiceCollection services)
+        /// <param name="builder">网站程序</param>
+        public static void ConfigureServices(this IServiceCollection services, WebApplicationBuilder builder)
         {
             //所有注册服务和类实例容器
             GlobalContext.Services = services;
@@ -48,8 +49,9 @@ namespace zgcwkj.Web
                 //PropertyNamingPolicy = JsonNamingPolicy.CamelCase 默认小写
                 //https://docs.microsoft.com/zh-cn/dotnet/api/system.text.json.jsonserializeroptions.propertynamingpolicy?view=net-6.0
                 options.JsonSerializerOptions.PropertyNamingPolicy = null;
-                //格式化时间
-                options.JsonSerializerOptions.Converters.Add(new DateTimeJsonConverter());
+                //数据序列化
+                options.JsonSerializerOptions.Converters.Add(new DateTimeJson());
+                options.JsonSerializerOptions.Converters.Add(new StringJson());
                 //取消 Unicode 编码
                 options.JsonSerializerOptions.Encoder = JavaScriptEncoder.Create(UnicodeRanges.All);
                 //空值不反回前端
@@ -93,7 +95,8 @@ namespace zgcwkj.Web
         /// 使用此方法配置HTTP请求流水线
         /// </summary>
         /// <param name="app">应用</param>
-        public static void Configure(this WebApplication app)
+        /// <param name="builder">网站程序</param>
+        public static void Configure(this WebApplication app, WebApplicationBuilder builder)
         {
             //服务提供者
             GlobalContext.ServiceProvider = app.Services;
@@ -157,31 +160,23 @@ namespace zgcwkj.Web
             app.UseRouting();
             //用户 Session
             app.UseSession();
-            //用户 WebSockets
-            var webSocketOptions = new WebSocketOptions()
-            {
-                KeepAliveInterval = TimeSpan.FromSeconds(120),//有效时长
-            };
-            app.UseWebSockets(webSocketOptions);
             //启用 Jwt
             app.JwtAuthorize();
             //用户默认路由
-            app.UseEndpoints(endpoints =>
-            {
-                endpoints.MapControllerRoute(
-                    name: "areaRoute",
-                    pattern: "{area:exists}/{controller=Home}/{action=Index}/{id?}");
-                endpoints.MapControllerRoute(
-                    name: "default",
-                    pattern: "{controller=Home}/{action=Index}/{id?}");
-            });
+            app.MapControllerRoute(
+                name: "areaRoute",
+                pattern: "{area:exists}/{controller=Home}/{action=Index}/{id?}");
+            app.MapControllerRoute(
+                name: "default",
+                pattern: "{controller=Admin}/{action=Index}/{id?}");
         }
 
         /// <summary>
         /// 依赖注入
         /// </summary>
         /// <param name="services">服务</param>
-        public static void AddInjection(this IServiceCollection services)
+        /// <param name="builder">网站程序</param>
+        public static void AddInjection(this IServiceCollection services, WebApplicationBuilder builder)
         {
             //数据库上下文
             services.AddDbContext<MyDbContext>();

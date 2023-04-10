@@ -1,12 +1,12 @@
 ﻿using System.Text.Json;
 using System.Text.Json.Serialization;
 
-namespace zgcwkj.Web.Comm
+namespace zgcwkj.Web
 {
     /// <summary>
-    /// 时间 Json 格式化
+    /// 时间序列化
     /// </summary>
-    public class DateTimeJsonConverter : JsonConverter<DateTime>
+    public class DateTimeJson : JsonConverter<DateTime>
     {
         /// <summary>
         /// 读取
