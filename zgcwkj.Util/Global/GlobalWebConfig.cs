@@ -18,6 +18,5 @@ namespace zgcwkj.Util
             if (!Directory.Exists(protection)) Directory.CreateDirectory(protection);
             services.AddDataProtection().PersistKeysToFileSystem(new DirectoryInfo(protection));
         }
-
     }
 }

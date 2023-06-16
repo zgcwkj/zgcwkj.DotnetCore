@@ -2,7 +2,6 @@
 using Microsoft.AspNetCore.Mvc;
 using zgcwkj.Model.Context;
 using zgcwkj.Util;
-using zgcwkj.Web.Comm;
 
 namespace zgcwkj.Web.Controllers
 {
@@ -51,21 +50,22 @@ namespace zgcwkj.Web.Controllers
         [HttpPost]
         public IActionResult Login(string userName, string password)
         {
-            //登录方法体
-            var myJwtv = new MyJwtValidator
-            {
-                Account = userName,
-                Password = password,
-            };
-            var jwtToken = JwtConfig.GetToken(myJwtv);
-            //返回结果
-            var jsonResult = new
-            {
-                status = jwtToken.Status,
-                token = jwtToken.Token,
-                validTo = jwtToken.ValidTo,
-            };
-            return Json(jsonResult);
+            ////登录方法体
+            //var myJwtv = new MyJwtValidator
+            //{
+            //    Account = userName,
+            //    Password = password,
+            //};
+            //var jwtToken = JwtConfig.GetToken(myJwtv);
+            ////返回结果
+            //var jsonResult = new
+            //{
+            //    status = jwtToken.Status,
+            //    token = jwtToken.Token,
+            //    validTo = jwtToken.ValidTo,
+            //};
+            //return Json(jsonResult);
+            return Json("");
         }
 
         /// <summary>

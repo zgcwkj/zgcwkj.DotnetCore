@@ -5,6 +5,8 @@ using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using zgcwkj.Util.Log;
 
+#pragma warning disable SYSLIB0014
+
 namespace zgcwkj.Util.Common
 {
     /// <summary>
@@ -328,3 +330,5 @@ namespace zgcwkj.Util.Common
         }
     }
 }
+
+#pragma warning restore SYSLIB0014

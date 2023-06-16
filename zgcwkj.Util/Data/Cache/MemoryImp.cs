@@ -206,6 +206,6 @@ namespace zgcwkj.Util.Data
             return dict[hashKey];
         }
 
-        #endregion
+        #endregion Hash
     }
 }

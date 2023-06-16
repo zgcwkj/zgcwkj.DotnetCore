@@ -1,14 +1,13 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using System.Data;
 using System.Text.RegularExpressions;
-using zgcwkj.Util.Data;
 using zgcwkj.Util.Data.Extension;
 
 namespace zgcwkj.Util
 {
     /// <summary>
     /// <b>数据库操作提供者</b>
-    /// 
+    ///
     /// <para>常规使用：using var cmd = DbProvider.Create()</para>
     /// <para>注入使用：services.AddTransient&lt;DbAccess&gt;()</para>
     /// <para>建议使用<b>EF</b>操作数据库</para>
@@ -38,7 +37,7 @@ namespace zgcwkj.Util
             return true;
         }
 
-        #endregion
+        #endregion 操作对象
 
         #region 操作脚本
 
@@ -58,8 +57,6 @@ namespace zgcwkj.Util
             if (cmdAccess.dbModel.GroupBy.IsNotNull()) sql += $" {cmdAccess.dbModel.GroupBy}";
             //结尾的脚本
             if (cmdAccess.dbModel.EndSql.IsNotNull()) sql += $" {cmdAccess.dbModel.EndSql}";
-            //数据库通用脚本
-            sql = GenericScript(sql);
             //返回脚本
             return sql;
         }
@@ -318,114 +315,7 @@ namespace zgcwkj.Util
             return data;
         }
 
-        /// <summary>
-        /// 数据库通用脚本
-        /// </summary>
-        /// <param name="sql">Sql脚本</param>
-        /// <returns>脚本</returns>
-        private static string GenericScript(string sql)
-        {
-            //转成通用脚本
-            var type = DbFactory.Type;
-            if (type == Enum.DbType.MySql)
-            {
-                //时间函数
-                if (sql.Contains("getdate()"))
-                {
-                    sql = sql.Replace("getdate()", "now()");
-                }
-                //分页函数
-                int pageSql = sql.IndexOf("offset");
-                if (pageSql != -1 && sql.LastIndexOf("only") > pageSql)
-                {
-                    var updSql = string.Empty;
-                    var page = Regex.Match(sql, @"(?<=offset).+(?=rows fetch next.+)").Value;
-                    var pageSize = Regex.Match(sql, @"(?<=rows fetch next.+).+(?=rows only)").Value;
-                    updSql += $" limit {page},{pageSize}";
-                    sql = sql.Substring(0, pageSql) + updSql;
-                }
-                //记录数函数
-                var topStr = Regex.Match(sql, @"select.+top.+?[0-9]+").Value;
-                if (!topStr.IsNull())
-                {
-                    var countStr = Regex.Match(topStr, @"(?<=select.+top.+?)[0-9]+").Value;
-                    sql = sql.Replace(topStr, "select ");
-                    if (!sql.Contains("limit")) sql = $"{sql} limit {countStr}";
-                }
-            }
-            else if (type == Enum.DbType.SqlServer)
-            {
-                //时间函数
-                if (sql.Contains("now()"))
-                {
-                    sql = sql.Replace("now()", "getdate()");
-                }
-                //是否为空函数
-                var isnullStr = Regex.Match(sql, @"isnull\(.+?\)").Value;
-                if (!isnullStr.IsNull())
-                {
-                    var isnullStrB = Regex.Match(sql, @"(?<=isnull\().+?(?=\))").Value;
-                    sql = sql.Replace(isnullStr, $"{isnullStrB} is null");
-                }
-                //分页函数
-                int pageSql = sql.IndexOf("limit");
-                if (pageSql != -1)
-                {
-                    if (sql.LastIndexOf(",") > pageSql)
-                    {
-                        var updSql = string.Empty;
-                        if (!sql.ToLower().Contains("order")) updSql = "order by 1";
-                        var page = Regex.Match(sql, @"(?<=limit).+(?=,.+)").Value;
-                        var pageSize = Regex.Match(sql, @"(?<=limit.+,)[0-9]+").Value;
-                        updSql += $" offset {page} rows fetch next {pageSize} rows only";
-                        sql = sql.Substring(0, pageSql) + updSql;
-                    }
-                    else
-                    {
-                        var limitStr = Regex.Match(sql, @"limit.+[0-9]+").Value;
-                        var countStr = Regex.Match(sql, @"(?<=limit).+[0-9]+").Value;
-                        sql = sql.Replace(limitStr, "");
-                        sql = $"select top {countStr} * from ({sql}) tables";
-                    }
-                }
-            }
-            else if (type == Enum.DbType.PostgreSql)
-            {
-                //随机函数
-                if (sql.Contains("rand()"))
-                {
-                    sql = sql.Replace("rand()", "random()");
-                }
-                //是否为空函数
-                var isnullStr = Regex.Match(sql, @"isnull\(.+?\)").Value;
-                if (!isnullStr.IsNull())
-                {
-                    var isnullStrB = Regex.Match(sql, @"(?<=isnull\().+?(?=\))").Value;
-                    sql = sql.Replace(isnullStr, $"{isnullStrB} is null");
-                }
-                //分页函数
-                int pageSql = sql.IndexOf("limit");
-                if (pageSql != -1 && sql.LastIndexOf(",") > pageSql)
-                {
-                    var updSql = string.Empty;
-                    var page = Regex.Match(sql, @"(?<=limit).+(?=,.+)").Value;
-                    var pageSize = Regex.Match(sql, @"(?<=limit.+,)[0-9]+").Value;
-                    updSql += $"limit {pageSize} offset {page}";
-                    sql = sql.Substring(0, pageSql) + updSql;
-                }
-                //记录数函数
-                var topStr = Regex.Match(sql, @"select.+top.+?[0-9]+").Value;
-                if (!topStr.IsNull())
-                {
-                    var countStr = Regex.Match(topStr, @"(?<=select.+top.+?)[0-9]+").Value;
-                    sql = sql.Replace(topStr, "select ");
-                    if (!sql.Contains("limit")) sql = $"{sql} limit {countStr}";
-                }
-            }
-            return sql;
-        }
-
-        #endregion
+        #endregion 操作脚本
 
         #region 操作事务
 
@@ -482,7 +372,7 @@ namespace zgcwkj.Util
             dbCommon.Dispose();
         }
 
-        #endregion
+        #endregion 操作事务
 
         #region 操作数据库
 
@@ -706,7 +596,7 @@ namespace zgcwkj.Util
             return updateCount;
         }
 
-        #endregion
+        #endregion 操作数据库
 
         #region 操作数据库（核心）
 
@@ -800,7 +690,7 @@ namespace zgcwkj.Util
             return count;
         }
 
-        #endregion
+        #endregion 操作数据库（核心）
 
         #region 其他
 
@@ -817,6 +707,6 @@ namespace zgcwkj.Util
             return okStr;
         }
 
-        #endregion
+        #endregion 其他
     }
 }

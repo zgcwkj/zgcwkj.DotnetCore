@@ -31,7 +31,8 @@ namespace zgcwkj.Util
                     Version = version,
                     Description = description,
                 });
-                options.OrderActionsBy(o => o.RelativePath);
+                //排序接口
+                //options.OrderActionsBy(o => o.RelativePath);
                 //显示注释
                 var basePath = GlobalConstant.GetRunPath;
                 var xmlFilesPath = Directory.GetFiles(basePath, "*.xml");

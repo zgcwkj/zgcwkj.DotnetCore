@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Rewrite;
 using Microsoft.Extensions.FileProviders;
 using System.Text.Encodings.Web;
+using System.Text.Json;
 using System.Text.Unicode;
 using zgcwkj.Model.Context;
 using zgcwkj.Util;
@@ -48,10 +49,9 @@ namespace zgcwkj.Web
                 //PropertyNamingPolicy = null 默认不改变
                 //PropertyNamingPolicy = JsonNamingPolicy.CamelCase 默认小写
                 //https://docs.microsoft.com/zh-cn/dotnet/api/system.text.json.jsonserializeroptions.propertynamingpolicy?view=net-6.0
-                options.JsonSerializerOptions.PropertyNamingPolicy = null;
+                options.JsonSerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
                 //数据序列化
                 options.JsonSerializerOptions.Converters.Add(new DateTimeJson());
-                options.JsonSerializerOptions.Converters.Add(new StringJson());
                 //取消 Unicode 编码
                 options.JsonSerializerOptions.Encoder = JavaScriptEncoder.Create(UnicodeRanges.All);
                 //空值不反回前端
@@ -87,7 +87,7 @@ namespace zgcwkj.Web
             //配置 Swagger
             services.AddSwaggerJwt();
             //配置 Jwt
-            services.AddJwtConfig(new MyJwtValidator());
+            //services.AddJwtConfig(new MyJwtValidator());
         }
 
         /// <summary>
@@ -124,19 +124,19 @@ namespace zgcwkj.Web
                     if (context.Response.StatusCode == 401)
                     {
                         context.Request.Path = "/Admin/Index";
-                        await next();
+                        //await next();
                     }
                     //404 错误
                     if (context.Response.StatusCode == 404)
                     {
                         context.Request.Path = "/Help/Error";
-                        await next();
+                        //await next();
                     }
                     //500 错误
                     if (context.Response.StatusCode == 500)
                     {
                         context.Request.Path = "/Help/Error";
-                        await next();
+                        //await next();
                     }
                 });
                 //用户访问地址重写
@@ -161,14 +161,14 @@ namespace zgcwkj.Web
             //用户 Session
             app.UseSession();
             //启用 Jwt
-            app.JwtAuthorize();
+            //app.JwtAuthorize();
             //用户默认路由
             app.MapControllerRoute(
                 name: "areaRoute",
                 pattern: "{area:exists}/{controller=Home}/{action=Index}/{id?}");
             app.MapControllerRoute(
                 name: "default",
-                pattern: "{controller=Admin}/{action=Index}/{id?}");
+                pattern: "{controller=Home}/{action=Index}/{id?}");
         }
 
         /// <summary>

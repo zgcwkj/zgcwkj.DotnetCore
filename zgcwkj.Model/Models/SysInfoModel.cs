@@ -1,6 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Runtime.CompilerServices;
 using zgcwkj.Util;
 
 namespace zgcwkj.Model.Models

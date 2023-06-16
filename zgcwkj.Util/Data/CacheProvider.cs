@@ -2,7 +2,7 @@
 {
     /// <summary>
     /// <b>缓存操作提供者</b>
-    /// 
+    ///
     /// <para>常规使用：var cache = CacheProvider.Create()</para>
     /// <para>注入使用：services.AddTransient&lt;CacheAccess&gt;()</para>
     /// </summary>

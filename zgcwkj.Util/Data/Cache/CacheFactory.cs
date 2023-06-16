@@ -14,7 +14,7 @@ namespace zgcwkj.Util.Data
         {
             get
             {
-                string dbTypeStr = ConfigHelp.Get("CacheType") ?? "memory";
+                var dbTypeStr = ConfigHelp.Get("CacheType") ?? "memory";
                 var cacheType = dbTypeStr.ToLower() switch
                 {
                     "memory" => CacheType.Memory,
@@ -32,7 +32,7 @@ namespace zgcwkj.Util.Data
         {
             get
             {
-                string dbConnect = Type switch
+                var dbConnect = Type switch
                 {
                     CacheType.Memory => ConfigHelp.Get("MemoryConnect"),
                     CacheType.Redis => ConfigHelp.Get("RedisConnect"),

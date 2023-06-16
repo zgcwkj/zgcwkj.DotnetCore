@@ -7,7 +7,7 @@ namespace zgcwkj.Util
 {
     /// <summary>
     /// <b>数据表对象</b>
-    /// 
+    ///
     /// <para>继承后可以操作数据库</para>
     /// </summary>
     public abstract class DbModel
@@ -422,7 +422,7 @@ namespace zgcwkj.Util
     /// <summary>
     /// 表对象
     /// </summary>
-    partial class TableMode
+    internal partial class TableMode
     {
         /// <summary>
         /// 是否是主键

@@ -1,15 +1,14 @@
-﻿using System;
-using zgcwkj.Model.Context;
+﻿using zgcwkj.Model.Context;
 using zgcwkj.Model.Models;
 using zgcwkj.Util;
 
 namespace zgcwkj.Demo
 {
-    class Program
+    internal class Program
     {
-        static void Main(string[] args)
+        private static void Main(string[] args)
         {
-            string userID = "zgcwkj".ToMD5();
+            var userID = "zgcwkj".ToMD5();
 
             //Cache
             Console.WriteLine("Cache >");

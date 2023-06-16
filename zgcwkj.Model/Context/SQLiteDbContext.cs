@@ -3,7 +3,6 @@ using zgcwkj.Model.DefaultData;
 using zgcwkj.Model.Models;
 using zgcwkj.Util;
 using zgcwkj.Util.Data;
-using zgcwkj.Util.Enum;
 
 namespace zgcwkj.Model.Context
 {
@@ -12,17 +11,21 @@ namespace zgcwkj.Model.Context
     /// </summary>
     public class SQLiteDbContext : DbCommon
     {
-        public SQLiteDbContext() : base(DbType.SQLite, ConfigHelp.Get("SQLite2Connect"))
-        {
-
-        }
-
         /// <summary>
-        /// 配置要使用的数据库 
+        /// 配置要使用的数据库
         /// </summary>
         /// <param name="optionsBuilder">上下文选项生成器</param>
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
+            //配置
+            var dbConnect = ConfigHelp.Get("SQLite2Connect");
+            var dbTimeout = 10;
+            //SQLite
+            optionsBuilder.UseSqlite(dbConnect, p =>
+            {
+                p.CommandTimeout(dbTimeout);
+            });
+            //
             base.OnConfiguring(optionsBuilder);
         }
 
@@ -44,4 +47,3 @@ namespace zgcwkj.Model.Context
         public DbSet<SysInfoModel> SysInfoModel { get; set; }
     }
 }
-

@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using zgcwkj.Model.DefaultData;
 using zgcwkj.Model.Models;
+using zgcwkj.Util;
 using zgcwkj.Util.Data;
 
 namespace zgcwkj.Model.Context
@@ -11,11 +12,20 @@ namespace zgcwkj.Model.Context
     public class MyDbContext : DbCommon
     {
         /// <summary>
-        /// 配置要使用的数据库 
+        /// 配置要使用的数据库
         /// </summary>
         /// <param name="optionsBuilder">上下文选项生成器</param>
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
+            //配置
+            var dbConnect = ConfigHelp.Get("SQLiteConnect");
+            var dbTimeout = 10;
+            //SQLite
+            optionsBuilder.UseSqlite(dbConnect, p =>
+            {
+                p.CommandTimeout(dbTimeout);
+            });
+            //
             base.OnConfiguring(optionsBuilder);
         }
 

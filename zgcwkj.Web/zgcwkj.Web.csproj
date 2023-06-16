@@ -9,8 +9,11 @@
 	</PropertyGroup>
 
 	<ItemGroup>
+		<PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="6.0.18" />
+	</ItemGroup>
+
+	<ItemGroup>
 		<ProjectReference Include="..\zgcwkj.Model\zgcwkj.Model.csproj" />
-		<ProjectReference Include="..\zgcwkj.Util\zgcwkj.Util.csproj" />
 	</ItemGroup>
 
 </Project>

@@ -1,6 +1,7 @@
 ﻿using System.Data;
 using System.Text;
 using System.Text.Json;
+using System.Text.RegularExpressions;
 using zgcwkj.Util.Common;
 using zgcwkj.Util.Log;
 
@@ -27,7 +28,7 @@ namespace zgcwkj.Util
                 }
                 catch (Exception ex)
                 {
-                    string meg = ex.Message;
+                    var meg = ex.Message;
                     if (GlobalConstant.IsDevelopment) Logger.Error(meg);
                 }
             }
@@ -50,7 +51,7 @@ namespace zgcwkj.Util
                 }
                 catch (Exception ex)
                 {
-                    string meg = ex.Message;
+                    var meg = ex.Message;
                     if (GlobalConstant.IsDevelopment) Logger.Error(meg);
                 }
             }
@@ -97,7 +98,7 @@ namespace zgcwkj.Util
                 }
                 catch (Exception ex)
                 {
-                    string meg = ex.Message;
+                    var meg = ex.Message;
                     if (GlobalConstant.IsDevelopment) Logger.Error(meg);
                 }
             }
@@ -121,7 +122,7 @@ namespace zgcwkj.Util
                 }
                 catch (Exception ex)
                 {
-                    string meg = ex.Message;
+                    var meg = ex.Message;
                     if (GlobalConstant.IsDevelopment) Logger.Error(meg);
                 }
             }
@@ -145,7 +146,7 @@ namespace zgcwkj.Util
                 }
                 catch (Exception ex)
                 {
-                    string meg = ex.Message;
+                    var meg = ex.Message;
                     if (GlobalConstant.IsDevelopment) Logger.Error(meg);
                 }
             }
@@ -169,7 +170,7 @@ namespace zgcwkj.Util
                 }
                 catch (Exception ex)
                 {
-                    string meg = ex.Message;
+                    var meg = ex.Message;
                     if (GlobalConstant.IsDevelopment) Logger.Error(meg);
                 }
             }
@@ -192,7 +193,7 @@ namespace zgcwkj.Util
                 }
                 catch (Exception ex)
                 {
-                    string meg = ex.Message;
+                    var meg = ex.Message;
                     if (GlobalConstant.IsDevelopment) Logger.Error(meg);
                 }
             }
@@ -213,7 +214,7 @@ namespace zgcwkj.Util
             }
             catch (Exception ex)
             {
-                string meg = ex.Message;
+                var meg = ex.Message;
                 if (GlobalConstant.IsDevelopment) Logger.Error(meg);
             }
             return def;
@@ -230,12 +231,12 @@ namespace zgcwkj.Util
         {
             try
             {
-                DateTime dateTime = value.ToDate();
+                var dateTime = value.ToDate();
                 return dateTime.ToString(dateMode);
             }
             catch (Exception ex)
             {
-                string meg = ex.Message;
+                var meg = ex.Message;
                 if (GlobalConstant.IsDevelopment) Logger.Error(meg);
             }
             return def;
@@ -243,7 +244,7 @@ namespace zgcwkj.Util
 
         /// <summary>
         /// 格式化日期时间
-        /// 
+        ///
         /// 0 > yyyy-MM-dd
         /// 1 > yyyy-MM-dd HH:mm:ss
         /// 2 > yyyy/MM/dd
@@ -283,7 +284,7 @@ namespace zgcwkj.Util
         /// <returns></returns>
         public static DateTime ToUnixByDate(this double timeStamp)
         {
-            DateTime nowTime = new DateTime(1970, 1, 1, 0, 0, 0);
+            var nowTime = new DateTime(1970, 1, 1, 0, 0, 0);
             if (timeStamp.ToString().Length == 13)
             {
                 nowTime = nowTime.AddMilliseconds(timeStamp);
@@ -302,8 +303,8 @@ namespace zgcwkj.Util
         /// <returns></returns>
         public static double ToDateByUnix(this DateTime dateTime)
         {
-            DateTime nowTime = new DateTime(1970, 1, 1, 0, 0, 0);
-            TimeSpan nowSpan = dateTime - TimeZoneInfo.ConvertTime(nowTime, TimeZoneInfo.Local);
+            var nowTime = new DateTime(1970, 1, 1, 0, 0, 0);
+            var nowSpan = dateTime - TimeZoneInfo.ConvertTime(nowTime, TimeZoneInfo.Local);
             return nowSpan.TotalSeconds;
         }
 
@@ -368,7 +369,7 @@ namespace zgcwkj.Util
             }
             catch (Exception ex)
             {
-                string meg = ex.Message;
+                var meg = ex.Message;
                 if (GlobalConstant.IsDevelopment) Logger.Error(meg);
             }
             return true;
@@ -406,6 +407,48 @@ namespace zgcwkj.Util
         }
 
         /// <summary>
+        /// 数字转汉字
+        /// </summary>
+        /// <param name="number"></param>
+        /// <returns></returns>
+        public static string ToChinese(this int number)
+        {
+            var units = new string[] { "", "十", "百", "千", "万", "十", "百", "千", "亿", "十", "百", "千" };
+            var nums = new string[] { "零", "一", "二", "三", "四", "五", "六", "七", "八", "九" };
+            if (number == 0)
+            {
+                return nums[0];
+            }
+            var results = "";
+            for (int i = number.ToString().Length - 1; i >= 0; i--)
+            {
+                int r = (int)(number / Math.Pow(10, i));
+                results += nums[r % 10] + units[i];
+            }
+            results = results.Replace("零十", "零")
+                             .Replace("零百", "零")
+                             .Replace("零千", "零")
+                             .Replace("亿万", "亿");
+            results = Regex.Replace(results, "零([万, 亿])", "$1");
+            results = Regex.Replace(results, "零+", "零");
+
+            if (results.StartsWith("一十"))
+            {
+                results = results.Substring(1);
+            }
+        cutzero:
+            if (results.EndsWith("零"))
+            {
+                results = results.Substring(0, results.Length - 1);
+                if (results.EndsWith("零"))
+                {
+                    goto cutzero;
+                }
+            }
+            return results;
+        }
+
+        /// <summary>
         /// 编码 Base64
         /// </summary>
         /// <param name="value">Data</param>
@@ -418,7 +461,7 @@ namespace zgcwkj.Util
             }
             catch (Exception ex)
             {
-                string meg = ex.Message;
+                var meg = ex.Message;
                 if (GlobalConstant.IsDevelopment) Logger.Error(meg);
                 return "";
             }
@@ -437,7 +480,7 @@ namespace zgcwkj.Util
             }
             catch (Exception ex)
             {
-                string meg = ex.Message;
+                var meg = ex.Message;
                 if (GlobalConstant.IsDevelopment) Logger.Error(meg);
                 return "";
             }
@@ -456,7 +499,7 @@ namespace zgcwkj.Util
             }
             catch (Exception ex)
             {
-                string meg = ex.Message;
+                var meg = ex.Message;
                 if (GlobalConstant.IsDevelopment) Logger.Error(meg);
                 return "";
             }
@@ -478,10 +521,10 @@ namespace zgcwkj.Util
         /// <returns>转换后的 List</returns>
         public static List<Dictionary<string, object>> ToList(this DataTable dataTable)
         {
-            List<Dictionary<string, object>> list = new List<Dictionary<string, object>>();
+            var list = new List<Dictionary<string, object>>();
             foreach (DataRow dataRow in dataTable.Rows)
             {
-                Dictionary<string, object> dictionary = new Dictionary<string, object>();
+                var dictionary = new Dictionary<string, object>();
                 foreach (DataColumn dataColumn in dataTable.Columns)
                 {
                     //列名
@@ -511,19 +554,19 @@ namespace zgcwkj.Util
         /// <returns>转换后的 DataTable</returns>
         public static DataTable ToDataTable(this List<Dictionary<string, object>> list)
         {
-            DataTable dataTable = new DataTable();
+            var dataTable = new DataTable();
             if (list.Count > 0)
             {
                 //==>创建 Table 表头
-                foreach (KeyValuePair<string, object> keyValuePair in list[0])
+                foreach (var keyValuePair in list[0])
                 {
                     dataTable.Columns.Add(keyValuePair.Key, typeof(string));
                 }
                 //==>创建 Table 数据
-                foreach (Dictionary<string, object> dictionary in list)
+                foreach (var dictionary in list)
                 {
-                    DataRow dr = dataTable.NewRow();
-                    foreach (KeyValuePair<string, object> keyValuePair in dictionary)
+                    var dr = dataTable.NewRow();
+                    foreach (var keyValuePair in dictionary)
                     {
                         dr[keyValuePair.Key] = keyValuePair.Value;
                     }

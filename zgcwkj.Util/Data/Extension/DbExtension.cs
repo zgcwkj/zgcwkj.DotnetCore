@@ -227,58 +227,85 @@ namespace zgcwkj.Util.Data.Extension
                         case DbType.Date:
                             value = parameter.Value.ToTrim().ToDate().ToString("yyyy-MM-dd HH:mm:ss");
                             break;
+
                         case DbType.AnsiString:
                             break;
+
                         case DbType.Binary:
                             break;
+
                         case DbType.Byte:
                             break;
+
                         case DbType.Boolean:
                             break;
+
                         case DbType.Currency:
                             break;
+
                         case DbType.DateTime:
                             break;
+
                         case DbType.Decimal:
                             break;
+
                         case DbType.Double:
                             break;
+
                         case DbType.Guid:
                             break;
+
                         case DbType.Int16:
                             break;
+
                         case DbType.Int32:
                             break;
+
                         case DbType.Int64:
                             break;
+
                         case DbType.Object:
                             break;
+
                         case DbType.SByte:
                             break;
+
                         case DbType.Single:
                             break;
+
                         case DbType.String:
                             break;
+
                         case DbType.Time:
                             break;
+
                         case DbType.UInt16:
                             break;
+
                         case DbType.UInt32:
                             break;
+
                         case DbType.UInt64:
                             break;
+
                         case DbType.VarNumeric:
                             break;
+
                         case DbType.AnsiStringFixedLength:
                             break;
+
                         case DbType.StringFixedLength:
                             break;
+
                         case DbType.Xml:
                             break;
+
                         case DbType.DateTime2:
                             break;
+
                         case DbType.DateTimeOffset:
                             break;
+
                         default:
                             value = parameter.Value.ToTrim();
                             break;
@@ -313,7 +340,7 @@ namespace zgcwkj.Util.Data.Extension
     /// <summary>
     /// 反射工具（私有）
     /// </summary>
-    partial class DbExtensionReflection
+    internal partial class DbExtensionReflection
     {
         /// <summary>
         /// 同步字典

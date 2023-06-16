@@ -351,7 +351,7 @@ namespace zgcwkj.Util.Data.Extension
             }
             cmd.Connection = conn;
             cmd.CommandText = strSql;
-            cmd.CommandTimeout = DbFactory.Timeout;
+            cmd.CommandTimeout = 100;
             if (isOpenTrans != null)
             {
                 cmd.Transaction = isOpenTrans;
@@ -360,13 +360,12 @@ namespace zgcwkj.Util.Data.Extension
             if (dbParameter != null)
             {
                 cmd.Parameters.Clear();
-                dbParameter = DbParameterExtension.ToDbParameter(dbParameter);
+                //dbParameter = DbParameterExtension.ToDbParameter(dbParameter);
                 foreach (var parameter in dbParameter)
                 {
                     cmd.Parameters.Add(parameter);
                 }
             }
         }
-
     }
 }
