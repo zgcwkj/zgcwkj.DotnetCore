@@ -14,7 +14,7 @@ namespace zgcwkj.Util.Common
         /// <returns></returns>
         public byte[] GetByte(string name)
         {
-            Stream stream = GetType().Assembly.GetManifestResourceStream(name);
+            var stream = GetType().Assembly.GetManifestResourceStream(name);
             var bytes = new byte[stream.Length];
             stream.Read(bytes, 0, bytes.Length);
             stream.Close();
@@ -33,13 +33,13 @@ namespace zgcwkj.Util.Common
             {
                 var bytes = GetByte(name);
                 //文件所在的文件夹的路径
-                string filePath = $"{GlobalConstant.GetRunPath}\\{Path.GetDirectoryName(path)}";
+                var filePath = $"{GlobalConstant.GetRunPath}\\{Path.GetDirectoryName(path)}";
                 //防止没有文件夹
                 if (!Directory.Exists(filePath)) Directory.CreateDirectory(filePath);
                 //文件的路径
-                string filePathAndName = $"{GlobalConstant.GetRunPath}\\{path}";
+                var filePathAndName = $"{GlobalConstant.GetRunPath}\\{path}";
                 //文件流输出
-                Stream stream = File.OpenWrite(filePathAndName);
+                var stream = File.OpenWrite(filePathAndName);
                 stream.Write(bytes, 0, bytes.Length);
                 stream.Close();
                 return true;

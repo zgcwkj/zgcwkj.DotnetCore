@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
-using System.Text.Json;
 
 namespace zgcwkj.Util
 {
@@ -13,9 +12,9 @@ namespace zgcwkj.Util
         /// 获取 Session 对象
         /// </summary>
         /// <returns></returns>
-        public static ISession GetObj()
+        public static ISession? GetObj()
         {
-            IHttpContextAccessor hca = GlobalContext.ServiceProvider?.GetService<IHttpContextAccessor>();
+            var hca = GlobalContext.ServiceProvider?.GetService<IHttpContextAccessor>();
             return hca?.HttpContext?.Session;
         }
 
@@ -26,11 +25,11 @@ namespace zgcwkj.Util
         /// <param name="key">Session的键名</param>
         /// <param name="value">Session的键值</param>
         /// <returns>状态</returns>
-        public static bool Set<T>(string key, T value)
+        public static bool Set<T>(string key, T value) where T : notnull
         {
             if (string.IsNullOrEmpty(key)) return false;
-            IHttpContextAccessor hca = GlobalContext.ServiceProvider?.GetService<IHttpContextAccessor>();
-            hca?.HttpContext?.Session.SetString(key, JsonSerializer.Serialize(value));
+            var hca = GlobalContext.ServiceProvider?.GetService<IHttpContextAccessor>();
+            hca?.HttpContext?.Session.SetString(key, value.ToJson());
             return true;
         }
 
@@ -50,13 +49,13 @@ namespace zgcwkj.Util
         /// </summary>
         /// <param name="key">Session的键名</param>
         /// <returns>值</returns>
-        public static T Get<T>(string key)
+        public static T? Get<T>(string key)
         {
             if (string.IsNullOrEmpty(key)) return default;
-            IHttpContextAccessor hca = GlobalContext.ServiceProvider?.GetService<IHttpContextAccessor>();
+            var hca = GlobalContext.ServiceProvider?.GetService<IHttpContextAccessor>();
             var sessionStr = hca?.HttpContext?.Session.GetString(key);
             if (string.IsNullOrEmpty(sessionStr)) return default;
-            return JsonSerializer.Deserialize<T>(sessionStr);
+            return sessionStr.ToJson<T>();
         }
 
         /// <summary>
@@ -66,7 +65,7 @@ namespace zgcwkj.Util
         /// <returns>值</returns>
         public static string Get(string key)
         {
-            return Get<string>(key);
+            return Get<string>(key) ?? "";
         }
 
         /// <summary>
@@ -77,7 +76,7 @@ namespace zgcwkj.Util
         public static bool Remove(string key)
         {
             if (string.IsNullOrEmpty(key)) return false;
-            IHttpContextAccessor hca = GlobalContext.ServiceProvider?.GetService<IHttpContextAccessor>();
+            var hca = GlobalContext.ServiceProvider?.GetService<IHttpContextAccessor>();
             hca?.HttpContext?.Session.Remove(key);
             return true;
         }
@@ -88,7 +87,7 @@ namespace zgcwkj.Util
         /// <returns>状态</returns>
         public static bool Clear()
         {
-            IHttpContextAccessor hca = GlobalContext.ServiceProvider?.GetService<IHttpContextAccessor>();
+            var hca = GlobalContext.ServiceProvider?.GetService<IHttpContextAccessor>();
             hca?.HttpContext?.Session.Clear();
             return true;
         }

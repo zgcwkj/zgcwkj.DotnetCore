@@ -48,7 +48,7 @@ namespace zgcwkj.Util
             get
             {
                 var isDevelopment = GlobalContext.HostingEnvironment?.IsProduction();
-                return isDevelopment.ToBool();
+                return isDevelopment ?? false;
             }
         }
 
@@ -60,7 +60,7 @@ namespace zgcwkj.Util
             get
             {
                 var isDevelopment = GlobalContext.HostingEnvironment?.IsDevelopment();
-                return isDevelopment.ToBool();
+                return isDevelopment ?? false;
             }
         }
 
@@ -71,8 +71,9 @@ namespace zgcwkj.Util
         {
             get
             {
-                string filePath = Path.GetDirectoryName(typeof(GlobalConstant).Assembly.Location);
-                return filePath;
+                var location = typeof(GlobalConstant).Assembly.Location;
+                var filePath = Path.GetDirectoryName(location);
+                return filePath ?? "";
             }
         }
 
@@ -83,7 +84,7 @@ namespace zgcwkj.Util
         {
             get
             {
-                string filePath = System.AppDomain.CurrentDomain.BaseDirectory;
+                var filePath = System.AppDomain.CurrentDomain.BaseDirectory;
                 return filePath;
             }
         }
@@ -95,7 +96,7 @@ namespace zgcwkj.Util
         {
             get
             {
-                string filePath = System.Environment.CurrentDirectory;
+                var filePath = System.Environment.CurrentDirectory;
                 return filePath;
             }
         }
@@ -107,7 +108,7 @@ namespace zgcwkj.Util
         {
             get
             {
-                string filePath = System.IO.Directory.GetCurrentDirectory();
+                var filePath = System.IO.Directory.GetCurrentDirectory();
                 return filePath;
             }
         }
@@ -119,8 +120,8 @@ namespace zgcwkj.Util
         {
             get
             {
-                string filePath = GlobalContext.HostingEnvironment.ContentRootPath;
-                return filePath;
+                var filePath = GlobalContext.HostingEnvironment?.ContentRootPath;
+                return filePath ?? "";
             }
         }
 

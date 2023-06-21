@@ -12,9 +12,9 @@ namespace zgcwkj.Util
         /// 获取 Cookie 对象
         /// </summary>
         /// <returns></returns>
-        public static IResponseCookies GetObj()
+        public static IResponseCookies? GetObj()
         {
-            IHttpContextAccessor hca = GlobalContext.ServiceProvider?.GetService<IHttpContextAccessor>();
+            var hca = GlobalContext.ServiceProvider?.GetService<IHttpContextAccessor>();
             return hca?.HttpContext?.Response.Cookies;
         }
 
@@ -27,8 +27,8 @@ namespace zgcwkj.Util
         /// <returns>状态</returns>
         public static bool Set(string sName, string sValue, bool httpOnly = true)
         {
-            IHttpContextAccessor hca = GlobalContext.ServiceProvider?.GetService<IHttpContextAccessor>();
-            CookieOptions option = new CookieOptions
+            var hca = GlobalContext.ServiceProvider?.GetService<IHttpContextAccessor>();
+            var option = new CookieOptions
             {
                 Expires = DateTime.MaxValue,
                 HttpOnly = httpOnly,
@@ -47,8 +47,8 @@ namespace zgcwkj.Util
         /// <returns>状态</returns>
         public static bool Set(string sName, string sValue, int expires, bool httpOnly = true)
         {
-            IHttpContextAccessor hca = GlobalContext.ServiceProvider?.GetService<IHttpContextAccessor>();
-            CookieOptions option = new CookieOptions
+            var hca = GlobalContext.ServiceProvider?.GetService<IHttpContextAccessor>();
+            var option = new CookieOptions
             {
                 Expires = DateTime.Now.AddMinutes(expires),
                 HttpOnly = httpOnly,
@@ -66,8 +66,8 @@ namespace zgcwkj.Util
         /// <returns>状态</returns>
         public static bool SetTemp(string sName, string sValue, bool httpOnly = true)
         {
-            IHttpContextAccessor hca = GlobalContext.ServiceProvider?.GetService<IHttpContextAccessor>();
-            CookieOptions option = new CookieOptions
+            var hca = GlobalContext.ServiceProvider?.GetService<IHttpContextAccessor>();
+            var option = new CookieOptions
             {
                 HttpOnly = httpOnly,
             };
@@ -82,8 +82,8 @@ namespace zgcwkj.Util
         /// <returns>值</returns>
         public static string Get(string sName)
         {
-            IHttpContextAccessor hca = GlobalContext.ServiceProvider?.GetService<IHttpContextAccessor>();
-            return hca?.HttpContext?.Request.Cookies[sName];
+            var hca = GlobalContext.ServiceProvider?.GetService<IHttpContextAccessor>();
+            return hca?.HttpContext?.Request.Cookies[sName]??"";
         }
 
         /// <summary>
@@ -93,7 +93,7 @@ namespace zgcwkj.Util
         /// <returns>状态</returns>
         public static bool Remove(string sName)
         {
-            IHttpContextAccessor hca = GlobalContext.ServiceProvider?.GetService<IHttpContextAccessor>();
+            var hca = GlobalContext.ServiceProvider?.GetService<IHttpContextAccessor>();
             hca?.HttpContext?.Response.Cookies.Delete(sName);
             return true;
         }
@@ -104,11 +104,13 @@ namespace zgcwkj.Util
         /// <returns>状态</returns>
         public static bool Clear()
         {
-            IHttpContextAccessor hca = GlobalContext.ServiceProvider?.GetService<IHttpContextAccessor>();
+            var hca = GlobalContext.ServiceProvider?.GetService<IHttpContextAccessor>();
             //请求
             var request = hca?.HttpContext?.Request;
+            if (request == null) return false;
             //响应
             var response = hca?.HttpContext?.Response;
+            if (response == null) return false;
             //循环所有 Cookie
             foreach (var cookie in request.Cookies)
             {

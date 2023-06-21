@@ -21,14 +21,10 @@ namespace zgcwkj.Web
         public static void Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
-            //Service
             builder.Services.ConfigureServices(builder);
-            //Injection
             builder.Services.AddInjection(builder);
-            //App
             var app = builder.Build();
             app.Configure(builder);
-            //Run
             app.Run();
         }
 
@@ -85,9 +81,7 @@ namespace zgcwkj.Web
                 options.Filters.Add(new GlobalException());
             });
             //配置 Swagger
-            services.AddSwaggerJwt();
-            //配置 Jwt
-            //services.AddJwtConfig(new MyJwtValidator());
+            services.AddSwagger();
         }
 
         /// <summary>
@@ -158,10 +152,10 @@ namespace zgcwkj.Web
             });
             //用户路由
             app.UseRouting();
+            //用户
+            app.UseAuthorization();
             //用户 Session
             app.UseSession();
-            //启用 Jwt
-            //app.JwtAuthorize();
             //用户默认路由
             app.MapControllerRoute(
                 name: "areaRoute",

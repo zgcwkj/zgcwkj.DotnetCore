@@ -13,14 +13,14 @@ namespace zgcwkj.Util.Data
         /// <summary>
         /// Redis 缓存
         /// </summary>
-        private static ConnectionMultiplexer multiplexer;
+        private static ConnectionMultiplexer? multiplexer;
 
         /// <summary>
         /// Redis 缓存实例时
         /// </summary>
         public RedisImp()
         {
-            if (multiplexer.IsNull())
+            if (multiplexer == null)
             {
                 var configuration = ConfigurationOptions.Parse(CacheFactory.Connect, true);
                 configuration.ResolveDns = true;

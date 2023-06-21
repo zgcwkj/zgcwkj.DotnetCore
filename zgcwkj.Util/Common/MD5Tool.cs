@@ -41,8 +41,8 @@ namespace zgcwkj.Util.Common
         [Obsolete]
         public static string GetMd5_16(string ConvertString)
         {
-            MD5CryptoServiceProvider md5 = new MD5CryptoServiceProvider();
-            string t2 = BitConverter.ToString(md5.ComputeHash(UTF8Encoding.Default.GetBytes(ConvertString)), 4, 8);
+            var md5 = new MD5CryptoServiceProvider();
+            var t2 = BitConverter.ToString(md5.ComputeHash(UTF8Encoding.Default.GetBytes(ConvertString)), 4, 8);
             t2 = t2.Replace("-", "");
             return t2;
         }
@@ -56,9 +56,9 @@ namespace zgcwkj.Util.Common
         [Obsolete]
         public static string GetMD5_32(string s, string _input_charset)
         {
-            MD5CryptoServiceProvider md5 = new MD5CryptoServiceProvider();
-            byte[] t = md5.ComputeHash(Encoding.GetEncoding(_input_charset).GetBytes(s));//计算该数组的哈希值
-            StringBuilder sb = new StringBuilder(32);
+            var md5 = new MD5CryptoServiceProvider();
+            var t = md5.ComputeHash(Encoding.GetEncoding(_input_charset).GetBytes(s));//计算该数组的哈希值
+            var sb = new StringBuilder(32);
             for (int i = 0; i < t.Length; i++)
             {
                 sb.Append(t[i].ToString("x").PadLeft(2, '0'));

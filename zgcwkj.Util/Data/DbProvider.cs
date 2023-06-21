@@ -8,8 +8,8 @@ namespace zgcwkj.Util
     /// <summary>
     /// <b>数据库操作提供者</b>
     ///
-    /// <para>常规使用：using var cmd = DbProvider.Create()</para>
-    /// <para>注入使用：services.AddTransient&lt;DbAccess&gt;()</para>
+    /// <para>常规使用：var cmd = DbProvider.Create(dbContext)</para>
+    /// <para>注入使用：services.AddTransient&lt;DbAccess&gt;(dbContext)</para>
     /// <para>建议使用<b>EF</b>操作数据库</para>
     /// </summary>
     public static class DbProvider
@@ -20,9 +20,9 @@ namespace zgcwkj.Util
         /// 创建数据库命令
         /// </summary>
         /// <returns></returns>
-        public static DbAccess Create()
+        public static DbAccess Create(DbContext dbContext)
         {
-            return new DbAccess();
+            return new DbAccess(dbContext);
         }
 
         /// <summary>
@@ -33,7 +33,6 @@ namespace zgcwkj.Util
         public static bool Clear(this DbAccess cmdAccess)
         {
             cmdAccess.dbModel = new SqlModel();
-            //cmdAccess.dbCommon = new DbCommon();
             return true;
         }
 

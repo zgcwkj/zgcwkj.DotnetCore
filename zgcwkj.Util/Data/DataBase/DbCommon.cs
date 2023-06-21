@@ -9,9 +9,10 @@ namespace zgcwkj.Util.Data
     ///
     /// <para>常规使用：using var dbComm = new DbCommon()</para>
     /// <para>注入使用：services.AddDbContext&lt;DbCommon&gt;()</para>
-    /// <para>继承此对象可以实现原生操作！by zgcwkj</para>
+    /// <para>此处的 DbCommon 为继承后的对象名</para>
+    /// <para>数据库需要继承此对象</para>
     /// </summary>
-    public class DbCommon : DbContext, IDisposable
+    public abstract class DbCommon : DbContext, IDisposable
     {
         /// <summary>
         /// 配置要使用的数据库

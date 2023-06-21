@@ -19,6 +19,12 @@ namespace zgcwkj.Demo
             using var myDbContext = new MyDbContext();
             using var sQLiteDbContext = new SQLiteDbContext();
 
+            //Query SQL
+            var dbAccess = DbProvider.Create(myDbContext);
+            dbAccess.SetCommandText("select * from sys_user");
+            var sysUserTable = dbAccess.QueryDataTable();
+            var sysUserList = dbAccess.QueryDataList<SysUserModel>();
+
             //Query
             Console.WriteLine("Query >");
             var sysUser = myDbContext.SysUserModel.ToList();

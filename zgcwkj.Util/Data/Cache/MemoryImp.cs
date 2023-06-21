@@ -13,14 +13,14 @@ namespace zgcwkj.Util.Data
         /// <summary>
         /// Memory 缓存
         /// </summary>
-        private static IMemoryCache memoryCache;
+        private static IMemoryCache? memoryCache;
 
         /// <summary>
         /// Memory 缓存实例时
         /// </summary>
         public MemoryImp()
         {
-            if (memoryCache.IsNull())
+            if (memoryCache == null)
             {
                 var memoryCacheOptions = new MemoryCacheOptions();
                 memoryCache = new MemoryCache(memoryCacheOptions);

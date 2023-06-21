@@ -19,7 +19,7 @@ namespace zgcwkj.Util.Log
         internal static string OutputLogDirectory()
         {
             //文件夹路径
-            string filePath = GlobalConstant.GetRunPath;
+            var filePath = GlobalConstant.GetRunPath;
             filePath = $"{filePath}/Log/";
             //创建文件夹，防止文件夹没有
             if (!Directory.Exists(filePath)) Directory.CreateDirectory(filePath);
@@ -58,22 +58,22 @@ namespace zgcwkj.Util.Log
                 File.Delete($"{filePath}/{fileName}");
             }
             //输出错误状态
-            bool errorOK;
+            var errorOK = false;
             //错误计数
-            int index = 0;
+            var index = 0;
             do
             {
                 try
                 {
                     //文件内容
-                    string fileContent = $"Time: {DateTime.Now:yyyy-MM-dd HH:mm:ss}\r\n{message}\r\n\r\n";
+                    var fileContent = $"Time: {DateTime.Now:yyyy-MM-dd HH:mm:ss}\r\n{message}\r\n\r\n";
                     File.AppendAllText($"{filePath}/{fileName}", fileContent);
                     errorOK = false;
                 }
                 catch (Exception ex)
                 {
                     if (GlobalConstant.IsDevelopment) throw;
-                    string msg = ex.Message;
+                    var msg = ex.Message;
                     index++;
                     type += $"{index}";
                     Thread.Sleep(100);

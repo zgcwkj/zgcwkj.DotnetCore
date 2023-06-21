@@ -15,32 +15,32 @@ namespace zgcwkj.Util
         /// <para>所有注册服务和类实例容器</para>
         /// <para>用于依赖注入</para>
         /// </summary>
-        public static IServiceCollection Services { get; set; }
+        public static IServiceCollection? Services { get; set; }
 
         /// <summary>
         /// <para>所有配置的服务提供商</para>
         /// <para>用于获取依赖注入</para>
         /// </summary>
-        public static IServiceProvider ServiceProvider { get; set; }
+        public static IServiceProvider? ServiceProvider { get; set; }
 
         /// <summary>
         /// Web主机环境
         /// </summary>
-        public static IWebHostEnvironment HostingEnvironment { get; set; }
+        public static IWebHostEnvironment? HostingEnvironment { get; set; }
 
         /// <summary>
         /// 配置对象(私有)
         /// </summary>
-        private static IConfiguration configuration { get; set; }
+        private static IConfiguration? configuration { get; set; }
 
         /// <summary>
         /// 配置对象
         /// </summary>
-        public static IConfiguration Configuration
+        public static IConfiguration? Configuration
         {
             get
             {
-                if (configuration.IsNull())
+                if (configuration == null)
                 {
                     SetConfigFiles("appsettings.json");
                 }
@@ -82,26 +82,16 @@ namespace zgcwkj.Util
         }
 
         /// <summary>
-        /// 获取版本号
-        /// </summary>
-        /// <returns></returns>
-        public static string GetVersion()
-        {
-            Version version = Assembly.GetEntryAssembly().GetName().Version;
-            return $"{version.Major}.{version.Minor}";
-        }
-
-        /// <summary>
         /// 获取环境变量
         /// </summary>
         /// <param name="key">键</param>
         /// <returns></returns>
         public static string GetEnvVar(string key)
         {
-            string data = Environment.GetEnvironmentVariable(key, EnvironmentVariableTarget.Machine) ?? null;
+            var data = Environment.GetEnvironmentVariable(key, EnvironmentVariableTarget.Machine) ?? null;
             data ??= Environment.GetEnvironmentVariable(key, EnvironmentVariableTarget.Process) ?? null;
             data ??= Environment.GetEnvironmentVariable(key, EnvironmentVariableTarget.User) ?? null;
-            return data.ToTrim();
+            return data ?? "";
         }
 
         /// <summary>

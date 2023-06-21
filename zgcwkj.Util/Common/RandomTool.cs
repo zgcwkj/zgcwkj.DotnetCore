@@ -42,7 +42,7 @@
         {
             get
             {
-                string randomStr = "";//输入的随机字符
+                var randomStr = string.Empty;//输入的随机字符
                 if (DigitalOut) randomStr = DigitalStr;//数字
                 if (ContentOut) randomStr += ContentStr;//字符
                 if (SymbolOut) randomStr += SymbolStr;//符号
@@ -71,9 +71,9 @@
         /// <returns>随机字符</returns>
         public string GetRandom(int Length)
         {
-            string strRandom = "";
-            string[] zf = RandomStr.Split('|');
-            Random rd = new Random();
+            var strRandom = string.Empty;
+            var zf = RandomStr.Split('|');
+            var rd = new Random();
             for (int i = 0; i < Length; i++)
             {
                 int sjs = rd.Next(zf.Length);

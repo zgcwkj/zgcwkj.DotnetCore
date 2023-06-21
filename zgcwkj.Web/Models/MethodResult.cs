@@ -1,6 +1,6 @@
 ﻿using System.Text.Json.Serialization;
 
-namespace zgcwkj.Util.Models
+namespace zgcwkj.Web.Models
 {
     /// <summary>
     /// 方法结果

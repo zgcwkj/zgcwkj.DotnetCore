@@ -17,10 +17,12 @@ namespace zgcwkj.Util
         /// <param name="title">标题</param>
         /// <param name="version">版本</param>
         /// <param name="description">描述</param>
-        public static void AddSwagger(this IServiceCollection services, string title = "接口文档", string version = "v1", string description = default)
+        public static void AddSwagger(this IServiceCollection services, string title = "接口文档", string version = "v1", string? description = default)
         {
             if (services == null) throw new ArgumentNullException(nameof(services));
 
+            //Api Explorer
+            services.AddEndpointsApiExplorer();
             //注册 Swagger
             services.AddSwaggerGen(options =>
             {
@@ -50,10 +52,12 @@ namespace zgcwkj.Util
         /// <param name="title">标题</param>
         /// <param name="version">版本</param>
         /// <param name="description">描述</param>
-        public static void AddSwaggerJwt(this IServiceCollection services, string title = "接口文档", string version = "v1", string description = default)
+        public static void AddSwaggerJwt(this IServiceCollection services, string title = "接口文档", string version = "v1", string? description = default)
         {
             if (services == null) throw new ArgumentNullException(nameof(services));
 
+            //Api Explorer
+            services.AddEndpointsApiExplorer();
             //注册 Swagger
             services.AddSwaggerGen(options =>
             {

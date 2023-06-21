@@ -25,16 +25,17 @@ namespace zgcwkj.Util.Data.Extension
         {
             using (reader)
             {
-                dynamic d = new ExpandoObject();
+                var d = new ExpandoObject();
                 for (int i = 0; i < reader.FieldCount; i++)
                 {
+                    var dData = d as IDictionary<string, object>;
                     try
                     {
-                        ((IDictionary<string, object>)d).Add(reader.GetName(i), reader.GetValue(i));
+                        dData.Add(reader.GetName(i), reader.GetValue(i));
                     }
                     catch
                     {
-                        ((IDictionary<string, object>)d).Add(reader.GetName(i), null);
+                        dData.Add(reader.GetName(i), null);
                     }
                 }
                 return d;
@@ -50,7 +51,7 @@ namespace zgcwkj.Util.Data.Extension
         {
             using (reader)
             {
-                List<dynamic> list = new List<dynamic>();
+                var list = new List<dynamic>();
                 if (reader != null && !reader.IsClosed)
                 {
                     while (reader.Read())
@@ -74,22 +75,34 @@ namespace zgcwkj.Util.Data.Extension
         {
             using (reader)
             {
-                List<string> field = new List<string>(reader.FieldCount);
+                var field = new List<string>(reader.FieldCount);
                 for (int i = 0; i < reader.FieldCount; i++)
                 {
                     field.Add(reader.GetName(i));
                 }
-                List<T> list = new List<T>();
+                var list = new List<T>();
                 while (reader.Read())
                 {
-                    T model = Activator.CreateInstance<T>();
-                    foreach (PropertyInfo property in DbExtensionReflection.GetProperties(model.GetType()))
+                    var model = Activator.CreateInstance<T>();
+                    var modelType = model?.GetType();
+                    if (modelType == null) continue;
+                    var modelProps = DbExtensionReflection.GetProperties(modelType);
+                    if (modelProps == null) continue;
+                    foreach (var prop in modelProps)
                     {
-                        if (field.Contains(property.Name))
+                        var keyName = prop.Name;
+                        //检查对象标记
+                        foreach (var attribute in prop.GetCustomAttributes())
                         {
-                            if (!IsNullOrDBNull(reader[property.Name]))
+                            var columnAttribute = attribute as ColumnAttribute;//字段
+                            if (columnAttribute != null) keyName = columnAttribute.Name;
+                        }
+                        //赋值
+                        if (field.Contains(keyName))
+                        {
+                            if (!IsNullOrDBNull(reader[keyName]))
                             {
-                                property.SetValue(model, HackType(reader[property.Name], property.PropertyType), null);
+                                prop.SetValue(model, HackType(reader[keyName], prop.PropertyType), null);
                             }
                         }
                     }
@@ -110,14 +123,14 @@ namespace zgcwkj.Util.Data.Extension
         {
             using (reader)
             {
-                DataTable objDataTable = new DataTable("Table");
-                int intFieldCount = reader.FieldCount;
+                var objDataTable = new DataTable("Table");
+                var intFieldCount = reader.FieldCount;
                 for (int intCounter = 0; intCounter < intFieldCount; ++intCounter)
                 {
                     objDataTable.Columns.Add(reader.GetName(intCounter), reader.GetFieldType(intCounter));
                 }
                 objDataTable.BeginLoadData();
-                object[] objValues = new object[intFieldCount];
+                var objValues = new object[intFieldCount];
                 while (reader.Read())
                 {
                     reader.GetValues(objValues);
@@ -138,25 +151,28 @@ namespace zgcwkj.Util.Data.Extension
         /// <returns></returns>
         public static Hashtable GetPropertyInfo<T>(T entity)
         {
-            Hashtable ht = new Hashtable();
-            PropertyInfo[] props = DbExtensionReflection.GetProperties(entity.GetType());
-            foreach (PropertyInfo prop in props)
+            var ht = new Hashtable();
+            var entityType = entity?.GetType();
+            if (entityType == null) return ht;
+            var entityProps = DbExtensionReflection.GetProperties(entityType);
+            if (entityProps == null) return ht;
+            foreach (var prop in entityProps)
             {
-                bool flag = true;
-                foreach (Attribute attr in prop.GetCustomAttributes(true))
+                var flag = true;
+                var keyName = prop.Name;
+                //检查对象标记
+                foreach (var attribute in prop.GetCustomAttributes(true))
                 {
-                    if (attr is NotMappedAttribute notMapped)
-                    {
-                        flag = false;
-                        break;
-                    }
+                    var notMappedAttribute = attribute as NotMappedAttribute;//排除
+                    if (notMappedAttribute != null) flag = false;
+                    var columnAttribute = attribute as ColumnAttribute;//字段
+                    if (columnAttribute != null) keyName = columnAttribute.Name;
                 }
-                if (flag)
-                {
-                    string name = prop.Name;
-                    object value = prop.GetValue(entity, null);
-                    ht[name] = value;
-                }
+                //排除
+                if (flag) continue;
+                //赋值
+                var value = prop.GetValue(entity, null);
+                ht[keyName] = value;
             }
             return ht;
         }
@@ -171,9 +187,8 @@ namespace zgcwkj.Util.Data.Extension
         {
             if (conversionType.IsGenericType && conversionType.GetGenericTypeDefinition().Equals(typeof(Nullable<>)))
             {
-                if (value == null)
-                    return null;
-                NullableConverter nullableConverter = new NullableConverter(conversionType);
+                if (value == null) return new();
+                var nullableConverter = new NullableConverter(conversionType);
                 conversionType = nullableConverter.UnderlyingType;
             }
             return Convert.ChangeType(value, conversionType);
@@ -190,27 +205,7 @@ namespace zgcwkj.Util.Data.Extension
         }
 
         /// <summary>
-        /// 获取使用Linq生成的SQL
-        /// </summary>
-        /// <typeparam name="TEntity"></typeparam>
-        /// <param name="query"></param>
-        /// <returns></returns>
-        public static string GetSql<TEntity>(this IQueryable<TEntity> query)
-        {
-            var enumerator = query.Provider.Execute<IEnumerable<TEntity>>(query.Expression).GetEnumerator();
-            var relationalCommandCache = enumerator.Private("_relationalCommandCache");
-            var selectExpression = relationalCommandCache.Private<SelectExpression>("_selectExpression");
-            var factory = relationalCommandCache.Private<IQuerySqlGeneratorFactory>("_querySqlGeneratorFactory");
-
-            var sqlGenerator = factory.Create();
-            var command = sqlGenerator.GetCommand(selectExpression);
-
-            string sql = command.CommandText;
-            return sql;
-        }
-
-        /// <summary>
-        /// 获取运行时的SQL
+        /// 获取执行时的SQL
         /// </summary>
         /// <param name="dbCommand"></param>
         /// <returns></returns>
@@ -225,7 +220,8 @@ namespace zgcwkj.Util.Data.Extension
                     switch (parameter.DbType)
                     {
                         case DbType.Date:
-                            value = parameter.Value.ToTrim().ToDate().ToString("yyyy-MM-dd HH:mm:ss");
+                            var data = parameter.Value as DateTime?;
+                            value = data?.ToString("yyyy-MM-dd HH:mm:ss") ?? "";
                             break;
 
                         case DbType.AnsiString:
@@ -307,7 +303,7 @@ namespace zgcwkj.Util.Data.Extension
                             break;
 
                         default:
-                            value = parameter.Value.ToTrim();
+                            value = parameter.Value?.ToTrim() ?? "";
                             break;
                     }
                     sql = sql.Replace(parameter.ParameterName, value);
@@ -318,6 +314,26 @@ namespace zgcwkj.Util.Data.Extension
                 }
             }
             return sql;
+        }
+
+        /// <summary>
+        /// 获取使用Linq生成的SQL
+        /// </summary>
+        /// <typeparam name="TEntity"></typeparam>
+        /// <param name="query"></param>
+        /// <returns></returns>
+        public static string GetSql<TEntity>(this IQueryable<TEntity> query)
+        {
+            var enumerator = query.Provider.Execute<IEnumerable<TEntity>>(query.Expression).GetEnumerator();
+            var relationalCommandCache = enumerator.Private("_relationalCommandCache");
+            var selectExpression = relationalCommandCache.Private<SelectExpression>("_selectExpression");
+            var factory = relationalCommandCache.Private<IQuerySqlGeneratorFactory>("_querySqlGeneratorFactory");
+
+            var sqlGenerator = factory.Create();
+            var command = sqlGenerator.GetCommand(selectExpression);
+
+            var sql = command.CommandText;
+            return sql ?? "";
         }
 
         /// <summary>
@@ -345,7 +361,7 @@ namespace zgcwkj.Util.Data.Extension
         /// <summary>
         /// 同步字典
         /// </summary>
-        private static ConcurrentDictionary<string, object> dictCache = new ConcurrentDictionary<string, object>();
+        private static ConcurrentDictionary<string, object> dictCache = new();
 
         /// <summary>
         /// 得到类里面的属性集合
@@ -353,9 +369,10 @@ namespace zgcwkj.Util.Data.Extension
         /// <param name="type">类型</param>
         /// <param name="columns">列</param>
         /// <returns></returns>
-        public static PropertyInfo[] GetProperties(Type type, string[] columns = null)
+        public static PropertyInfo[]? GetProperties(Type type, string[]? columns = default)
         {
-            PropertyInfo[] properties = null;
+            if (type.FullName == null) return null;
+            var properties = null as PropertyInfo[];
             if (dictCache.ContainsKey(type.FullName))
             {
                 properties = dictCache[type.FullName] as PropertyInfo[];
@@ -372,7 +389,7 @@ namespace zgcwkj.Util.Data.Extension
                 var columnPropertyList = new List<PropertyInfo>();
                 foreach (var column in columns)
                 {
-                    var columnProperty = properties.Where(p => p.Name == column).FirstOrDefault();
+                    var columnProperty = properties?.Where(p => p.Name == column).FirstOrDefault();
                     if (columnProperty != null)
                     {
                         columnPropertyList.Add(columnProperty);

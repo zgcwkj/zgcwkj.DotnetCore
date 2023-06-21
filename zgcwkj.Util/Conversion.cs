@@ -94,7 +94,7 @@ namespace zgcwkj.Util
             {
                 try
                 {
-                    return Convert.ToString(value);
+                    return Convert.ToString(value) ?? "";
                 }
                 catch (Exception ex)
                 {
@@ -327,7 +327,7 @@ namespace zgcwkj.Util
             if (value.GetType() == typeof(DataTable))
             {
                 var dataTable = value as DataTable;
-                return JsonSerializer.Serialize(dataTable.ToList());
+                return JsonSerializer.Serialize(dataTable?.ToList());
             }
             return JsonSerializer.Serialize(value);
         }
@@ -336,9 +336,9 @@ namespace zgcwkj.Util
         /// Json 转对象
         /// </summary>
         /// <returns></returns>
-        public static T ToJson<T>(this string value)
+        public static T? ToJson<T>(this string value)
         {
-            return JsonSerializer.Deserialize<T>(value);
+            return JsonSerializer.Deserialize<T>(value) ?? default;
         }
 
         /// <summary>
@@ -362,7 +362,7 @@ namespace zgcwkj.Util
                 {
                     return true;
                 }
-                else if (value.ToString().Length > 0)
+                else if (value?.ToString()?.Length > 0)
                 {
                     return false;
                 }

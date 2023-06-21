@@ -15,7 +15,7 @@ namespace zgcwkj.Util.Data.Extension
         /// <summary>
         /// 数据库上下文
         /// </summary>
-        private DbContext MyDbContext { get; }
+        private DbContext? MyDbContext { get; }
 
         /// <summary>
         /// 数据库连接对象

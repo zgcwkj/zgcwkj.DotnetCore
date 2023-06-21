@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using zgcwkj.Model.Context;
+using zgcwkj.Model.Models;
 using zgcwkj.Util;
 
 namespace zgcwkj.Web.Controllers
@@ -8,7 +9,7 @@ namespace zgcwkj.Web.Controllers
     /// <summary>
     /// ApiController
     /// </summary>
-    [Authorize]
+    //[Authorize]
     [Route("[controller]/[action]")]
     public class ApiController : Controller
     {
@@ -21,6 +22,11 @@ namespace zgcwkj.Web.Controllers
         /// 数据库上下文
         /// </summary>
         private SQLiteDbContext _SQLite { get; }
+
+        /// <summary>
+        /// 数据库上下文
+        /// </summary>
+        private DbAccess _Db { get; }
 
         /// <summary>
         /// 缓存数据上下文
@@ -37,6 +43,7 @@ namespace zgcwkj.Web.Controllers
         {
             this._MyDb = myDbContext;
             this._SQLite = sQLiteDbContext;
+            this._Db = DbProvider.Create(myDbContext);
             this._Cache = cacheAccess;
         }
 
@@ -75,10 +82,9 @@ namespace zgcwkj.Web.Controllers
         [HttpPost]
         public IActionResult GetData()
         {
-            var cmd = DbProvider.Create();
-            cmd.Clear();
-            cmd.SetCommandText("select * from sys_user");
-            var dataTable = cmd.QueryDataTable();
+            _Db.Clear();
+            _Db.SetCommandText("select * from sys_user");
+            var dataTable = _Db.QueryDataTable();
             return Json(dataTable.ToList());
         }
 
@@ -88,6 +94,19 @@ namespace zgcwkj.Web.Controllers
         /// <returns></returns>
         [HttpPost]
         public IActionResult GetData2()
+        {
+            _Db.Clear();
+            _Db.SetCommandText("select * from sys_user");
+            var dataTable = _Db.QueryDataList<SysUserModel>();
+            return Json(dataTable);
+        }
+
+        /// <summary>
+        /// GetEFData
+        /// </summary>
+        /// <returns></returns>
+        [HttpPost]
+        public IActionResult GetEFData()
         {
             var linqData = _MyDb.SysUserModel;
             return Json(linqData.ToList());

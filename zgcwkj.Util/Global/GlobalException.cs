@@ -3,7 +3,6 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 using System.Text.Json;
 using zgcwkj.Util.Log;
-using zgcwkj.Util.Models;
 
 namespace zgcwkj.Util
 {
@@ -25,7 +24,7 @@ namespace zgcwkj.Util
                 //记录日志
                 Logger.Error(context.Exception.ToTrim());
                 //定义返回数据
-                var result = new MethodResult()
+                var result = new
                 {
                     ErrorCode = -1,
                     ErrorMessage = context.Exception.Message,
