@@ -1,8 +1,7 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Rewrite;
+﻿using Microsoft.AspNetCore.Rewrite;
 using System.Text.RegularExpressions;
 
-namespace zgcwkj.Web.Comm
+namespace zgcwkj.Web.Extensions
 {
     /// <summary>
     /// 地址重写规则

@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Rewrite;
 using Microsoft.Extensions.FileProviders;
 using System.Text.Encodings.Web;
@@ -5,7 +6,7 @@ using System.Text.Json;
 using System.Text.Unicode;
 using zgcwkj.Model.Context;
 using zgcwkj.Util;
-using zgcwkj.Web.Comm;
+using zgcwkj.Web.Extensions;
 
 namespace zgcwkj.Web
 {
@@ -36,6 +37,8 @@ namespace zgcwkj.Web
         /// <param name="builder">网站程序</param>
         public static void ConfigureServices(this IServiceCollection services, WebApplicationBuilder builder)
         {
+            //程序运行环境
+            GlobalContext.HostingEnvironment = builder.Environment;
             //所有注册服务和类实例容器
             GlobalContext.Services = services;
             //返回数据首字母不小写
@@ -73,15 +76,25 @@ namespace zgcwkj.Web
             services.AddOptions();
             //添加 MVC
             services.AddMvc();
-            //添加 HttpContext 存取器 
+            //添加 HttpContext 存取器
             services.AddHttpContextAccessor();
             //全局异常捕获
             services.AddControllers(options =>
             {
                 options.Filters.Add(new GlobalException());
             });
+            //配置 Jwt
+            services.AddAuthentication(options =>
+            {
+                options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+                options.DefaultSignInScheme = JwtBearerDefaults.AuthenticationScheme;
+            }).AddJwtBearer();
+            services.ConfigureOptions<JwtConfigure>();
+            services.AddSingleton<JwtConfigure>();
+            services.AddSingleton<UserSession>();
             //配置 Swagger
-            services.AddSwagger();
+            services.AddSwaggerJwt();
         }
 
         /// <summary>
@@ -92,10 +105,10 @@ namespace zgcwkj.Web
         /// <param name="builder">网站程序</param>
         public static void Configure(this WebApplication app, WebApplicationBuilder builder)
         {
+            //程序运行环境
+            GlobalContext.HostingEnvironment = app.Environment;
             //服务提供者
             GlobalContext.ServiceProvider = app.Services;
-            //主机环境
-            GlobalContext.HostingEnvironment = app.Environment;
             //配置对象
             GlobalContext.Configuration = app.Configuration;
             //运行模式
@@ -142,7 +155,7 @@ namespace zgcwkj.Web
             //默认的静态目录路径
             app.UseStaticFiles();
             //用户自定义静态目录
-            string resource = Path.Combine(app.Environment.ContentRootPath, "Resource");
+            var resource = Path.Combine(app.Environment.ContentRootPath, "Resource");
             if (!Directory.Exists(resource)) Directory.CreateDirectory(resource);
             app.UseStaticFiles(new StaticFileOptions
             {
@@ -152,7 +165,8 @@ namespace zgcwkj.Web
             });
             //用户路由
             app.UseRouting();
-            //用户
+            //用户鉴权
+            app.UseAuthentication();
             app.UseAuthorization();
             //用户 Session
             app.UseSession();
@@ -172,6 +186,8 @@ namespace zgcwkj.Web
         /// <param name="builder">网站程序</param>
         public static void AddInjection(this IServiceCollection services, WebApplicationBuilder builder)
         {
+            //程序运行环境
+            GlobalContext.HostingEnvironment = builder.Environment;
             //数据库上下文
             services.AddDbContext<MyDbContext>();
             services.AddDbContext<SQLiteDbContext>();

@@ -17,13 +17,13 @@ namespace zgcwkj.Web.Models
         /// 错误消息
         /// </summary>
         [JsonPropertyName("ErrorMessage")]
-        public string ErrorMessage { get; set; } = null;
+        public string? ErrorMessage { get; set; } = null;
 
         /// <summary>
         /// 数据
         /// </summary>
         [JsonPropertyName("Data")]
-        public object Data { get; set; } = null;
+        public object? Data { get; set; } = null;
 
         /// <summary>
         /// 数据数量

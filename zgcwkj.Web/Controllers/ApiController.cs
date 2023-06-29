@@ -3,13 +3,14 @@ using Microsoft.AspNetCore.Mvc;
 using zgcwkj.Model.Context;
 using zgcwkj.Model.Models;
 using zgcwkj.Util;
+using zgcwkj.Web.Extensions;
 
 namespace zgcwkj.Web.Controllers
 {
     /// <summary>
     /// ApiController
     /// </summary>
-    //[Authorize]
+    [Authorize]
     [Route("[controller]/[action]")]
     public class ApiController : Controller
     {
@@ -34,17 +35,31 @@ namespace zgcwkj.Web.Controllers
         private CacheAccess _Cache { get; }
 
         /// <summary>
+        /// Jwt 配置
+        /// </summary>
+        private JwtConfigure _Jwt { get; }
+
+        /// <summary>
+        /// 用户会话
+        /// </summary>
+        private UserSession _UserSession { get; }
+
+        /// <summary>
         /// 实例时
         /// </summary>
-        /// <param name="myDbContext">数据库上下文</param>
-        /// <param name="sQLiteDbContext">数据库上下文</param>
-        /// <param name="cacheAccess">缓存数据上下文</param>
-        public ApiController(MyDbContext myDbContext, SQLiteDbContext sQLiteDbContext, CacheAccess cacheAccess)
+        public ApiController(
+            MyDbContext myDbContext,
+            SQLiteDbContext sQLiteDbContext,
+            CacheAccess cacheAccess,
+            JwtConfigure jwtConfigure,
+            UserSession userSession)
         {
             this._MyDb = myDbContext;
             this._SQLite = sQLiteDbContext;
             this._Db = DbProvider.Create(myDbContext);
             this._Cache = cacheAccess;
+            this._Jwt = jwtConfigure;
+            this._UserSession = userSession;
         }
 
         /// <summary>
@@ -57,22 +72,31 @@ namespace zgcwkj.Web.Controllers
         [HttpPost]
         public IActionResult Login(string userName, string password)
         {
-            ////登录方法体
-            //var myJwtv = new MyJwtValidator
-            //{
-            //    Account = userName,
-            //    Password = password,
-            //};
-            //var jwtToken = JwtConfig.GetToken(myJwtv);
-            ////返回结果
-            //var jsonResult = new
-            //{
-            //    status = jwtToken.Status,
-            //    token = jwtToken.Token,
-            //    validTo = jwtToken.ValidTo,
-            //};
-            //return Json(jsonResult);
-            return Json("");
+            //登录方法体
+            var myJwt = new
+            {
+                Account = userName,
+                Password = password,
+            };
+            var myJwtMd5 = myJwt.ToJson().ToMD5();
+            var jwtToken = _Jwt.GenerateToken(myJwtMd5, userName);
+            //返回结果
+            var jsonResult = new
+            {
+                status = true,
+                token = jwtToken,
+            };
+            return Json(jsonResult);
+        }
+
+        /// <summary>
+        /// GetLogin
+        /// </summary>
+        /// <returns></returns>
+        [HttpPost]
+        public IActionResult GetLogin()
+        {
+            return Json(_UserSession);
         }
 
         /// <summary>

@@ -1,12 +1,13 @@
-﻿using System.Text.Json;
+﻿using System.Globalization;
+using System.Text.Json;
 using System.Text.Json.Serialization;
 
-namespace zgcwkj.Web
+namespace zgcwkj.Web.Extensions
 {
     /// <summary>
-    /// 时间序列化
+    /// Int64 序列化
     /// </summary>
-    public class DateTimeJson : JsonConverter<DateTime>
+    public class LongJson : JsonConverter<long>
     {
         /// <summary>
         /// 读取
@@ -15,13 +16,13 @@ namespace zgcwkj.Web
         /// <param name="typeToConvert">类型</param>
         /// <param name="options">选项</param>
         /// <returns></returns>
-        public override DateTime Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
+        public override long Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
         {
             if (reader.TokenType == JsonTokenType.String)
             {
-                if (DateTime.TryParse(reader.GetString(), out DateTime data)) return data;
+                if (long.TryParse(reader.GetString(), out long data)) return data;
             }
-            return reader.GetDateTime();
+            return reader.GetInt64();
         }
 
         /// <summary>
@@ -30,9 +31,11 @@ namespace zgcwkj.Web
         /// <param name="writer">写</param>
         /// <param name="value">值</param>
         /// <param name="options">选项</param>
-        public override void Write(Utf8JsonWriter writer, DateTime value, JsonSerializerOptions options)
+        public override void Write(Utf8JsonWriter writer, long value, JsonSerializerOptions options)
         {
-            writer.WriteStringValue(value.ToString("yyyy-MM-dd HH:mm:ss"));
+            var zhCN = new CultureInfo("zh-CN");//时区
+            var setValue = value.ToString(zhCN);
+            writer?.WriteStringValue(setValue);
         }
     }
 }

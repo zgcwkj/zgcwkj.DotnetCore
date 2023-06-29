@@ -68,13 +68,14 @@ namespace zgcwkj.Util
                     Version = version,
                     Description = description,
                 });
-                options.OrderActionsBy(o => o.RelativePath);
+                //排序接口
+                //options.OrderActionsBy(o => o.RelativePath);
                 //显示注释
                 var basePath = GlobalConstant.GetRunPath;
                 var xmlFilesPath = Directory.GetFiles(basePath, "*.xml");
                 foreach (var xmlPath in xmlFilesPath)
                 {
-                    options.IncludeXmlComments(xmlPath);
+                    options.IncludeXmlComments(xmlPath, true);
                 }
                 //放置接口 Auth 授权按钮
                 options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
@@ -119,8 +120,12 @@ namespace zgcwkj.Util
                 options.SwaggerEndpoint(api, name);
                 //访问地址
                 options.RoutePrefix = url;
-                //修改界面打开时自动折叠
-                options.DocExpansion(DocExpansion.None);
+                //修改界面打开时自动展开
+                options.DocExpansion(DocExpansion.List);
+                //隐藏底部的 Schemas
+                options.DefaultModelsExpandDepth(-1);
+                //展开请求详情的 Schema
+                options.DefaultModelExpandDepth(int.MaxValue);
             });
         }
     }
