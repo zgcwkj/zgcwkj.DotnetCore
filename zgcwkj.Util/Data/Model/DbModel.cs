@@ -18,7 +18,7 @@ namespace zgcwkj.Util
         /// </summary>
         /// <param name="dbContext">数据库上下文</param>
         /// <returns></returns>
-        public bool LoadData(DbContext dbContext)
+        public bool LoadData(DbContext? dbContext = default)
         {
             var type = GetType();
             var tableName = GetTableName(type);
@@ -38,7 +38,7 @@ namespace zgcwkj.Util
             var cmd = DbProvider.Create(dbContext);
             cmd.SetCommandText(sql.ToString());
             var dataRow = cmd.QueryDataRow();
-            if (dataRow.IsNull()) return false;
+            if (dataRow == null) return false;
             //赋值
             var properties = GetType().GetProperties(BindingFlags.Instance | BindingFlags.Public);
             foreach (var property in properties)
@@ -63,8 +63,9 @@ namespace zgcwkj.Util
         /// <summary>
         /// 加载数据(异步)
         /// </summary>
+        /// <param name="dbContext">数据库上下文</param>
         /// <returns></returns>
-        public async Task<bool> LoadDataAsync(DbContext dbContext)
+        public async Task<bool> LoadDataAsync(DbContext? dbContext = default)
         {
             var type = GetType();
             var tableName = GetTableName(type);
@@ -84,7 +85,7 @@ namespace zgcwkj.Util
             var cmd = DbProvider.Create(dbContext);
             cmd.SetCommandText(sql.ToString());
             var dataRow = await cmd.QueryDataRowAsync();
-            if (dataRow.IsNull()) return false;
+            if (dataRow == null) return false;
             //赋值
             var properties = GetType().GetProperties(BindingFlags.Instance | BindingFlags.Public);
             foreach (var property in properties)
@@ -109,8 +110,9 @@ namespace zgcwkj.Util
         /// <summary>
         /// 新增数据
         /// </summary>
+        /// <param name="dbContext">数据库上下文</param>
         /// <returns></returns>
-        public bool Insert(DbContext dbContext)
+        public bool Insert(DbContext? dbContext = default)
         {
             var type = GetType();
             var tableName = GetTableName(type);
@@ -149,8 +151,9 @@ namespace zgcwkj.Util
         /// <summary>
         /// 新增数据(异步)
         /// </summary>
+        /// <param name="dbContext">数据库上下文</param>
         /// <returns></returns>
-        public async Task<bool> InsertAsync(DbContext dbContext)
+        public async Task<bool> InsertAsync(DbContext? dbContext = default)
         {
             var type = GetType();
             var tableName = GetTableName(type);
@@ -189,8 +192,9 @@ namespace zgcwkj.Util
         /// <summary>
         /// 更新数据
         /// </summary>
+        /// <param name="dbContext">数据库上下文</param>
         /// <returns></returns>
-        public bool Update(DbContext dbContext)
+        public bool Update(DbContext? dbContext = default)
         {
             var type = GetType();
             var tableName = GetTableName(type);
@@ -224,8 +228,9 @@ namespace zgcwkj.Util
         /// <summary>
         /// 更新数据(异步)
         /// </summary>
+        /// <param name="dbContext">数据库上下文</param>
         /// <returns></returns>
-        public async Task<bool> UpdateAsync(DbContext dbContext)
+        public async Task<bool> UpdateAsync(DbContext? dbContext = default)
         {
             var type = GetType();
             var tableName = GetTableName(type);
@@ -259,8 +264,9 @@ namespace zgcwkj.Util
         /// <summary>
         /// 删除数据
         /// </summary>
+        /// <param name="dbContext">数据库上下文</param>
         /// <returns></returns>
-        public bool Delete(DbContext dbContext)
+        public bool Delete(DbContext? dbContext = default)
         {
             var type = GetType();
             var tableName = GetTableName(type);
@@ -286,8 +292,9 @@ namespace zgcwkj.Util
         /// <summary>
         /// 删除数据(异步)
         /// </summary>
+        /// <param name="dbContext">数据库上下文</param>
         /// <returns></returns>
-        public async Task<bool> DeleteAsync(DbContext dbContext)
+        public async Task<bool> DeleteAsync(DbContext? dbContext = default)
         {
             var type = GetType();
             var tableName = GetTableName(type);

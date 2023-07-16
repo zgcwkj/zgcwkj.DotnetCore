@@ -8,8 +8,9 @@ namespace zgcwkj.Util
     /// <summary>
     /// <b>数据库操作提供者</b>
     ///
-    /// <para>常规使用：var cmd = DbProvider.Create(dbContext)</para>
-    /// <para>注入使用：services.AddTransient&lt;DbAccess&gt;(dbContext)</para>
+    /// <para>常规使用：var cmd = DbProvider.Create()</para>
+    /// <para>注入使用：services.AddTransient&lt;DbProvider&gt;()</para>
+    /// <para>当存在多个<b>DbContext</b>时，请传递它</para>
     /// <para>建议使用<b>EF</b>操作数据库</para>
     /// </summary>
     public static class DbProvider
@@ -20,7 +21,7 @@ namespace zgcwkj.Util
         /// 创建数据库命令
         /// </summary>
         /// <returns></returns>
-        public static DbAccess Create(DbContext dbContext)
+        public static DbAccess Create(DbContext? dbContext = default)
         {
             return new DbAccess(dbContext);
         }
@@ -316,63 +317,6 @@ namespace zgcwkj.Util
 
         #endregion 操作脚本
 
-        #region 操作事务
-
-        /// <summary>
-        /// 事务开始
-        /// </summary>
-        /// <param name="cmdAccess">对象</param>
-        public static void TransBegin(this DbAccess cmdAccess)
-        {
-            var database = cmdAccess.dbCommon.Database;
-            var dbConnection = database.GetDbConnection();
-            if (dbConnection.State == ConnectionState.Closed)
-            {
-                dbConnection.Open();
-            }
-            cmdAccess.dbTrans = database.BeginTransaction();
-        }
-
-        /// <summary>
-        /// 事务提交
-        /// </summary>
-        /// <param name="cmdAccess">对象</param>
-        public static int TransCommit(this DbAccess cmdAccess)
-        {
-            var dbCommon = cmdAccess.dbCommon;
-            var dbTrans = cmdAccess.dbTrans;
-            try
-            {
-                int returnValue = dbCommon.SaveChanges();
-                if (dbTrans != null) dbTrans.Commit();
-                dbCommon.Dispose();
-                return returnValue;
-            }
-            catch
-            {
-                throw;
-            }
-            finally
-            {
-                if (dbTrans == null) dbCommon.Dispose();
-            }
-        }
-
-        /// <summary>
-        /// 事务回滚
-        /// </summary>
-        /// <param name="cmdAccess">对象</param>
-        public static void TransRollback(this DbAccess cmdAccess)
-        {
-            var dbCommon = cmdAccess.dbCommon;
-            var dbTrans = cmdAccess.dbTrans;
-            dbTrans.Rollback();
-            dbTrans.Dispose();
-            dbCommon.Dispose();
-        }
-
-        #endregion 操作事务
-
         #region 操作数据库
 
         /// <summary>
@@ -424,7 +368,7 @@ namespace zgcwkj.Util
         /// </summary>
         /// <param name="cmdAccess">对象</param>
         /// <returns>行数据</returns>
-        public static DataRow QueryDataRow(this DbAccess cmdAccess)
+        public static DataRow? QueryDataRow(this DbAccess cmdAccess)
         {
             var sqlStr = cmdAccess.GetSql();
             var strFrom = $" {sqlStr}";
@@ -444,7 +388,7 @@ namespace zgcwkj.Util
         /// </summary>
         /// <param name="cmdAccess">对象</param>
         /// <returns>行数据</returns>
-        public static async Task<DataRow> QueryDataRowAsync(this DbAccess cmdAccess)
+        public static async Task<DataRow?> QueryDataRowAsync(this DbAccess cmdAccess)
         {
             var sqlStr = cmdAccess.GetSql();
             var strFrom = $" {sqlStr}";
@@ -464,7 +408,7 @@ namespace zgcwkj.Util
         /// </summary>
         /// <param name="cmdAccess">对象</param>
         /// <returns>数据对象</returns>
-        public static T QueryObj<T>(this DbAccess cmdAccess)
+        public static T? QueryObj<T>(this DbAccess cmdAccess)
         {
             var sqlStr = cmdAccess.GetSql();
             var strFrom = $" {sqlStr}";
@@ -480,7 +424,7 @@ namespace zgcwkj.Util
         /// </summary>
         /// <param name="cmdAccess">对象</param>
         /// <returns>数据对象</returns>
-        public static async Task<T> QueryObjAsync<T>(this DbAccess cmdAccess)
+        public static async Task<T?> QueryObjAsync<T>(this DbAccess cmdAccess)
         {
             var sqlStr = cmdAccess.GetSql();
             var strFrom = $" {sqlStr}";
@@ -496,7 +440,7 @@ namespace zgcwkj.Util
         /// </summary>
         /// <param name="cmdAccess">对象</param>
         /// <returns>首行首列</returns>
-        public static object QueryScalar(this DbAccess cmdAccess)
+        public static object? QueryScalar(this DbAccess cmdAccess)
         {
             var sqlStr = cmdAccess.GetSql();
             var strFrom = $" {sqlStr}";
@@ -516,7 +460,7 @@ namespace zgcwkj.Util
         /// </summary>
         /// <param name="cmdAccess">对象</param>
         /// <returns>首行首列</returns>
-        public static async Task<object> QueryScalarAsync(this DbAccess cmdAccess)
+        public static async Task<object?> QueryScalarAsync(this DbAccess cmdAccess)
         {
             var sqlStr = cmdAccess.GetSql();
             var strFrom = $" {sqlStr}";

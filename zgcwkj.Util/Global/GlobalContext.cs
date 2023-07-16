@@ -2,7 +2,6 @@
 using Microsoft.AspNetCore.StaticFiles;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using System.Reflection;
 
 namespace zgcwkj.Util
 {
@@ -54,7 +53,7 @@ namespace zgcwkj.Util
 
         /// <summary>
         /// 加载自定义的配置文件
-        /// 例如：SetConfigFiles("appsettings.json")
+        /// <para>例如：SetConfigFiles("appsettings.json")</para>
         /// </summary>
         public static void SetConfigFiles(params string[] configFileNames)
         {

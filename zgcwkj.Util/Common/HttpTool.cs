@@ -202,24 +202,6 @@ namespace zgcwkj.Util.Common
                 Logger.Error($"HttpTool Download(Error): {ex.Message} Url: {request.RequestUri}");
             }
         }
-
-        /// <summary>
-        /// 设置证书策略
-        /// </summary>
-        public static void SetCertificatePolicy()
-        {
-            ServicePointManager.ServerCertificateValidationCallback += RemoteCertificateValidate;
-        }
-
-        /// <summary>
-        /// 远程证书验证
-        /// </summary>
-        private static bool RemoteCertificateValidate(object sender, X509Certificate cert, X509Chain chain, SslPolicyErrors error)
-        {
-            // 信任任何证书
-            System.Console.WriteLine("Warning, trust any certificate");
-            return true;
-        }
     }
 
     /// <summary>

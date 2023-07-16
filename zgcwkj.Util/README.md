@@ -4,11 +4,7 @@
 
 ```
 {
-  "DbType": "SQLite", //SQLite PostgreSql SqlServer MySql
-  "SQLiteConnect": "data source=dbName.db", //SQLite
-  "PgsqlConnect": "server=127.0.0.1;port=5432;username=postgres;password=root;database=dbName;", //PostgreSql
-  "MysqlConnect": "server=127.0.0.1;port=3306;username=root;password=root;database=dbName;charset=utf8;Pooling=true;", //MySql
-  "MssqlConnect": "server=127.0.0.1,1433;uid=sa;pwd=root;database=dbName;MultipleActiveResultSets=true;", //SqlServer
+  "SQLConnect": "data source=dbName.db", //SQLite
   "CacheType": "Memory", //Redis Memory
   "RedisConnect": "127.0.0.1" //Redis
 }
@@ -16,39 +12,59 @@
 
 > Code
 ```
-//Insert
-TableModel table = new TableModel();
-table.ID = GlobalConstant.Guid;
-table.Name = "Name";
-table.Title = "Title";
-table.Like = "Like";
-var data = DbFactory.DB.Insert(table);
+//Cache
+Console.WriteLine("Cache >");
+CacheAccess.Set("zgcwkj", userID, 0);
+Console.WriteLine(CacheAccess.Get<string>("zgcwkj"));
 
-//Update Data
-var dbParameters = new List<DbParameter>();
-dbParameters.Add(DbParameterExtension.CreateDbParameter("@id", "iddata"));
-var data = DbFactory.DB.ExecuteSqlRaw("delete from table where id=@id", dbParameters.ToArray());
+//DbContext
+using var myDbContext = new MyDbContext();
 
-//Update Data 2
-var dbParameters = new List<DbParameter>();
-dbParameters.Add(DbParameterExtension.CreateDbParameter("@id", "2"));
-var data = DbFactory.DB.FindTable("select * from table where 1 = @id", dbParameters);
-
-//Update Data 3
-TableModel table = new TableModel();
-table.ID = GlobalConstant.Guid;
-table.Name = "Name";
-table.Title = "Title";
-table.Like = "Like";
-var data3 = DbFactory.DB.Update(table);
-
-//Delete
-var expression = LinqExtension.True<TableModel>();
-expression = expression.And(T ⇒ T.id == "iddata");
-var data1 = DbFactory.DB.Delete(expression);
-var data2 = DbFactory.DB.Delete<TableModel>(T ⇒ T.id == "iddata");
+//Query SQL
+var dbAccess = DbProvider.Create(myDbContext);
+dbAccess.SetCommandText("select * from sys_user");
+var sysUserTable = dbAccess.QueryDataTable();
+var sysUserList = dbAccess.QueryDataList<SysUserModel>();
 
 //Query
-var linq = DbFactory.DB.QuerTable<TableModel>(T ⇒ T.id == "iddata");
-var data = linq.ToList();
+Console.WriteLine("Query >");
+var sysUser = myDbContext.SysUserModel.ToList();
+Console.WriteLine(sysUser.ToJson());
+
+//Insert
+Console.WriteLine("Insert >");
+var newUserID = GlobalConstant.GuidMd5;
+var sysUser2 = new SysUserModel();
+sysUser2.UserID = newUserID;
+sysUser2.UserName = $"MyName{newUserID}";
+sysUser2.Password = $"MyPassword{newUserID}";
+sysUser2.Privacy = "won't insert ";
+myDbContext.Add(sysUser2);
+int insertCount = myDbContext.SaveChanges();
+
+//Update
+Console.WriteLine("Update >");
+var sysUser3 = (from sUser in myDbContext.SysUserModel
+                where sUser.UserID == newUserID
+                select sUser).FirstOrDefault();
+sysUser3.Password = $"NewMyPassword{newUserID}";
+int updateCount = myDbContext.SaveChanges();
+
+//Query
+Console.WriteLine("Query >");
+var sysUsers = myDbContext.SysUserModel.ToList();
+Console.WriteLine(sysUsers.ToJson());
+
+//Delete
+Console.WriteLine("Delete >");
+var sysUser4 = (from sUser in myDbContext.SysUserModel
+                where sUser.UserID == newUserID
+                select sUser).FirstOrDefault();
+myDbContext.Remove(sysUser4);
+int deleteCount = myDbContext.SaveChanges();
+
+//Query
+Console.WriteLine("Query >");
+var sysUsers2 = myDbContext.SysUserModel.ToList();
+Console.WriteLine(sysUsers2.ToJson());
 ```

@@ -9,13 +9,25 @@ namespace zgcwkj.Util
     public class SessionHelper
     {
         /// <summary>
+        /// Http 上下文
+        /// </summary>
+        private static HttpContext _HttpContext
+        {
+            get
+            {
+                var hca = GlobalContext.ServiceProvider?.GetService<IHttpContextAccessor>() ?? throw new Exception("HttpContextAccessor 未注入");
+                var hc = hca.HttpContext ?? throw new Exception("HttpContext 未注入");
+                return hc;
+            }
+        }
+
+        /// <summary>
         /// 获取 Session 对象
         /// </summary>
         /// <returns></returns>
-        public static ISession? GetObj()
+        public static ISession GetObj()
         {
-            var hca = GlobalContext.ServiceProvider?.GetService<IHttpContextAccessor>();
-            return hca?.HttpContext?.Session;
+            return _HttpContext.Session;
         }
 
         /// <summary>
@@ -28,8 +40,7 @@ namespace zgcwkj.Util
         public static bool Set<T>(string key, T value) where T : notnull
         {
             if (string.IsNullOrEmpty(key)) return false;
-            var hca = GlobalContext.ServiceProvider?.GetService<IHttpContextAccessor>();
-            hca?.HttpContext?.Session.SetString(key, value.ToJson());
+            _HttpContext.Session.SetString(key, value.ToJson());
             return true;
         }
 
@@ -52,8 +63,7 @@ namespace zgcwkj.Util
         public static T? Get<T>(string key)
         {
             if (string.IsNullOrEmpty(key)) return default;
-            var hca = GlobalContext.ServiceProvider?.GetService<IHttpContextAccessor>();
-            var sessionStr = hca?.HttpContext?.Session.GetString(key);
+            var sessionStr = _HttpContext.Session.GetString(key);
             if (string.IsNullOrEmpty(sessionStr)) return default;
             return sessionStr.ToJson<T>();
         }
@@ -76,8 +86,7 @@ namespace zgcwkj.Util
         public static bool Remove(string key)
         {
             if (string.IsNullOrEmpty(key)) return false;
-            var hca = GlobalContext.ServiceProvider?.GetService<IHttpContextAccessor>();
-            hca?.HttpContext?.Session.Remove(key);
+            _HttpContext.Session.Remove(key);
             return true;
         }
 
@@ -87,8 +96,7 @@ namespace zgcwkj.Util
         /// <returns>状态</returns>
         public static bool Clear()
         {
-            var hca = GlobalContext.ServiceProvider?.GetService<IHttpContextAccessor>();
-            hca?.HttpContext?.Session.Clear();
+            _HttpContext.Session.Clear();
             return true;
         }
     }

@@ -20,51 +20,6 @@ namespace zgcwkj.Util.Data
         /// <param name="optionsBuilder">上下文选项生成器</param>
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            ////SQLite
-            //if (dbType == DbType.SQLite)
-            //{
-            //    optionsBuilder.UseSqlite(dbConnect, p =>
-            //    {
-            //        p.CommandTimeout(dbTimeout);
-            //    });
-            //}
-            ////PostgreSql
-            //else if (dbType == DbType.PostgreSql)
-            //{
-            //    //
-            //    optionsBuilder.UseNpgsql(dbConnect, p =>
-            //    {
-            //        p.CommandTimeout(dbTimeout);
-            //        //指定数据库版本
-            //        if (dbParameters.ContainsKey("version"))
-            //        {
-            //            p.SetPostgresVersion(dbParameters["version"].ToInt(), 0);
-            //        }
-            //        //时间兼容（旧的时间行为）
-            //        if (dbParameters.ContainsKey("olddatetimebehavior"))
-            //        {
-            //            var oldDateTimeBehavior = dbParameters["olddatetimebehavior"].ToBool();
-            //            AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", oldDateTimeBehavior);
-            //            AppContext.SetSwitch("Npgsql.DisableDateTimeInfinityConversions", oldDateTimeBehavior);
-            //        }
-            //    });
-            //}
-            ////SqlServer
-            //else if (dbType == DbType.SqlServer)
-            //{
-            //    optionsBuilder.UseSqlServer(dbConnect, p =>
-            //    {
-            //        p.CommandTimeout(dbTimeout);
-            //    });
-            //}
-            ////MySql
-            //else if (dbType == DbType.MySql)
-            //{
-            //    optionsBuilder.UseMySql(dbConnect, ServerVersion.AutoDetect(dbConnect), p =>
-            //    {
-            //        p.CommandTimeout(dbTimeout);
-            //    });
-            //}
             //数据库拦截器
             //optionsBuilder.AddInterceptors(new DbInterceptor());
             //输出日志

@@ -9,13 +9,25 @@ namespace zgcwkj.Util
     public class CookieHelper
     {
         /// <summary>
+        /// Http 上下文
+        /// </summary>
+        private static HttpContext _HttpContext
+        {
+            get
+            {
+                var hca = GlobalContext.ServiceProvider?.GetService<IHttpContextAccessor>() ?? throw new Exception("HttpContextAccessor 未注入");
+                var hc = hca.HttpContext ?? throw new Exception("HttpContext 未注入");
+                return hc;
+            }
+        }
+
+        /// <summary>
         /// 获取 Cookie 对象
         /// </summary>
         /// <returns></returns>
         public static IResponseCookies? GetObj()
         {
-            var hca = GlobalContext.ServiceProvider?.GetService<IHttpContextAccessor>();
-            return hca?.HttpContext?.Response.Cookies;
+            return _HttpContext.Response.Cookies;
         }
 
         /// <summary>
@@ -27,13 +39,12 @@ namespace zgcwkj.Util
         /// <returns>状态</returns>
         public static bool Set(string sName, string sValue, bool httpOnly = true)
         {
-            var hca = GlobalContext.ServiceProvider?.GetService<IHttpContextAccessor>();
             var option = new CookieOptions
             {
                 Expires = DateTime.MaxValue,
                 HttpOnly = httpOnly,
             };
-            hca?.HttpContext?.Response.Cookies.Append(sName, sValue, option);
+            _HttpContext.Response.Cookies.Append(sName, sValue, option);
             return true;
         }
 
@@ -47,13 +58,12 @@ namespace zgcwkj.Util
         /// <returns>状态</returns>
         public static bool Set(string sName, string sValue, int expires, bool httpOnly = true)
         {
-            var hca = GlobalContext.ServiceProvider?.GetService<IHttpContextAccessor>();
             var option = new CookieOptions
             {
                 Expires = DateTime.Now.AddMinutes(expires),
                 HttpOnly = httpOnly,
             };
-            hca?.HttpContext?.Response.Cookies.Append(sName, sValue, option);
+            _HttpContext.Response.Cookies.Append(sName, sValue, option);
             return true;
         }
 
@@ -66,12 +76,11 @@ namespace zgcwkj.Util
         /// <returns>状态</returns>
         public static bool SetTemp(string sName, string sValue, bool httpOnly = true)
         {
-            var hca = GlobalContext.ServiceProvider?.GetService<IHttpContextAccessor>();
             var option = new CookieOptions
             {
                 HttpOnly = httpOnly,
             };
-            hca?.HttpContext?.Response.Cookies.Append(sName, sValue, option);
+            _HttpContext.Response.Cookies.Append(sName, sValue, option);
             return true;
         }
 
@@ -82,8 +91,7 @@ namespace zgcwkj.Util
         /// <returns>值</returns>
         public static string Get(string sName)
         {
-            var hca = GlobalContext.ServiceProvider?.GetService<IHttpContextAccessor>();
-            return hca?.HttpContext?.Request.Cookies[sName]??"";
+            return _HttpContext.Request.Cookies[sName] ?? "";
         }
 
         /// <summary>
@@ -93,8 +101,7 @@ namespace zgcwkj.Util
         /// <returns>状态</returns>
         public static bool Remove(string sName)
         {
-            var hca = GlobalContext.ServiceProvider?.GetService<IHttpContextAccessor>();
-            hca?.HttpContext?.Response.Cookies.Delete(sName);
+            _HttpContext.Response.Cookies.Delete(sName);
             return true;
         }
 
@@ -104,12 +111,11 @@ namespace zgcwkj.Util
         /// <returns>状态</returns>
         public static bool Clear()
         {
-            var hca = GlobalContext.ServiceProvider?.GetService<IHttpContextAccessor>();
             //请求
-            var request = hca?.HttpContext?.Request;
+            var request = _HttpContext.Request;
             if (request == null) return false;
             //响应
-            var response = hca?.HttpContext?.Response;
+            var response = _HttpContext.Response;
             if (response == null) return false;
             //循环所有 Cookie
             foreach (var cookie in request.Cookies)
