@@ -1,6 +1,4 @@
-﻿using zgcwkj.Util.Enum;
-
-namespace zgcwkj.Util.Log
+﻿namespace zgcwkj.Util.Log
 {
     /// <summary>
     /// 日志输出

@@ -1,29 +1,43 @@
 ﻿using Microsoft.Extensions.Caching.Memory;
-using zgcwkj.Util;
-using zgcwkj.Util.Interface;
-using zgcwkj.Util.Log;
+using Microsoft.Extensions.DependencyInjection;
 
-namespace zgcwkj.Util.Data
+namespace zgcwkj.Util
 {
     /// <summary>
     /// Memory 缓存
     /// </summary>
-    internal class MemoryImp : ICache
+    public static class CacheMemory
     {
         /// <summary>
         /// Memory 缓存
         /// </summary>
-        private static IMemoryCache? memoryCache;
+        private static IMemoryCache? memoryCache { get; set; }
 
         /// <summary>
-        /// Memory 缓存实例时
+        /// Memory 缓存
         /// </summary>
-        public MemoryImp()
+        private static IMemoryCache _IMemoryCache
         {
-            if (memoryCache == null)
+            get
             {
-                var memoryCacheOptions = new MemoryCacheOptions();
-                memoryCache = new MemoryCache(memoryCacheOptions);
+                //从上下文中获取
+                if (GlobalContext.ServiceProvider != null)
+                {
+                    memoryCache = GlobalContext.ServiceProvider?.GetService<IMemoryCache>();
+                }
+                //内置创建对象
+                if (memoryCache == null)
+                {
+                    var memoryCacheOptions = new MemoryCacheOptions();
+                    memoryCache = new MemoryCache(memoryCacheOptions);
+                }
+                //抛出异常
+                if (memoryCache == null)
+                {
+                    throw new Exception("初始化 Memory 缓存失败");
+                }
+                //
+                return memoryCache;
             }
         }
 
@@ -31,11 +45,10 @@ namespace zgcwkj.Util.Data
         /// Key 是否存在
         /// </summary>
         /// <param name="key">键</param>
-        /// <param name="db">数据库索引</param>
         /// <returns>存在</returns>
-        public bool Exists(string key, int db = -1)
+        public static bool? Exists(string key)
         {
-            return memoryCache.TryGetValue(key, out _);
+            return _IMemoryCache.TryGetValue(key, out _);
         }
 
         /// <summary>
@@ -44,18 +57,17 @@ namespace zgcwkj.Util.Data
         /// <typeparam name="T">类型</typeparam>
         /// <param name="key">键</param>
         /// <param name="value">值</param>
-        /// <param name="db">数据库索引</param>
         /// <param name="timeSpan">时间差</param>
         /// <returns></returns>
-        public bool Set<T>(string key, T value, int db = -1, TimeSpan timeSpan = default)
+        public static bool Set<T>(string key, T value, TimeSpan timeSpan = default)
         {
             try
             {
                 if (timeSpan == default)
                 {
-                    return memoryCache.Set(key, value) != null;
+                    return _IMemoryCache.Set(key, value) != null;
                 }
-                return memoryCache.Set(key, value, timeSpan) != null;
+                return _IMemoryCache.Set(key, value, timeSpan) != null;
             }
             catch (Exception ex)
             {
@@ -69,22 +81,20 @@ namespace zgcwkj.Util.Data
         /// </summary>
         /// <typeparam name="T">类型</typeparam>
         /// <param name="key">键</param>
-        /// <param name="db">数据库索引</param>
         /// <returns></returns>
-        public T Get<T>(string key, int db = -1)
+        public static T? Get<T>(string key)
         {
-            return memoryCache.Get<T>(key);
+            return _IMemoryCache.Get<T>(key);
         }
 
         /// <summary>
         /// 删除缓存
         /// </summary>
         /// <param name="key">类型</param>
-        /// <param name="db">数据库索引</param>
         /// <returns></returns>
-        public bool Remove(string key, int db = -1)
+        public static bool? Remove(string key)
         {
-            memoryCache.Remove(key);
+            _IMemoryCache.Remove(key);
             return true;
         }
 
@@ -93,9 +103,8 @@ namespace zgcwkj.Util.Data
         /// </summary>
         /// <param name="key">键</param>
         /// <param name="hashKey">哈希键</param>
-        /// <param name="db">数据库索引</param>
         /// <returns>存在</returns>
-        public bool HashExists(string key, string hashKey, int db = -1)
+        public static bool? ExistsHash(string key, string hashKey)
         {
             return ExistsHashFieldCache(key, hashKey);
         }
@@ -106,9 +115,8 @@ namespace zgcwkj.Util.Data
         /// <param name="key">键</param>
         /// <param name="hashKey">哈希键</param>
         /// <param name="hashValue">哈希值</param>
-        /// <param name="db">数据库索引</param>
         /// <returns>状态</returns>
-        public bool HashSet<T>(string key, string hashKey, T hashValue, int db = -1)
+        public static bool SetHash<T>(string key, string hashKey, T hashValue)
         {
             var count = SetHashFieldCache(key, new Dictionary<string, T> { { hashKey, hashValue } });
             return count > 0;
@@ -120,9 +128,8 @@ namespace zgcwkj.Util.Data
         /// <typeparam name="T">类型</typeparam>
         /// <param name="key">键</param>
         /// <param name="hashKey">哈希键</param>
-        /// <param name="db">数据库索引</param>
         /// <returns>数据</returns>
-        public T HashGet<T>(string key, string hashKey, int db = -1)
+        public static T? GetHash<T>(string key, string hashKey)
         {
             var dict = GetHashFieldCache(key, new Dictionary<string, T> { { hashKey, default } });
             return dict[hashKey];
@@ -133,13 +140,23 @@ namespace zgcwkj.Util.Data
         /// </summary>
         /// <param name="key">键</param>
         /// <param name="hashKey">哈希键</param>
-        /// <param name="db">数据库索引</param>
         /// <returns>状态</returns>
-        public long HashRemove(string key, string hashKey, int db = -1)
+        public static long RemoveHash(string key, string hashKey)
         {
             var remove = RemoveHashFieldCache(key, hashKey);
             return remove ? 1 : 0;
         }
+
+        ///// <summary>
+        ///// 清理全部缓存
+        ///// </summary>
+        ///// <returns></returns>
+        //public static bool Clear()
+        //{
+        //    memoryCache?.Dispose();
+        //    memoryCache = null;
+        //    return true;
+        //}
 
         #region Hash
 
@@ -149,10 +166,10 @@ namespace zgcwkj.Util.Data
         /// <param name="key">键</param>
         /// <param name="hashKey">哈希键</param>
         /// <returns></returns>
-        private bool ExistsHashFieldCache(string key, string hashKey)
+        private static bool? ExistsHashFieldCache(string key, string hashKey)
         {
-            var hashFields = memoryCache.Get<Dictionary<string, object>>(key);
-            return hashFields.ContainsKey(hashKey);
+            var hashFields = _IMemoryCache.Get<Dictionary<string, object>>(key);
+            return hashFields?.ContainsKey(hashKey);
         }
 
         /// <summary>
@@ -162,12 +179,12 @@ namespace zgcwkj.Util.Data
         /// <param name="key">键</param>
         /// <param name="dict">字典</param>
         /// <returns></returns>
-        private int SetHashFieldCache<T>(string key, Dictionary<string, T> dict)
+        private static int SetHashFieldCache<T>(string key, Dictionary<string, T> dict)
         {
             var count = 0;
             foreach (var fieldKey in dict.Keys)
             {
-                count += memoryCache.Set(key, dict[fieldKey]) != null ? 1 : 0;
+                count += _IMemoryCache.Set(key, dict[fieldKey]) != null ? 1 : 0;
             }
             return count;
         }
@@ -179,10 +196,11 @@ namespace zgcwkj.Util.Data
         /// <param name="key">键</param>
         /// <param name="dict">字典</param>
         /// <returns></returns>
-        private Dictionary<string, T> GetHashFieldCache<T>(string key, Dictionary<string, T> dict)
+        private static Dictionary<string, T>? GetHashFieldCache<T>(string key, Dictionary<string, T> dict)
         {
-            var hashFields = memoryCache.Get<Dictionary<string, T>>(key);
-            foreach (var keyValuePair in hashFields.Where(p => dict.Keys.Contains(p.Key)))
+            var hashFields = _IMemoryCache.Get<Dictionary<string, T>>(key);
+            if (hashFields == null) return null;
+            foreach (var keyValuePair in hashFields.Where(p => dict.ContainsKey(p.Key)))
             {
                 dict[keyValuePair.Key] = keyValuePair.Value;
             }
@@ -195,13 +213,13 @@ namespace zgcwkj.Util.Data
         /// <param name="key">键</param>
         /// <param name="hashKey">哈希键</param>
         /// <returns></returns>
-        private bool RemoveHashFieldCache(string key, string hashKey)
+        private static bool RemoveHashFieldCache(string key, string hashKey)
         {
             var dict = new Dictionary<string, bool> { { hashKey, false } };
-            var hashFields = memoryCache.Get<Dictionary<string, object>>(key);
+            var hashFields = _IMemoryCache.Get<Dictionary<string, object>>(key);
             foreach (var fieldKey in dict.Keys)
             {
-                dict[fieldKey] = hashFields.Remove(fieldKey);
+                dict[fieldKey] = hashFields?.Remove(fieldKey) == true;
             }
             return dict[hashKey];
         }

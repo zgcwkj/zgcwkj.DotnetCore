@@ -108,7 +108,7 @@ namespace zgcwkj.Web.Extensions
             var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(tokenConfig.SecureKey));
             //生成签名证书
             var signingCredentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
-            //存储 Token 数据
+            //生成凭据数据
             var claim = new List<Claim>
             {
                 new("userID", id),
@@ -136,12 +136,8 @@ namespace zgcwkj.Web.Extensions
             var _userSession = scope.ServiceProvider.GetRequiredService<UserSession>();
             var jwtSecurityToken = securityToken as JwtSecurityToken;
             //获取 Token 数据
-            var claims = jwtSecurityToken?.Claims.ToList();
-            var claimsDic = new Dictionary<string, string>();
-            foreach (var item in claims ?? new())
-            {
-                claimsDic.Add(item.Type, item.Value);
-            }
+            var claims = jwtSecurityToken?.Claims.ToList() ?? new();
+            var claimsDic = claims.ToDictionary(D => D.Type, D => D.Value);
             //检查数据
             if (!claimsDic.ContainsKey("userID")) return false;
             if (!claimsDic.ContainsKey("userName")) return false;

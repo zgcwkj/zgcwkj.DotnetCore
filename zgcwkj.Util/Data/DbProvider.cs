@@ -310,10 +310,117 @@ namespace zgcwkj.Util
             }
             if (outLog)
             {
-                Log.Logger.Fatal($"参数含有注入字符，Sql:({cmdAccess.GetSql()}),value:({value})");
+                Logger.Fatal($"参数含有注入字符，Sql:({cmdAccess.GetSql()}),value:({value})");
             }
             return data;
         }
+
+        ///// <summary>
+        ///// 数据库通用脚本
+        ///// </summary>
+        ///// <param name="sql">Sql脚本</param>
+        ///// <returns>脚本</returns>
+        //private static string GenericScript(string sql)
+        //{
+        //    //转成通用脚本
+        //    var type = DbFactory.Type;
+        //    if (type == Enum.DbType.MySql)
+        //    {
+        //        //时间函数
+        //        if (sql.Contains("getdate()"))
+        //        {
+        //            sql = sql.Replace("getdate()", "now()");
+        //        }
+        //        //分页函数
+        //        int pageSql = sql.IndexOf("offset");
+        //        if (pageSql != -1 && sql.LastIndexOf("only") > pageSql)
+        //        {
+        //            var updSql = string.Empty;
+        //            var page = Regex.Match(sql, @"(?<=offset).+(?=rows fetch next.+)").Value;
+        //            var pageSize = Regex.Match(sql, @"(?<=rows fetch next.+).+(?=rows only)").Value;
+        //            updSql += $" limit {page},{pageSize}";
+        //            sql = sql.Substring(0, pageSql) + updSql;
+        //        }
+        //        //记录数函数
+        //        var topStr = Regex.Match(sql, @"select.+top.+?[0-9]+").Value;
+        //        if (!topStr.IsNull())
+        //        {
+        //            var countStr = Regex.Match(topStr, @"(?<=select.+top.+?)[0-9]+").Value;
+        //            sql = sql.Replace(topStr, "select ");
+        //            if (!sql.Contains("limit")) sql = $"{sql} limit {countStr}";
+        //        }
+        //    }
+        //    else if (type == Enum.DbType.SqlServer)
+        //    {
+        //        //时间函数
+        //        if (sql.Contains("now()"))
+        //        {
+        //            sql = sql.Replace("now()", "getdate()");
+        //        }
+        //        //是否为空函数
+        //        var isnullStr = Regex.Match(sql, @"isnull\(.+?\)").Value;
+        //        if (!isnullStr.IsNull())
+        //        {
+        //            var isnullStrB = Regex.Match(sql, @"(?<=isnull\().+?(?=\))").Value;
+        //            sql = sql.Replace(isnullStr, $"{isnullStrB} is null");
+        //        }
+        //        //分页函数
+        //        int pageSql = sql.IndexOf("limit");
+        //        if (pageSql != -1)
+        //        {
+        //            if (sql.LastIndexOf(",") > pageSql)
+        //            {
+        //                var updSql = string.Empty;
+        //                if (!sql.ToLower().Contains("order")) updSql = "order by 1";
+        //                var page = Regex.Match(sql, @"(?<=limit).+(?=,.+)").Value;
+        //                var pageSize = Regex.Match(sql, @"(?<=limit.+,)[0-9]+").Value;
+        //                updSql += $" offset {page} rows fetch next {pageSize} rows only";
+        //                sql = sql.Substring(0, pageSql) + updSql;
+        //            }
+        //            else
+        //            {
+        //                var limitStr = Regex.Match(sql, @"limit.+[0-9]+").Value;
+        //                var countStr = Regex.Match(sql, @"(?<=limit).+[0-9]+").Value;
+        //                sql = sql.Replace(limitStr, "");
+        //                sql = $"select top {countStr} * from ({sql}) tables";
+        //            }
+        //        }
+        //    }
+        //    else if (type == Enum.DbType.PostgreSql)
+        //    {
+        //        //随机函数
+        //        if (sql.Contains("rand()"))
+        //        {
+        //            sql = sql.Replace("rand()", "random()");
+        //        }
+        //        //是否为空函数
+        //        var isnullStr = Regex.Match(sql, @"isnull\(.+?\)").Value;
+        //        if (!isnullStr.IsNull())
+        //        {
+        //            var isnullStrB = Regex.Match(sql, @"(?<=isnull\().+?(?=\))").Value;
+        //            sql = sql.Replace(isnullStr, $"{isnullStrB} is null");
+        //        }
+        //        //分页函数
+        //        int pageSql = sql.IndexOf("limit");
+        //        if (pageSql != -1 && sql.LastIndexOf(",") > pageSql)
+        //        {
+        //            var updSql = string.Empty;
+        //            var page = Regex.Match(sql, @"(?<=limit).+(?=,.+)").Value;
+        //            var pageSize = Regex.Match(sql, @"(?<=limit.+,)[0-9]+").Value;
+        //            updSql += $"limit {pageSize} offset {page}";
+        //            sql = sql.Substring(0, pageSql) + updSql;
+        //        }
+        //        //记录数函数
+        //        var topStr = Regex.Match(sql, @"select.+top.+?[0-9]+").Value;
+        //        if (!topStr.IsNull())
+        //        {
+        //            var countStr = Regex.Match(topStr, @"(?<=select.+top.+?)[0-9]+").Value;
+        //            sql = sql.Replace(topStr, "select ");
+        //            if (!sql.Contains("limit")) sql = $"{sql} limit {countStr}";
+        //        }
+        //    }
+        //    return sql;
+        //}
 
         #endregion 操作脚本
 

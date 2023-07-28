@@ -30,11 +30,6 @@ namespace zgcwkj.Web.Controllers
         private DbAccess _Db { get; }
 
         /// <summary>
-        /// 缓存数据上下文
-        /// </summary>
-        private CacheAccess _Cache { get; }
-
-        /// <summary>
         /// Jwt 配置
         /// </summary>
         private JwtConfigure _Jwt { get; }
@@ -50,14 +45,12 @@ namespace zgcwkj.Web.Controllers
         public ApiController(
             MyDbContext myDbContext,
             SQLiteDbContext sQLiteDbContext,
-            CacheAccess cacheAccess,
             JwtConfigure jwtConfigure,
             UserSession userSession)
         {
             this._MyDb = myDbContext;
             this._SQLite = sQLiteDbContext;
             this._Db = DbProvider.Create(myDbContext);
-            this._Cache = cacheAccess;
             this._Jwt = jwtConfigure;
             this._UserSession = userSession;
         }
@@ -143,22 +136,21 @@ namespace zgcwkj.Web.Controllers
         [HttpPost]
         public IActionResult TestCache()
         {
-            int testCache = CacheAccess.Get<int>("TestCache");
-            CacheAccess.Set("TestCache", testCache + 1);
+            var testCache = CacheMemory.Get<int>("TestCache");
+            CacheMemory.Set("TestCache", testCache + 1);
             return Json(testCache);
         }
 
-        /// <summary>
-        /// TestCache
-        /// </summary>
-        /// <returns></returns>
-        [HttpPost]
-        public IActionResult TestCache2()
-        {
-            int testCache = _Cache.Get<int>("TestCache");
-            _Cache.Set("TestCache", testCache + 1);
-            return Json(testCache);
-        }
+        ///// <summary>
+        ///// ClearCache
+        ///// </summary>
+        ///// <returns></returns>
+        //[HttpPost]
+        //public IActionResult ClearCache()
+        //{
+        //    CacheMemory.Clear();
+        //    return Json("OK");
+        //}
 
         /// <summary>
         /// TestError

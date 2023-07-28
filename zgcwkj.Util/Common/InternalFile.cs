@@ -1,6 +1,4 @@
-﻿using zgcwkj.Util.Log;
-
-namespace zgcwkj.Util.Common
+﻿namespace zgcwkj.Util.Common
 {
     /// <summary>
     /// 内置的嵌入式资源

@@ -5,8 +5,6 @@
 ```
 {
   "SQLConnect": "data source=dbName.db", //SQLite
-  "CacheType": "Memory", //Redis Memory
-  "RedisConnect": "127.0.0.1" //Redis
 }
 ```
 
@@ -14,11 +12,12 @@
 ```
 //Cache
 Console.WriteLine("Cache >");
-CacheAccess.Set("zgcwkj", userID, 0);
-Console.WriteLine(CacheAccess.Get<string>("zgcwkj"));
+CacheMemory.Set("zgcwkj", userID);
+Console.WriteLine(CacheMemory.Get<string>("zgcwkj"));
 
 //DbContext
 using var myDbContext = new MyDbContext();
+using var sQLiteDbContext = new SQLiteDbContext();
 
 //Query SQL
 var dbAccess = DbProvider.Create(myDbContext);
@@ -67,4 +66,22 @@ int deleteCount = myDbContext.SaveChanges();
 Console.WriteLine("Query >");
 var sysUsers2 = myDbContext.SysUserModel.ToList();
 Console.WriteLine(sysUsers2.ToJson());
+
+//Query
+Console.WriteLine("Cross-database Query >");
+var sysInfo = sQLiteDbContext.SysInfoModel.ToList();
+var suInfo = (from sInfo in sysInfo
+                join sUser in sysUsers2 on sInfo.SysID equals sUser.SysID
+                select new
+                {
+                    sInfo.SysID,
+                    sInfo.SysName,
+                    sInfo.SysIP,
+                    sInfo.SysUrl,
+                    sInfo.SysStatus,
+                    sUser.UserID,
+                    sUser.UserName,
+                    sUser.Password,
+                }).ToList();
+Console.WriteLine(suInfo.ToJson());
 ```

@@ -191,8 +191,6 @@ namespace zgcwkj.Web
             //数据库上下文
             services.AddDbContext<MyDbContext>();
             services.AddDbContext<SQLiteDbContext>();
-            //缓存数据上下文
-            services.AddScoped<CacheAccess>();
         }
     }
 }

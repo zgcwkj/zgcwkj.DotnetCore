@@ -1,9 +1,6 @@
 ﻿using System.Net;
 using System.Net.NetworkInformation;
-using System.Net.Security;
-using System.Security.Cryptography.X509Certificates;
 using System.Text;
-using zgcwkj.Util.Log;
 
 #pragma warning disable SYSLIB0014
 
