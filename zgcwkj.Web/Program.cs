@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Rewrite;
 using Microsoft.Extensions.FileProviders;
+using System.Net;
 using System.Text.Encodings.Web;
 using System.Text.Json;
 using System.Text.Unicode;
@@ -76,13 +77,14 @@ namespace zgcwkj.Web
             services.AddOptions();
             //添加 MVC
             services.AddMvc();
-            //添加 HttpContext 存取器
-            services.AddHttpContextAccessor();
-            //全局异常捕获
+            //添加 Controllers
             services.AddControllers(options =>
             {
+                //全局异常捕获
                 options.Filters.Add(new GlobalException());
             });
+            //添加 HttpContext 存取器
+            services.AddHttpContextAccessor();
             //配置 Jwt
             services.AddAuthentication(options =>
             {
@@ -92,7 +94,7 @@ namespace zgcwkj.Web
             }).AddJwtBearer();
             services.ConfigureOptions<JwtConfigure>();
             services.AddSingleton<JwtConfigure>();
-            services.AddSingleton<UserSession>();
+            services.AddScoped<UserSession>();
             //配置 Swagger
             services.AddSwaggerJwt();
         }
@@ -111,6 +113,27 @@ namespace zgcwkj.Web
             GlobalContext.ServiceProvider = app.Services;
             //配置对象
             GlobalContext.Configuration = app.Configuration;
+            //限制访问 Swagger
+            //app.Use(async (context, next) =>
+            //{
+            //    //访问信息
+            //    var path = context.Request.Path;
+            //    var userIP = context.Connection.RemoteIpAddress ?? IPAddress.Parse("127.0.0.1");
+            //    //允许IP
+            //    var allowIP = new HashSet<IPAddress>
+            //    {
+            //        IPAddress.Parse("127.0.0.1"),
+            //        IPAddress.Parse("::1"),
+            //    };
+            //    //检验
+            //    if (path.StartsWithSegments("/swagger") && !allowIP.Contains(userIP))
+            //    {
+            //        context.Response.StatusCode = (int)HttpStatusCode.Forbidden;
+            //        return;
+            //    }
+            //    //放行
+            //    await next();
+            //});
             //运行模式
             if (app.Environment.IsDevelopment())
             {

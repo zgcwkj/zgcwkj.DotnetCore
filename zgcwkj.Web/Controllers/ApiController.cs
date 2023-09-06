@@ -65,19 +65,25 @@ namespace zgcwkj.Web.Controllers
         [HttpPost]
         public IActionResult Login(string userName, string password)
         {
-            //登录方法体
-            var myJwt = new
+            var isOK = false;
+            var token = "";
+            if (userName == password)
             {
-                Account = userName,
-                Password = password,
-            };
-            var myJwtMd5 = myJwt.ToJson().ToMD5();
-            var jwtToken = _Jwt.GenerateToken(myJwtMd5, userName);
+                isOK = true;
+                //登录方法体
+                var myJwt = new
+                {
+                    Account = userName,
+                    Password = password,
+                };
+                var myJwtMd5 = myJwt.ToJson().ToMD5();
+                token = _Jwt.GenerateToken(myJwtMd5, userName);
+            }
             //返回结果
             var jsonResult = new
             {
-                status = true,
-                token = jwtToken,
+                status = isOK,
+                token = token,
             };
             return Json(jsonResult);
         }

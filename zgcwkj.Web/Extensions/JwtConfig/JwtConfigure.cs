@@ -5,7 +5,6 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Net;
 using System.Security.Claims;
 using System.Text;
-using zgcwkj.Util;
 
 namespace zgcwkj.Web.Extensions
 {
@@ -20,19 +19,11 @@ namespace zgcwkj.Web.Extensions
         private IConfiguration _IConfig { get; }
 
         /// <summary>
-        /// IServiceScopeFactory
-        /// </summary>
-        private IServiceScopeFactory _IServiceScopeFactory { get; }
-
-        /// <summary>
         /// Jwt 配置
         /// </summary>
-        public JwtConfigure(
-            IConfiguration config,
-            IServiceScopeFactory serviceScopeFactory)
+        public JwtConfigure(IConfiguration config)
         {
             this._IConfig = config;
-            this._IServiceScopeFactory = serviceScopeFactory;
         }
 
         /// <summary>
@@ -132,23 +123,28 @@ namespace zgcwkj.Web.Extensions
         /// </summary>
         private bool ValidatorUser(IEnumerable<string> audiences, SecurityToken securityToken, TokenValidationParameters validationParameters)
         {
-            using var scope = _IServiceScopeFactory.CreateScope();
-            var _userSession = scope.ServiceProvider.GetRequiredService<UserSession>();
             var jwtSecurityToken = securityToken as JwtSecurityToken;
-            //获取 Token 数据
-            var claims = jwtSecurityToken?.Claims.ToList() ?? new();
-            var claimsDic = claims.ToDictionary(D => D.Type, D => D.Value);
-            //检查数据
-            if (!claimsDic.ContainsKey("userID")) return false;
-            if (!claimsDic.ContainsKey("userName")) return false;
-            if (!claimsDic.ContainsKey("dateTime")) return false;
-            //用户数据
-            _userSession.SetData(
-                claimsDic["userID"],
-                claimsDic["userName"],
-                claimsDic["dateTime"].ToDate());
-            //
-            return true;
+            if (jwtSecurityToken == null) return false;
+            var claims = jwtSecurityToken.Claims;
+            if (claims == null) return false;
+            try
+            {
+                //获取凭据中的数据
+                var userID = claims.Where(w => w.Type == "userID").First().Value.ToStr();
+                var userName = claims.Where(w => w.Type == "userName").First().Value.ToStr();
+                var dateTime = claims.Where(w => w.Type == "dateTime").First().Value.ToDate();
+                //检查数据
+                if (userID == default) return false;
+                if (userName == default) return false;
+                if (dateTime == default) return false;
+                //
+                return true;
+            }
+            catch (Exception ex)
+            {
+                var msg = ex.Message;
+            }
+            return false;
         }
 
         /// <summary>
