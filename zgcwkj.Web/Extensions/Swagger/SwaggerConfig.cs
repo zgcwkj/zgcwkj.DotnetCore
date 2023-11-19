@@ -1,9 +1,8 @@
-﻿using Microsoft.AspNetCore.Builder;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.OpenApi.Models;
+﻿using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.SwaggerUI;
+using zgcwkj.Util;
 
-namespace zgcwkj.Util
+namespace zgcwkj.Web.Extensions
 {
     /// <summary>
     /// 配置 Swagger
@@ -36,6 +35,7 @@ namespace zgcwkj.Util
                 //排序接口
                 //options.OrderActionsBy(o => o.RelativePath);
                 //显示注释
+
                 var basePath = GlobalConstant.GetRunPath;
                 var xmlFilesPath = Directory.GetFiles(basePath, "*.xml");
                 foreach (var xmlPath in xmlFilesPath)

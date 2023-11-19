@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
-		<TargetFramework>net6.0</TargetFramework>
+		<TargetFramework>net8.0</TargetFramework>
 		<Nullable>enable</Nullable>
 		<ImplicitUsings>enable</ImplicitUsings>
 		<PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
@@ -12,9 +12,9 @@
 		<PackageTags>Core,Util,Data,EF,Cache</PackageTags>
 		<PackageReleaseNotes></PackageReleaseNotes>
 		<NeutralLanguage>zh-Hans</NeutralLanguage>
-		<Version>2.0.0</Version>
-		<FileVersion>2.0.0.0</FileVersion>
-		<AssemblyVersion>2.0.0.0</AssemblyVersion>
+		<Version>8.0.0</Version>
+		<FileVersion>8.0.0.0</FileVersion>
+		<AssemblyVersion>8.0.0.0</AssemblyVersion>
 		<Description>为 Core 提供一套数据相关的服务</Description>
 		<RepositoryUrl>https://www.nuget.org/packages/zgcwkj.Util</RepositoryUrl>
 		<PackageLicenseFile>LICENSE</PackageLicenseFile>
@@ -32,10 +32,10 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<PackageReference Include="Microsoft.EntityFrameworkCore" Version="6.0.25" />
-		<PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="6.0.25" />
-		<PackageReference Include="Microsoft.Extensions.Caching.Abstractions" Version="6.0.0" />
-		<PackageReference Include="Swashbuckle.AspNetCore" Version="6.5.0" />
+		<FrameworkReference Include="Microsoft.AspNetCore.App" />
+		<PackageReference Include="Microsoft.EntityFrameworkCore" Version="8.0.0" />
+		<PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="8.0.0" />
+		<PackageReference Include="Microsoft.Extensions.Caching.Abstractions" Version="8.0.0" />
 	</ItemGroup>
 
 	<ItemGroup>
