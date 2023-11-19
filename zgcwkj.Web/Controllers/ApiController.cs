@@ -162,7 +162,9 @@ namespace zgcwkj.Web.Controllers
         /// TestError
         /// </summary>
         /// <returns></returns>
+        [HttpGet]
         [HttpPost]
+        [AllowAnonymous]
         public IActionResult TestError()
         {
             throw new Exception("TestError");

@@ -1,21 +1,21 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 using System.Text.Json;
+using zgcwkj.Util;
 
-namespace zgcwkj.Util
+namespace zgcwkj.Web.Filters
 {
     /// <summary>
-    /// 全局异常捕获
+    /// 网站异常捕获
     /// </summary>
-    public class GlobalException : IAsyncExceptionFilter
+    public class WebExceptionFilter : IAsyncExceptionFilter
     {
         /// <summary>
         /// 捕获到异常时
         /// </summary>
         /// <param name="context"></param>
         /// <returns></returns>
-        public Task OnExceptionAsync(ExceptionContext context)
+        public virtual Task OnExceptionAsync(ExceptionContext context)
         {
             //如果异常没有被处理则进行处理
             if (context.ExceptionHandled == false)

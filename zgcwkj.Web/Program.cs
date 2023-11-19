@@ -8,6 +8,7 @@ using System.Text.Unicode;
 using zgcwkj.Model.Context;
 using zgcwkj.Util;
 using zgcwkj.Web.Extensions;
+using zgcwkj.Web.Filters;
 
 namespace zgcwkj.Web
 {
@@ -81,7 +82,7 @@ namespace zgcwkj.Web
             services.AddControllers(options =>
             {
                 //全局异常捕获
-                options.Filters.Add(new GlobalException());
+                options.Filters.Add<WebExceptionFilter>();
             });
             //添加 HttpContext 存取器
             services.AddHttpContextAccessor();
