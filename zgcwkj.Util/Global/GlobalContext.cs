@@ -11,21 +11,15 @@ namespace zgcwkj.Util
     public class GlobalContext
     {
         /// <summary>
-        /// <para>所有注册服务和类实例容器</para>
-        /// <para>用于依赖注入</para>
+        /// Web主机环境
         /// </summary>
-        public static IServiceCollection? Services { get; set; }
+        public static IWebHostEnvironment? HostingEnvironment { get; set; }
 
         /// <summary>
         /// <para>所有配置的服务提供商</para>
         /// <para>用于获取依赖注入</para>
         /// </summary>
         public static IServiceProvider? ServiceProvider { get; set; }
-
-        /// <summary>
-        /// Web主机环境
-        /// </summary>
-        public static IWebHostEnvironment? HostingEnvironment { get; set; }
 
         /// <summary>
         /// 配置对象(私有)
@@ -81,6 +75,19 @@ namespace zgcwkj.Util
         }
 
         /// <summary>
+        /// 快速获取注入的服务
+        /// </summary>
+        /// <typeparam name="T">服务对象</typeparam>
+        /// <returns>服务对象</returns>
+        public static T GetServer<T>()
+        {
+            var objData = (ServiceProvider ?? throw new($"ServiceProvider is null"))
+                .GetService<T>() ?? throw new($"{typeof(T).Name} Service is null");
+            //
+            return objData;
+        }
+
+        /// <summary>
         /// 获取环境变量
         /// </summary>
         /// <param name="key">键</param>
@@ -130,8 +137,8 @@ namespace zgcwkj.Util
         public static void SetCacheControl(StaticFileResponseContext context)
         {
             var second = 365 * 24 * 60 * 60;
-            context.Context.Response.Headers.Add("Cache-Control", new[] { "public,max-age=" + second });
-            context.Context.Response.Headers.Add("Expires", new[] { DateTime.UtcNow.AddYears(1).ToString("R") }); // Format RFC1123
+            context?.Context?.Response?.Headers?.TryAdd("Cache-Control", new[] { "public,max-age=" + second });
+            context?.Context?.Response?.Headers?.TryAdd("Expires", new[] { DateTime.UtcNow.AddYears(1).ToString("R") }); // Format RFC1123
         }
     }
 }

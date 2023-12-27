@@ -17,43 +17,27 @@ namespace zgcwkj.Web.Controllers
         /// <summary>
         /// 数据库上下文
         /// </summary>
-        private MyDbContext _MyDb { get; }
+        private MyDbContext _MyDb => GlobalContext.GetServer<MyDbContext>();
 
         /// <summary>
         /// 数据库上下文
         /// </summary>
-        private SQLiteDbContext _SQLite { get; }
+        private SQLiteDbContext _SQLite => GlobalContext.GetServer<SQLiteDbContext>();
 
         /// <summary>
         /// 数据库上下文
         /// </summary>
-        private DbAccess _Db { get; }
+        private DbAccess _Db => DbProvider.Create(_MyDb);
 
         /// <summary>
         /// Jwt 配置
         /// </summary>
-        private JwtConfigure _Jwt { get; }
+        private JwtConfigure _Jwt => GlobalContext.GetServer<JwtConfigure>();
 
         /// <summary>
         /// 用户会话
         /// </summary>
-        private UserSession _UserSession { get; }
-
-        /// <summary>
-        /// 实例时
-        /// </summary>
-        public ApiController(
-            MyDbContext myDbContext,
-            SQLiteDbContext sQLiteDbContext,
-            JwtConfigure jwtConfigure,
-            UserSession userSession)
-        {
-            this._MyDb = myDbContext;
-            this._SQLite = sQLiteDbContext;
-            this._Db = DbProvider.Create(myDbContext);
-            this._Jwt = jwtConfigure;
-            this._UserSession = userSession;
-        }
+        private UserSession _UserSession => GlobalContext.GetServer<UserSession>();
 
         /// <summary>
         /// Login
