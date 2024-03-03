@@ -1,7 +1,9 @@
 ﻿using System.Data;
 using System.Text;
+using System.Text.Encodings.Web;
 using System.Text.Json;
 using System.Text.RegularExpressions;
+using System.Text.Unicode;
 using zgcwkj.Util;
 using zgcwkj.Util.Common;
 
@@ -326,12 +328,16 @@ public static class Conversion
     {
         try
         {
+            var options = new JsonSerializerOptions
+            {
+                Encoder = JavaScriptEncoder.Create(UnicodeRanges.BasicLatin, UnicodeRanges.Cyrillic)
+            };
             if (value.GetType() == typeof(DataTable))
             {
                 var dataTable = value as DataTable;
-                return JsonSerializer.Serialize(dataTable?.ToList());
+                return JsonSerializer.Serialize(dataTable?.ToList(), options);
             }
-            return JsonSerializer.Serialize(value);
+            return JsonSerializer.Serialize(value, options);
         }
         catch (Exception ex)
         {
@@ -350,7 +356,11 @@ public static class Conversion
     {
         try
         {
-            return JsonSerializer.Deserialize<T>(value) ?? default;
+            var options = new JsonSerializerOptions
+            {
+                Encoder = JavaScriptEncoder.Create(UnicodeRanges.BasicLatin, UnicodeRanges.Cyrillic)
+            };
+            return JsonSerializer.Deserialize<T>(value, options) ?? default;
         }
         catch (Exception ex)
         {
