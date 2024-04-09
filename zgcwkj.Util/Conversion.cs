@@ -13,6 +13,106 @@ using zgcwkj.Util.Common;
 public static class Conversion
 {
     /// <summary>
+    /// 统一转换入口
+    /// </summary>
+    /// <typeparam name="T">类型</typeparam>
+    /// <param name="value">值</param>
+    /// <param name="def">失败值</param>
+    /// <returns>转换结果</returns>
+    public static T? To<T>(this object value, T? def = default)
+    {
+        if (value != null)
+        {
+            try
+            {
+                var valueType = typeof(T);
+                if (valueType == typeof(short))
+                {
+                    return (T)(object)value.ToShort((def as short?) ?? default);
+                }
+                else if (valueType == typeof(int))
+                {
+                    return (T)(object)value.ToInt((def as int?) ?? default);
+                }
+                else if (valueType == typeof(long))
+                {
+                    return (T)(object)value.ToLong((def as long?) ?? default);
+                }
+                else if (valueType == typeof(double))
+                {
+                    return (T)(object)value.ToDouble((def as double?) ?? default);
+                }
+                else if (valueType == typeof(float))
+                {
+                    return (T)(object)value.ToFloat((def as float?) ?? default);
+                }
+                else if (valueType == typeof(decimal))
+                {
+                    return (T)(object)value.ToDecimal((def as decimal?) ?? default);
+                }
+                else if (valueType == typeof(string))
+                {
+                    return (T)(object)value.ToStr((def as string) ?? string.Empty);
+                }
+                else if (valueType == typeof(bool))
+                {
+                    return (T)(object)value.ToBool((def as bool?) ?? default);
+                }
+                else if (valueType == typeof(byte))
+                {
+                    var data = JsonSerializer.SerializeToUtf8Bytes(value);
+                    if (data.Length != 0) return (T)(object)data.First();
+                }
+                else if (valueType == typeof(byte[]))
+                {
+                    var data = JsonSerializer.SerializeToUtf8Bytes(value);
+                    return (T)(object)data;
+                }
+                else if (valueType == typeof(DateTime))
+                {
+                    return (T)(object)value.ToDate((def as DateTime?) ?? default);
+                }
+                else
+                {
+                    var data = value.ToStr();
+                    if (data.IsJson()) return data.ToJson<T>();
+                    return (T)value;
+                }
+            }
+            catch (Exception ex)
+            {
+                var meg = ex.Message;
+                if (GlobalConstant.IsDevelopment) Logger.Error(meg);
+            }
+        }
+        return def;
+    }
+
+    /// <summary>
+    /// 转换成 Short 类型
+    /// </summary>
+    /// <param name="value">值</param>
+    /// <param name="def">失败值</param>
+    /// <returns></returns>
+    public static short ToShort(this object value, short def = 0)
+    {
+        if (!value.IsNull())
+        {
+            try
+            {
+                var data = value.ToDouble();
+                return Convert.ToInt16(data);
+            }
+            catch (Exception ex)
+            {
+                var meg = ex.Message;
+                if (GlobalConstant.IsDevelopment) Logger.Error(meg);
+            }
+        }
+        return def;
+    }
+
+    /// <summary>
     /// 转换成 Int 类型
     /// </summary>
     /// <param name="value">值</param>
@@ -24,7 +124,32 @@ public static class Conversion
         {
             try
             {
-                return Convert.ToInt32(value);
+                var data = value.ToDouble();
+                return Convert.ToInt32(data);
+            }
+            catch (Exception ex)
+            {
+                var meg = ex.Message;
+                if (GlobalConstant.IsDevelopment) Logger.Error(meg);
+            }
+        }
+        return def;
+    }
+
+    /// <summary>
+    /// 转换成 Long 类型
+    /// </summary>
+    /// <param name="value">值</param>
+    /// <param name="def">失败值</param>
+    /// <returns></returns>
+    public static long ToLong(this object value, long def = 0)
+    {
+        if (!value.IsNull())
+        {
+            try
+            {
+                var data = value.ToDouble();
+                return Convert.ToInt64(data);
             }
             catch (Exception ex)
             {
@@ -71,15 +196,73 @@ public static class Conversion
     }
 
     /// <summary>
+    /// 转换成 Decimal 类型
+    /// </summary>
+    /// <param name="value">值</param>
+    /// <param name="def">失败值</param>
+    /// <returns></returns>
+    public static decimal ToDecimal(this object value, decimal def = 0)
+    {
+        if (!value.IsNull())
+        {
+            try
+            {
+                return Convert.ToDecimal(value);
+            }
+            catch (Exception ex)
+            {
+                var meg = ex.Message;
+                if (GlobalConstant.IsDevelopment) Logger.Error(meg);
+            }
+        }
+        return def;
+    }
+
+    /// <summary>
+    /// 截断 Decimal 类型的小数位
+    /// </summary>
+    /// <param name="value">数据值</param>
+    /// <param name="length">保留长度</param>
+    /// <returns></returns>
+    public static decimal ToTruncate(this decimal value, int length = 2)
+    {
+        var pow = (decimal)Math.Pow(10, length);
+        return Math.Truncate(value * pow) / pow;
+    }
+
+    /// <summary>
+    /// 转换成 Float 类型
+    /// </summary>
+    /// <param name="value">值</param>
+    /// <param name="def">失败值</param>
+    /// <returns></returns>
+    public static float ToFloat(this object value, float def = 0)
+    {
+        if (!value.IsNull())
+        {
+            try
+            {
+                return (float)Convert.ToDouble(value);
+            }
+            catch (Exception ex)
+            {
+                var meg = ex.Message;
+                if (GlobalConstant.IsDevelopment) Logger.Error(meg);
+            }
+        }
+        return def;
+    }
+
+    /// <summary>
     /// 截断 Float 类型的小数位
     /// </summary>
     /// <param name="value">数据值</param>
     /// <param name="length">保留长度</param>
     /// <returns></returns>
-    public static double ToTruncate(this float value, int length = 2)
+    public static float ToTruncate(this float value, int length = 2)
     {
         var pow = Math.Pow(10, length);
-        return Math.Truncate(value * pow) / pow;
+        return (float)(Math.Truncate(value * pow) / pow);
     }
 
     /// <summary>
@@ -245,16 +428,16 @@ public static class Conversion
     /// <summary>
     /// 格式化日期时间
     ///
-    /// 0 > yyyy-MM-dd
-    /// 1 > yyyy-MM-dd HH:mm:ss
-    /// 2 > yyyy/MM/dd
-    /// 3 > yyyy年MM月dd日
-    /// 4 > MM-dd
-    /// 5 > MM/dd
-    /// 6 > MM月dd日
-    /// 7 > yyyy-MM
-    /// 8 > yyyy/MM
-    /// 9 > yyyy年MM月
+    /// <para>0 > yyyy-MM-dd</para>
+    /// <para>1 > yyyy-MM-dd HH:mm:ss</para>
+    /// <para>2 > yyyy/MM/dd</para>
+    /// <para>3 > yyyy年MM月dd日</para>
+    /// <para>4 > MM-dd</para>
+    /// <para>5 > MM/dd</para>
+    /// <para>6 > MM月dd日</para>
+    /// <para>7 > yyyy-MM</para>
+    /// <para>8 > yyyy/MM</para>
+    /// <para>9 > yyyy年MM月</para>
     /// </summary>
     /// <param name="dateTime">日期时间</param>
     /// <param name="dateMode">自定义格式</param>
@@ -312,10 +495,16 @@ public static class Conversion
     /// 时间转时间戳字符
     /// </summary>
     /// <param name="dateTime">时间</param>
+    /// <param name="length">长度</param>
     /// <returns></returns>
-    public static string ToDateByUnixStr(this DateTime dateTime)
+    public static string ToDateByUnixStr(this DateTime dateTime, int length = default)
     {
-        return dateTime.ToDateByUnix().ToStr();
+        var data = dateTime.ToDateByUnix();
+        if (length != default)
+        {
+            return data.ToStr()[..length];
+        }
+        return data.ToStr();
     }
 
     /// <summary>
@@ -395,7 +584,7 @@ public static class Conversion
     /// </summary>
     /// <param name="value">值</param>
     /// <returns></returns>
-    public static bool IsNull(this object value)
+    public static bool IsNull(this object? value)
     {
         try
         {
@@ -429,7 +618,7 @@ public static class Conversion
     /// </summary>
     /// <param name="value">值</param>
     /// <returns></returns>
-    public static bool IsNotNull(this object value)
+    public static bool IsNotNull(this object? value)
     {
         return !value.IsNull();
     }
@@ -439,7 +628,7 @@ public static class Conversion
     /// </summary>
     /// <param name="value">值</param>
     /// <returns></returns>
-    public static bool IsNullOrZero(this object value)
+    public static bool IsNullOrZero(this object? value)
     {
         if (IsNull(value))
         {
