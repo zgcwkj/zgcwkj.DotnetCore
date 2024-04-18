@@ -52,6 +52,12 @@ public static class Conversion
                 }
                 else if (valueType == typeof(string))
                 {
+                    var type = value.GetType();
+                    if (value.ToStr() == type.ToStr())
+                    {
+                        var dataTemp = value.ToJson();
+                        return (T)(object)dataTemp;
+                    }
                     return (T)(object)value.ToStr((def as string) ?? string.Empty);
                 }
                 else if (valueType == typeof(bool))
