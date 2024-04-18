@@ -53,7 +53,8 @@ public static class Conversion
                 else if (valueType == typeof(string))
                 {
                     var type = value.GetType();
-                    if (value.ToStr() == type.ToStr())
+                    var isAnonymousType = Attribute.IsDefined(type, typeof(CompilerGeneratedAttribute), false) && type.Name.Contains("AnonymousType");//匿名对象
+                    if (isAnonymousType || value.ToStr() == type.ToStr())
                     {
                         var dataTemp = value.ToJson();
                         return (T)(object)dataTemp;
