@@ -303,7 +303,7 @@ namespace zgcwkj.Util.Data.Extension
                             break;
 
                         default:
-                            value = parameter.Value?.ToTrim() ?? "";
+                            value = parameter.Value?.To<string>().Trim() ?? "";
                             break;
                     }
                     sql = sql.Replace(parameter.ParameterName, value);

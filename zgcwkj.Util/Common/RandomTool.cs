@@ -115,7 +115,7 @@
                 rTool.ContentStr = string.Empty;
                 rTool.SymbolStr = string.Empty;
             }
-            return rTool.GetRandom(Length).ToInt();
+            return rTool.GetRandom(Length).To<int>();
         }
 
         /// <summary>

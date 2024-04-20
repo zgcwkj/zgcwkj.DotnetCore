@@ -235,7 +235,7 @@ namespace zgcwkj.Util.Common
                 IPHostEntry host = Dns.GetHostEntry(new Uri(url).Host);
                 if (host.AddressList.Length != 0)
                 {
-                    return host.AddressList[0].ToStr();
+                    return host.AddressList[0].To<string>();
                 }
             }
             catch { }

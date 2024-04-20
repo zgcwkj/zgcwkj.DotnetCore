@@ -132,7 +132,7 @@ namespace zgcwkj.Util
         {
             get
             {
-                return DateTime.Now.ToDateByUnix().ToTruncate(0).ToTrim();
+                return DateTime.Now.ToDateByUnix().ToTruncate(0).To<string>().Trim();
             }
         }
 

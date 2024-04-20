@@ -1,7 +1,6 @@
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Rewrite;
 using Microsoft.Extensions.FileProviders;
-using System.Net;
 using System.Text.Encodings.Web;
 using System.Text.Json;
 using System.Text.Unicode;
@@ -41,8 +40,6 @@ namespace zgcwkj.Web
         {
             //程序运行环境
             GlobalContext.HostingEnvironment = builder.Environment;
-            //所有注册服务和类实例容器
-            GlobalContext.Services = services;
             //返回数据首字母不小写
             services.AddMvc().AddJsonOptions(options =>
             {

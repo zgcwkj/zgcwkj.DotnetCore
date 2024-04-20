@@ -28,7 +28,7 @@ var sysUserList = dbAccess.QueryDataList<SysUserModel>();
 //Query
 Console.WriteLine("Query >");
 var sysUser = myDbContext.SysUserModel.ToList();
-Console.WriteLine(sysUser.ToJson());
+Console.WriteLine(sysUser.To<string>());
 
 //Insert
 Console.WriteLine("Insert >");
@@ -52,20 +52,20 @@ int updateCount = myDbContext.SaveChanges();
 //Query
 Console.WriteLine("Query >");
 var sysUsers = myDbContext.SysUserModel.ToList();
-Console.WriteLine(sysUsers.ToJson());
+Console.WriteLine(sysUsers.To<string>());
 
 //Delete
 Console.WriteLine("Delete >");
 var sysUser4 = (from sUser in myDbContext.SysUserModel
                 where sUser.UserID == newUserID
                 select sUser).FirstOrDefault();
-myDbContext.Remove(sysUser4);
+if (sysUser4 != null) myDbContext.Remove(sysUser4);
 int deleteCount = myDbContext.SaveChanges();
 
 //Query
 Console.WriteLine("Query >");
 var sysUsers2 = myDbContext.SysUserModel.ToList();
-Console.WriteLine(sysUsers2.ToJson());
+Console.WriteLine(sysUsers2.To<string>());
 
 //Query
 Console.WriteLine("Cross-database Query >");
@@ -83,5 +83,5 @@ var suInfo = (from sInfo in sysInfo
                     sUser.UserName,
                     sUser.Password,
                 }).ToList();
-Console.WriteLine(suInfo.ToJson());
+Console.WriteLine(suInfo.To<string>());
 ```

@@ -38,17 +38,17 @@ namespace zgcwkj.Web.Extensions
             //获取请求数据
             if (httpContextAccessor.HttpContext != null)
             {
-                var token = httpContextAccessor.HttpContext.Request.Headers["Authorization"].ToStr();
-                token = token.Replace("Bearer", "").ToTrim();
+                var token = httpContextAccessor.HttpContext.Request.Headers["Authorization"].To<string>();
+                token = token.Replace("Bearer", "").To<string>().Trim();
                 if (string.IsNullOrEmpty(token)) return;
                 //登录信息
                 var jwtSecurityToken = new JwtSecurityTokenHandler();
                 var jwtSecurity = jwtSecurityToken.ReadJwtToken(token);
                 var claims = jwtSecurity?.Claims;
                 if (claims == null) return;
-                var userID = claims.Where(w => w.Type == "userID").First().Value.ToStr();
-                var userName = claims.Where(w => w.Type == "userName").First().Value.ToStr();
-                var dateTime = claims.Where(w => w.Type == "dateTime").First().Value.ToDate();
+                var userID = claims.Where(w => w.Type == "userID").First().Value.To<string>();
+                var userName = claims.Where(w => w.Type == "userName").First().Value.To<string>();
+                var dateTime = claims.Where(w => w.Type == "dateTime").First().Value.To<DateTime>();
                 ////比对用户信息
                 //var userData = GetUserInfo(userID);
                 //if (userData == null || userData.Guid == Guid.Empty) return;

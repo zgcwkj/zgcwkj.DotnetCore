@@ -21,7 +21,7 @@ namespace zgcwkj.Web.Filters
             if (context.ExceptionHandled == false)
             {
                 //记录日志
-                Logger.Error(context.Exception.ToTrim());
+                Logger.Error(context.Exception.To<string>().Trim());
                 //定义返回数据
                 var result = new
                 {

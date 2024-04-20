@@ -40,7 +40,7 @@ namespace zgcwkj.Util
         public static bool Set<T>(string key, T value) where T : notnull
         {
             if (string.IsNullOrEmpty(key)) return false;
-            _HttpContext.Session.SetString(key, value.ToJson());
+            _HttpContext.Session.SetString(key, value.To<string>());
             return true;
         }
 
@@ -65,7 +65,7 @@ namespace zgcwkj.Util
             if (string.IsNullOrEmpty(key)) return default;
             var sessionStr = _HttpContext.Session.GetString(key);
             if (string.IsNullOrEmpty(sessionStr)) return default;
-            return sessionStr.ToJson<T>();
+            return sessionStr.To<T>();
         }
 
         /// <summary>

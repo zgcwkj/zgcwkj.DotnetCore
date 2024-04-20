@@ -296,17 +296,17 @@ namespace zgcwkj.Util
         /// <returns></returns>
         private static string PreventInjection(this object value, DbAccess cmdAccess)
         {
-            var data = value.ToTrim();
+            var data = value.To<string>().Trim();
             var outLog = false;
-            if (data.ToTrim().Contains("\\"))
+            if (data.To<string>().Trim().Contains("\\"))
             {
                 outLog = true;
-                data = data.ToTrim().Replace("\\", "");
+                data = data.To<string>().Trim().Replace("\\", "");
             }
-            if (data.ToTrim().Contains("'"))
+            if (data.To<string>().Trim().Contains("'"))
             {
                 outLog = true;
-                data = data.ToTrim().Replace("'", "");
+                data = data.To<string>().Trim().Replace("'", "");
             }
             if (outLog)
             {
@@ -597,7 +597,7 @@ namespace zgcwkj.Util
             var dataTable = cmdAccess.GetData(strFrom);
             if (dataTable.Rows.Count > 0)
             {
-                return dataTable.Rows[0][0].ToInt();
+                return dataTable.Rows[0][0].To<int>();
             }
             return 0;
         }
@@ -617,7 +617,7 @@ namespace zgcwkj.Util
             var dataTable = await cmdAccess.GetDataAsync(strFrom);
             if (dataTable.Rows.Count > 0)
             {
-                return dataTable.Rows[0][0].ToInt();
+                return dataTable.Rows[0][0].To<int>();
             }
             return 0;
         }

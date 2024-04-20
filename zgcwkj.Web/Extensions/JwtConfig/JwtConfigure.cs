@@ -69,7 +69,7 @@ namespace zgcwkj.Web.Extensions
                     };
                     context.Response.ContentType = "application/json";
                     context.Response.StatusCode = (int)HttpStatusCode.Unauthorized;
-                    context.Response.WriteAsync(responseResult.ToJson());
+                    context.Response.WriteAsync(responseResult.To<string>());
                     return Task.FromResult(0);
                 }
             };
@@ -81,7 +81,7 @@ namespace zgcwkj.Web.Extensions
         /// <summary>
         /// 配置
         /// </summary>
-        public void Configure(string name, JwtBearerOptions options)
+        public void Configure(string? name, JwtBearerOptions options)
         {
             Configure(options);
         }
@@ -130,9 +130,9 @@ namespace zgcwkj.Web.Extensions
             try
             {
                 //获取凭据中的数据
-                var userID = claims.Where(w => w.Type == "userID").First().Value.ToStr();
-                var userName = claims.Where(w => w.Type == "userName").First().Value.ToStr();
-                var dateTime = claims.Where(w => w.Type == "dateTime").First().Value.ToDate();
+                var userID = claims.Where(w => w.Type == "userID").First().Value.To<string>();
+                var userName = claims.Where(w => w.Type == "userName").First().Value.To<string>();
+                var dateTime = claims.Where(w => w.Type == "dateTime").First().Value.To<DateTime>();
                 //检查数据
                 if (userID == default) return false;
                 if (userName == default) return false;
@@ -150,38 +150,30 @@ namespace zgcwkj.Web.Extensions
         /// <summary>
         /// Jwt 配置对象
         /// </summary>
-        internal class JwtConfigureModel
+        /// <remarks>
+        /// Jwt 配置对象
+        /// </remarks>
+        internal class JwtConfigureModel(IConfiguration config)
         {
             /// <summary>
             /// Issuer
             /// </summary>
-            public string Issuer { get; }
+            public string Issuer { get; } = config.GetValue<string>("JwtConfig:Issuer")!.To<string>();
 
             /// <summary>
             /// SecureKey
             /// </summary>
-            public string SecureKey { get; }
+            public string SecureKey { get; } = config.GetValue<string>("JwtConfig:SecureKey")!.To<string>();
 
             /// <summary>
             /// Audience
             /// </summary>
-            public string Audience { get; }
+            public string Audience { get; } = config.GetValue<string>("JwtConfig:Audience")!.To<string>();
 
             /// <summary>
             /// TimeOut
             /// </summary>
-            public int TimeOut { get; }
-
-            /// <summary>
-            /// Jwt 配置对象
-            /// </summary>
-            public JwtConfigureModel(IConfiguration config)
-            {
-                this.Issuer = config.GetValue<string>("JwtConfig:Issuer");
-                this.SecureKey = config.GetValue<string>("JwtConfig:SecureKey");
-                this.Audience = config.GetValue<string>("JwtConfig:Audience");
-                this.TimeOut = config.GetValue<int>("JwtConfig:TimeOut");
-            }
+            public int TimeOut { get; } = config.GetValue<int>("JwtConfig:TimeOut")!.To<int>();
         }
     }
 }

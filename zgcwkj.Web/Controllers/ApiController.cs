@@ -60,7 +60,7 @@ namespace zgcwkj.Web.Controllers
                     Account = userName,
                     Password = password,
                 };
-                var myJwtMd5 = myJwt.ToJson().ToMD5();
+                var myJwtMd5 = myJwt.To<string>().ToMD5();
                 token = _Jwt.GenerateToken(myJwtMd5, userName);
             }
             //返回结果

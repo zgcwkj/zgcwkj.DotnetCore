@@ -8,7 +8,7 @@
         /// <summary>
         /// 日志文件大小
         /// </summary>
-        internal static int LogFileSize { get; set; } = ConfigHelp.Get("LogFileSize").ToInt();
+        internal static int LogFileSize { get; set; } = ConfigHelp.Get("LogFileSize").To<int>();
 
         /// <summary>
         /// 输出日志目录

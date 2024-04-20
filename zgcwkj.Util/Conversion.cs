@@ -1,8 +1,8 @@
 ﻿using System.Data;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Text.Encodings.Web;
 using System.Text.Json;
-using System.Text.RegularExpressions;
 using System.Text.Unicode;
 using zgcwkj.Util;
 using zgcwkj.Util.Common;
@@ -19,7 +19,7 @@ public static class Conversion
     /// <param name="value">值</param>
     /// <param name="def">失败值</param>
     /// <returns>转换结果</returns>
-    public static T? To<T>(this object value, T? def = default)
+    public static T To<T>(this object value, T def = default!)
     {
         if (value != null)
         {
@@ -82,7 +82,7 @@ public static class Conversion
                 else
                 {
                     var data = value.ToStr();
-                    if (data.IsJson()) return data.ToJson<T>();
+                    if (data.IsJson()) return data.ToJson<T>()!;
                     return (T)value;
                 }
             }
@@ -101,7 +101,7 @@ public static class Conversion
     /// <param name="value">值</param>
     /// <param name="def">失败值</param>
     /// <returns></returns>
-    public static short ToShort(this object value, short def = 0)
+    private static short ToShort(this object value, short def = 0)
     {
         if (!value.IsNull())
         {
@@ -125,7 +125,7 @@ public static class Conversion
     /// <param name="value">值</param>
     /// <param name="def">失败值</param>
     /// <returns></returns>
-    public static int ToInt(this object value, int def = 0)
+    private static int ToInt(this object value, int def = 0)
     {
         if (!value.IsNull())
         {
@@ -149,7 +149,7 @@ public static class Conversion
     /// <param name="value">值</param>
     /// <param name="def">失败值</param>
     /// <returns></returns>
-    public static long ToLong(this object value, long def = 0)
+    private static long ToLong(this object value, long def = 0)
     {
         if (!value.IsNull())
         {
@@ -173,7 +173,7 @@ public static class Conversion
     /// <param name="value">值</param>
     /// <param name="def">失败值</param>
     /// <returns></returns>
-    public static double ToDouble(this object value, double def = 0)
+    private static double ToDouble(this object value, double def = 0)
     {
         if (!value.IsNull())
         {
@@ -208,7 +208,7 @@ public static class Conversion
     /// <param name="value">值</param>
     /// <param name="def">失败值</param>
     /// <returns></returns>
-    public static decimal ToDecimal(this object value, decimal def = 0)
+    private static decimal ToDecimal(this object value, decimal def = 0)
     {
         if (!value.IsNull())
         {
@@ -243,7 +243,7 @@ public static class Conversion
     /// <param name="value">值</param>
     /// <param name="def">失败值</param>
     /// <returns></returns>
-    public static float ToFloat(this object value, float def = 0)
+    private static float ToFloat(this object value, float def = 0)
     {
         if (!value.IsNull())
         {
@@ -278,7 +278,7 @@ public static class Conversion
     /// <param name="value">值</param>
     /// <param name="def">失败值</param>
     /// <returns></returns>
-    public static string ToStr(this object value, string def = "")
+    private static string ToStr(this object value, string def = "")
     {
         if (!value.IsNull())
         {
@@ -296,84 +296,12 @@ public static class Conversion
     }
 
     /// <summary>
-    /// 转换成字符串类型
-    /// 去掉前后的空格
-    /// </summary>
-    /// <param name="value">值</param>
-    /// <param name="def">失败值</param>
-    /// <returns></returns>
-    public static string ToTrim(this object value, string def = "")
-    {
-        if (!value.IsNull())
-        {
-            try
-            {
-                return value.ToStr().Trim();
-            }
-            catch (Exception ex)
-            {
-                var meg = ex.Message;
-                if (GlobalConstant.IsDevelopment) Logger.Error(meg);
-            }
-        }
-        return def;
-    }
-
-    /// <summary>
-    /// 转换成字符串类型
-    /// 去掉前面的空格
-    /// </summary>
-    /// <param name="value">值</param>
-    /// <param name="def">失败值</param>
-    /// <returns></returns>
-    public static string ToTrimStart(this object value, string def = "")
-    {
-        if (!value.IsNull())
-        {
-            try
-            {
-                return value.ToStr().TrimStart();
-            }
-            catch (Exception ex)
-            {
-                var meg = ex.Message;
-                if (GlobalConstant.IsDevelopment) Logger.Error(meg);
-            }
-        }
-        return def;
-    }
-
-    /// <summary>
-    /// 转换成字符串类型
-    /// 去掉后面的空格
-    /// </summary>
-    /// <param name="value">值</param>
-    /// <param name="def">失败值</param>
-    /// <returns></returns>
-    public static string ToTrimEnd(this object value, string def = "")
-    {
-        if (!value.IsNull())
-        {
-            try
-            {
-                return value.ToStr().TrimEnd();
-            }
-            catch (Exception ex)
-            {
-                var meg = ex.Message;
-                if (GlobalConstant.IsDevelopment) Logger.Error(meg);
-            }
-        }
-        return def;
-    }
-
-    /// <summary>
     /// 转换成布尔类型
     /// </summary>
     /// <param name="value">值</param>
     /// <param name="def">失败值</param>
     /// <returns></returns>
-    public static bool ToBool(this object value, bool def = false)
+    private static bool ToBool(this object value, bool def = false)
     {
         if (!value.IsNull())
         {
@@ -396,7 +324,7 @@ public static class Conversion
     /// <param name="value">值</param>
     /// <param name="def">失败值</param>
     /// <returns></returns>
-    public static DateTime ToDate(this object value, DateTime def = default)
+    private static DateTime ToDate(this object value, DateTime def = default)
     {
         try
         {
@@ -520,7 +448,7 @@ public static class Conversion
     /// <param name="value">值</param>
     /// <param name="def">失败值</param>
     /// <returns></returns>
-    public static string ToJson(this object value, string def = "{}")
+    private static string ToJson(this object value, string def = "{}")
     {
         try
         {
@@ -548,7 +476,7 @@ public static class Conversion
     /// </summary>
     /// <param name="value">值</param>
     /// <returns></returns>
-    public static T? ToJson<T>(this string value)
+    private static T? ToJson<T>(this string value)
     {
         try
         {
@@ -649,48 +577,6 @@ public static class Conversion
         {
             return false;
         }
-    }
-
-    /// <summary>
-    /// 数字转汉字
-    /// </summary>
-    /// <param name="number"></param>
-    /// <returns></returns>
-    public static string ToChinese(this int number)
-    {
-        var units = new string[] { "", "十", "百", "千", "万", "十", "百", "千", "亿", "十", "百", "千" };
-        var nums = new string[] { "零", "一", "二", "三", "四", "五", "六", "七", "八", "九" };
-        if (number == 0)
-        {
-            return nums[0];
-        }
-        var results = "";
-        for (int i = number.ToString().Length - 1; i >= 0; i--)
-        {
-            int r = (int)(number / Math.Pow(10, i));
-            results += nums[r % 10] + units[i];
-        }
-        results = results.Replace("零十", "零")
-                         .Replace("零百", "零")
-                         .Replace("零千", "零")
-                         .Replace("亿万", "亿");
-        results = Regex.Replace(results, "零([万, 亿])", "$1");
-        results = Regex.Replace(results, "零+", "零");
-
-        if (results.StartsWith("一十"))
-        {
-            results = results.Substring(1);
-        }
-    cutzero:
-        if (results.EndsWith("零"))
-        {
-            results = results.Substring(0, results.Length - 1);
-            if (results.EndsWith("零"))
-            {
-                goto cutzero;
-            }
-        }
-        return results;
     }
 
     /// <summary>

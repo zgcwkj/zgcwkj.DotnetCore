@@ -419,8 +419,8 @@ namespace zgcwkj.Util
         private List<object> DataFormat(List<object> list)
         {
             var linq = list.Select(T =>
-                T.GetType() == typeof(string) ? T.ToTrim() :
-                T.GetType() == typeof(int) ? T.ToInt() :
+                T.GetType() == typeof(string) ? T.To<string>().Trim() :
+                T.GetType() == typeof(int) ? T.To<int>() :
                 T.GetType() == typeof(DateTime) ? T.ToDate("yyyy-MM-dd HH:mm:ss") :
                 T
             );
