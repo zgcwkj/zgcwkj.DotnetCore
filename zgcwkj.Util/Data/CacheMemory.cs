@@ -182,10 +182,23 @@ namespace zgcwkj.Util
         private static int SetHashFieldCache<T>(string key, Dictionary<string, T> dict)
         {
             var count = 0;
+            
+            // 获取或创建哈希字段字典
+            if (!_IMemoryCache.TryGetValue(key, out Dictionary<string, object>? hashFields))
+            {
+                hashFields = new Dictionary<string, object>();
+                _IMemoryCache.Set(key, hashFields);
+            }
+
+            if (hashFields == null) return 0;
+
+            // 更新或添加字段
             foreach (var fieldKey in dict.Keys)
             {
-                count += _IMemoryCache.Set(key, dict[fieldKey]) != null ? 1 : 0;
+                hashFields[fieldKey] = dict[fieldKey]!;
+                count++;
             }
+
             return count;
         }
 
@@ -198,12 +211,26 @@ namespace zgcwkj.Util
         /// <returns></returns>
         private static Dictionary<string, T>? GetHashFieldCache<T>(string key, Dictionary<string, T> dict)
         {
-            var hashFields = _IMemoryCache.Get<Dictionary<string, T>>(key);
+            if (!_IMemoryCache.TryGetValue(key, out Dictionary<string, object>? hashFields))
+            {
+                return null;
+            }
+
             if (hashFields == null) return null;
+
             foreach (var keyValuePair in hashFields.Where(p => dict.ContainsKey(p.Key)))
             {
-                dict[keyValuePair.Key] = keyValuePair.Value;
+                try
+                {
+                    dict[keyValuePair.Key] = (T)keyValuePair.Value;
+                }
+                catch (InvalidCastException)
+                {
+                    // 类型转换失败，跳过该字段
+                    Logger.Other($"Hash field type conversion failed for key: {key}, hashKey: {keyValuePair.Key}", "Warn");
+                }
             }
+
             return dict;
         }
 
@@ -215,13 +242,14 @@ namespace zgcwkj.Util
         /// <returns></returns>
         private static bool RemoveHashFieldCache(string key, string hashKey)
         {
-            var dict = new Dictionary<string, bool> { { hashKey, false } };
-            var hashFields = _IMemoryCache.Get<Dictionary<string, object>>(key);
-            foreach (var fieldKey in dict.Keys)
+            if (!_IMemoryCache.TryGetValue(key, out Dictionary<string, object>? hashFields))
             {
-                dict[fieldKey] = hashFields?.Remove(fieldKey) == true;
+                return false;
             }
-            return dict[hashKey];
+
+            if (hashFields == null) return false;
+
+            return hashFields.Remove(hashKey);
         }
 
         #endregion Hash

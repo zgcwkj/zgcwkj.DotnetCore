@@ -1,4 +1,4 @@
-﻿using Microsoft.OpenApi.Models;
+﻿using Microsoft.OpenApi;
 using Swashbuckle.AspNetCore.SwaggerUI;
 using zgcwkj.Util;
 
@@ -86,17 +86,10 @@ namespace zgcwkj.Web.Extensions
                     Description = "Value Bearer {token}",
                 });
                 //添加 Jwt 验证请求头信息
-                options.AddSecurityRequirement(new OpenApiSecurityRequirement
+                options.AddSecurityRequirement(doc => new OpenApiSecurityRequirement
                 {
                     {
-                        new OpenApiSecurityScheme
-                        {
-                            Reference = new OpenApiReference
-                            {
-                                Id = "Bearer",
-                                Type = ReferenceType.SecurityScheme
-                            }
-                        },
+                        new OpenApiSecuritySchemeReference("Bearer", doc),
                         new List<string>()
                     }
                 });

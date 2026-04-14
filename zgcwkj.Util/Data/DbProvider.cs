@@ -259,18 +259,54 @@ namespace zgcwkj.Util
             //得到脚本上的变量
             var matchCollection = GetMatchCollection(sqlStr);
             //循环变量
-            for (int i = 0; i < values.Count(); i++)
+            for (int i = 0; i < values.Length && i < matchCollection.Count; i++)
             {
                 if (values[i] != null)
                 {
-                    if (!string.IsNullOrEmpty(values[i].ToString()))
+                    var valueStr = values[i].ToString();
+                    if (!string.IsNullOrEmpty(valueStr))
                     {
                         isStatus = true;
-                        sqlStr = sqlStr.Replace(matchCollection[i].Value, $"'{values[i].PreventInjection(cmdAccess)}'");
+                        // 使用更安全的参数转义
+                        var escapedValue = EscapeSqlValue(valueStr, cmdAccess);
+                        sqlStr = sqlStr.Replace(matchCollection[i].Value, $"'{escapedValue}'");
                     }
                 }
             }
             return sqlStr;
+        }
+
+        /// <summary>
+        /// 转义SQL值（防止注入）
+        /// </summary>
+        /// <param name="value">原始值</param>
+        /// <param name="cmdAccess">操作对象</param>
+        /// <returns>转义后的值</returns>
+        private static string EscapeSqlValue(string value, DbAccess cmdAccess)
+        {
+            if (string.IsNullOrEmpty(value)) return value;
+
+            var data = value.Trim();
+            var hasInjection = false;
+
+            // 检测并移除危险字符
+            if (data.Contains('\\'))
+            {
+                hasInjection = true;
+                data = data.Replace("\\", "\\\\");
+            }
+            if (data.Contains('\''))
+            {
+                hasInjection = true;
+                data = data.Replace("'", "''");
+            }
+
+            if (hasInjection)
+            {
+                Logger.Other($"检测到潜在SQL注入，Sql:({cmdAccess.GetSql()}), OriginalValue:({value}), EscapedValue:({data})", "Warn");
+            }
+
+            return data;
         }
 
         /// <summary>
@@ -288,32 +324,6 @@ namespace zgcwkj.Util
             return sqlStr;
         }
 
-        /// <summary>
-        /// 防止数据脚本的注入
-        /// </summary>
-        /// <param name="value">值</param>
-        /// <param name="cmdAccess">操作对象（在注入时，逆推用）</param>
-        /// <returns></returns>
-        private static string PreventInjection(this object value, DbAccess cmdAccess)
-        {
-            var data = value.To<string>().Trim();
-            var outLog = false;
-            if (data.To<string>().Trim().Contains("\\"))
-            {
-                outLog = true;
-                data = data.To<string>().Trim().Replace("\\", "");
-            }
-            if (data.To<string>().Trim().Contains("'"))
-            {
-                outLog = true;
-                data = data.To<string>().Trim().Replace("'", "");
-            }
-            if (outLog)
-            {
-                Logger.Fatal($"参数含有注入字符，Sql:({cmdAccess.GetSql()}),value:({value})");
-            }
-            return data;
-        }
 
         ///// <summary>
         ///// 数据库通用脚本

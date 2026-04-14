@@ -28,12 +28,18 @@ namespace zgcwkj.Util.Data.Extension
         private DbCommand MyDbCommand { get; }
 
         /// <summary>
+        /// 日志记录文本
+        /// </summary>
+        private string LogCommandText { get; set; }
+
+        /// <summary>
         /// 数据查询拓展
         /// </summary>
         public DbScalarExtension(DbConnection _dbConnection)
         {
             MyDbConnection = _dbConnection;
             MyDbCommand = MyDbConnection.CreateCommand();
+            LogCommandText = "";
         }
 
         /// <summary>
@@ -46,6 +52,7 @@ namespace zgcwkj.Util.Data.Extension
             MyDbContext = _dbContext;
             MyDbConnection = _dbConnection;
             MyDbCommand = MyDbConnection.CreateCommand();
+            LogCommandText = "";
         }
 
         /// <summary>
@@ -100,6 +107,7 @@ namespace zgcwkj.Util.Data.Extension
                        : logger.CommandReaderExecuting(
                            connection,
                            MyDbCommand,
+                           LogCommandText,
                            MyDbContext,
                            Guid.NewGuid(),
                            connection.ConnectionId,
@@ -113,6 +121,7 @@ namespace zgcwkj.Util.Data.Extension
                         reader = logger.CommandReaderExecuted(
                             connection,
                             MyDbCommand,
+                           LogCommandText,
                             MyDbContext,
                             commandId,
                             connection.ConnectionId,
@@ -167,6 +176,7 @@ namespace zgcwkj.Util.Data.Extension
                        : await logger.CommandReaderExecutingAsync(
                            connection,
                            MyDbCommand,
+                           LogCommandText,
                            MyDbContext,
                            Guid.NewGuid(),
                            connection.ConnectionId,
@@ -180,6 +190,7 @@ namespace zgcwkj.Util.Data.Extension
                         reader = await logger.CommandReaderExecutedAsync(
                             connection,
                             MyDbCommand,
+                           LogCommandText,
                             MyDbContext,
                             commandId,
                             connection.ConnectionId,
@@ -235,6 +246,7 @@ namespace zgcwkj.Util.Data.Extension
                        : logger.CommandScalarExecuting(
                            connection,
                            MyDbCommand,
+                           LogCommandText,
                            MyDbContext,
                            Guid.NewGuid(),
                            connection.ConnectionId,
@@ -248,6 +260,7 @@ namespace zgcwkj.Util.Data.Extension
                         obj = logger.CommandScalarExecuted(
                             connection,
                             MyDbCommand,
+                           LogCommandText,
                             MyDbContext,
                             commandId,
                             connection.ConnectionId,
@@ -303,6 +316,7 @@ namespace zgcwkj.Util.Data.Extension
                        : await logger.CommandScalarExecutingAsync(
                            connection,
                            MyDbCommand,
+                           LogCommandText,
                            MyDbContext,
                            Guid.NewGuid(),
                            connection.ConnectionId,
@@ -316,6 +330,7 @@ namespace zgcwkj.Util.Data.Extension
                         obj = await logger.CommandScalarExecutedAsync(
                             connection,
                             MyDbCommand,
+                            LogCommandText,
                             MyDbContext,
                             commandId,
                             connection.ConnectionId,

@@ -13,6 +13,22 @@ using zgcwkj.Util.Common;
 public static class Conversion
 {
     /// <summary>
+    /// 处理转换异常
+    /// </summary>
+    /// <param name="ex">异常对象</param>
+    /// <param name="context">转换上下文</param>
+    private static void HandleConversionException(Exception ex, string context = "")
+    {
+        if (GlobalConstant.IsDevelopment)
+        {
+            var message = string.IsNullOrEmpty(context) 
+                ? ex.Message 
+                : $"Conversion error in {context}: {ex.Message}";
+            Logger.Error(message);
+        }
+    }
+
+    /// <summary>
     /// 统一转换入口
     /// </summary>
     /// <typeparam name="T">类型</typeparam>
@@ -88,8 +104,7 @@ public static class Conversion
             }
             catch (Exception ex)
             {
-                var meg = ex.Message;
-                if (GlobalConstant.IsDevelopment) Logger.Error(meg);
+                HandleConversionException(ex, $"To<{typeof(T).Name}>");
             }
         }
         return def;
@@ -112,8 +127,7 @@ public static class Conversion
             }
             catch (Exception ex)
             {
-                var meg = ex.Message;
-                if (GlobalConstant.IsDevelopment) Logger.Error(meg);
+                HandleConversionException(ex, "ToShort");
             }
         }
         return def;
@@ -123,7 +137,7 @@ public static class Conversion
     /// 转换成 Int 类型
     /// </summary>
     /// <param name="value">值</param>
-    /// <param name="def">失败值</param>
+    /// <param name="def">">失败值</param>
     /// <returns></returns>
     private static int ToInt(this object value, int def = 0)
     {
@@ -136,8 +150,7 @@ public static class Conversion
             }
             catch (Exception ex)
             {
-                var meg = ex.Message;
-                if (GlobalConstant.IsDevelopment) Logger.Error(meg);
+                HandleConversionException(ex, "ToInt");
             }
         }
         return def;
@@ -160,8 +173,7 @@ public static class Conversion
             }
             catch (Exception ex)
             {
-                var meg = ex.Message;
-                if (GlobalConstant.IsDevelopment) Logger.Error(meg);
+                HandleConversionException(ex, "ToLong");
             }
         }
         return def;
@@ -183,8 +195,7 @@ public static class Conversion
             }
             catch (Exception ex)
             {
-                var meg = ex.Message;
-                if (GlobalConstant.IsDevelopment) Logger.Error(meg);
+                HandleConversionException(ex, "ToDouble");
             }
         }
         return def;
@@ -218,8 +229,7 @@ public static class Conversion
             }
             catch (Exception ex)
             {
-                var meg = ex.Message;
-                if (GlobalConstant.IsDevelopment) Logger.Error(meg);
+                HandleConversionException(ex, "ToDecimal");
             }
         }
         return def;
@@ -253,8 +263,7 @@ public static class Conversion
             }
             catch (Exception ex)
             {
-                var meg = ex.Message;
-                if (GlobalConstant.IsDevelopment) Logger.Error(meg);
+                HandleConversionException(ex, "ToFloat");
             }
         }
         return def;
@@ -288,8 +297,7 @@ public static class Conversion
             }
             catch (Exception ex)
             {
-                var meg = ex.Message;
-                if (GlobalConstant.IsDevelopment) Logger.Error(meg);
+                HandleConversionException(ex, "ToStr");
             }
         }
         return def;
@@ -311,8 +319,7 @@ public static class Conversion
             }
             catch (Exception ex)
             {
-                var meg = ex.Message;
-                if (GlobalConstant.IsDevelopment) Logger.Error(meg);
+                HandleConversionException(ex, "ToBool");
             }
         }
         return def;
@@ -332,8 +339,7 @@ public static class Conversion
         }
         catch (Exception ex)
         {
-            var meg = ex.Message;
-            if (GlobalConstant.IsDevelopment) Logger.Error(meg);
+            HandleConversionException(ex, "ToDate");
         }
         return def;
     }
@@ -354,8 +360,7 @@ public static class Conversion
         }
         catch (Exception ex)
         {
-            var meg = ex.Message;
-            if (GlobalConstant.IsDevelopment) Logger.Error(meg);
+            HandleConversionException(ex, $"ToDate with format '{dateMode}'");
         }
         return def;
     }
@@ -465,8 +470,7 @@ public static class Conversion
         }
         catch (Exception ex)
         {
-            var meg = ex.Message;
-            if (GlobalConstant.IsDevelopment) Logger.Error(meg);
+            HandleConversionException(ex, "ToJson");
             return def;
         }
     }
@@ -488,8 +492,7 @@ public static class Conversion
         }
         catch (Exception ex)
         {
-            var meg = ex.Message;
-            if (GlobalConstant.IsDevelopment) Logger.Error(meg);
+            HandleConversionException(ex, $"JsonTo<{typeof(T).Name}>");
             return default;
         }
     }
@@ -508,8 +511,7 @@ public static class Conversion
         }
         catch (Exception ex)
         {
-            var meg = ex.Message;
-            if (GlobalConstant.IsDevelopment) Logger.Error(meg);
+            HandleConversionException(ex, "IsJson");
             return false;
         }
     }
@@ -542,8 +544,7 @@ public static class Conversion
         }
         catch (Exception ex)
         {
-            var meg = ex.Message;
-            if (GlobalConstant.IsDevelopment) Logger.Error(meg);
+            HandleConversionException(ex, "IsNull");
         }
         return true;
     }
@@ -592,8 +593,7 @@ public static class Conversion
         }
         catch (Exception ex)
         {
-            var meg = ex.Message;
-            if (GlobalConstant.IsDevelopment) Logger.Error(meg);
+            HandleConversionException(ex, "ToBase64(string)");
             return "";
         }
     }
@@ -611,8 +611,7 @@ public static class Conversion
         }
         catch (Exception ex)
         {
-            var meg = ex.Message;
-            if (GlobalConstant.IsDevelopment) Logger.Error(meg);
+            HandleConversionException(ex, "ToBase64(byte[])");
             return "";
         }
     }
@@ -630,8 +629,7 @@ public static class Conversion
         }
         catch (Exception ex)
         {
-            var meg = ex.Message;
-            if (GlobalConstant.IsDevelopment) Logger.Error(meg);
+            HandleConversionException(ex, "ToUnBase64");
             return "";
         }
     }

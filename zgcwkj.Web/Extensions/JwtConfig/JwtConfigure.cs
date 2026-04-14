@@ -130,9 +130,9 @@ namespace zgcwkj.Web.Extensions
             try
             {
                 //获取凭据中的数据
-                var userID = claims.Where(w => w.Type == "userID").First().Value.To<string>();
-                var userName = claims.Where(w => w.Type == "userName").First().Value.To<string>();
-                var dateTime = claims.Where(w => w.Type == "dateTime").First().Value.To<DateTime>();
+                var userID = claims.First(w => w.Type == "userID").Value.To<string>();
+                var userName = claims.First(w => w.Type == "userName").Value.To<string>();
+                var dateTime = claims.First(w => w.Type == "dateTime").Value.To<DateTime>();
                 //检查数据
                 if (userID == default) return false;
                 if (userName == default) return false;
@@ -147,9 +147,6 @@ namespace zgcwkj.Web.Extensions
             return false;
         }
 
-        /// <summary>
-        /// Jwt 配置对象
-        /// </summary>
         /// <remarks>
         /// Jwt 配置对象
         /// </remarks>

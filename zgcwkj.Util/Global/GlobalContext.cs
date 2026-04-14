@@ -51,27 +51,49 @@ namespace zgcwkj.Util
         /// </summary>
         public static void SetConfigFiles(params string[] configFileNames)
         {
-            var currentDirectory = GlobalConstant.GetRunPath;
-            //查找配置文件所在的位置是否正确
-            foreach (var configFileName in configFileNames)
+            // 可能的配置文件路径列表
+            var searchPaths = new[]
             {
-                if (!File.Exists($"{currentDirectory}/{configFileName}")) currentDirectory = GlobalConstant.GetRunPath;
-                if (!File.Exists($"{currentDirectory}/{configFileName}")) currentDirectory = GlobalConstant.GetRunPath2;
-                if (!File.Exists($"{currentDirectory}/{configFileName}")) currentDirectory = GlobalConstant.GetRunPath3;
-                if (!File.Exists($"{currentDirectory}/{configFileName}")) currentDirectory = GlobalConstant.GetRunPath4;
-                if (!File.Exists($"{currentDirectory}/{configFileName}")) currentDirectory = GlobalConstant.GetRunPath5;
-                if (!File.Exists($"{currentDirectory}/{configFileName}")) throw new Exception($"找不到“{configFileName}”配置文件");
-            }
-            //加载配置文件
-            var cBuilder = new ConfigurationBuilder();
-            var icBuilder = cBuilder.SetBasePath(currentDirectory);
-            foreach (var configFileName in configFileNames)
+                GlobalConstant.GetRunPath,
+                GlobalConstant.GetRunPath2,
+                GlobalConstant.GetRunPath3,
+                GlobalConstant.GetRunPath4,
+                GlobalConstant.GetRunPath5
+            };
+
+            // 查找第一个包含所有配置文件的目录
+            string? validDirectory = null;
+            foreach (var path in searchPaths)
             {
-                icBuilder.AddJsonFile(configFileName);
+                var allFilesExist = configFileNames.All(fileName => 
+                    File.Exists(Path.Combine(path, fileName)));
+                
+                if (allFilesExist)
+                {
+                    validDirectory = path;
+                    break;
+                }
             }
 
-            var config = icBuilder.Build();
-            configuration = config;
+            if (validDirectory == null)
+            {
+                var missingFiles = configFileNames.Where(fileName => 
+                    !searchPaths.Any(path => File.Exists(Path.Combine(path, fileName))));
+                
+                throw new FileNotFoundException(
+                    $"找不到配置文件: {string.Join(", ", missingFiles)}");
+            }
+
+            // 加载配置文件
+            var configBuilder = new ConfigurationBuilder()
+                .SetBasePath(validDirectory);
+
+            foreach (var configFileName in configFileNames)
+            {
+                configBuilder.AddJsonFile(configFileName, optional: false, reloadOnChange: true);
+            }
+
+            configuration = configBuilder.Build();
         }
 
         /// <summary>
@@ -81,9 +103,9 @@ namespace zgcwkj.Util
         /// <returns>服务对象</returns>
         public static T GetServer<T>()
         {
-            var objData = (ServiceProvider ?? throw new($"ServiceProvider is null"))
-                .GetService<T>() ?? throw new($"{typeof(T).Name} Service is null");
-            //
+            var objData = (ServiceProvider ?? throw new InvalidOperationException($"ServiceProvider is null"))
+                .GetService<T>() ?? throw new InvalidOperationException($"{typeof(T).Name} Service is null");
+            
             return objData;
         }
 
@@ -94,10 +116,10 @@ namespace zgcwkj.Util
         /// <returns></returns>
         public static string GetEnvVar(string key)
         {
-            var data = Environment.GetEnvironmentVariable(key, EnvironmentVariableTarget.Machine) ?? null;
-            data ??= Environment.GetEnvironmentVariable(key, EnvironmentVariableTarget.Process) ?? null;
-            data ??= Environment.GetEnvironmentVariable(key, EnvironmentVariableTarget.User) ?? null;
-            return data ?? "";
+            var data = Environment.GetEnvironmentVariable(key, EnvironmentVariableTarget.Machine);
+            data ??= Environment.GetEnvironmentVariable(key, EnvironmentVariableTarget.Process);
+            data ??= Environment.GetEnvironmentVariable(key, EnvironmentVariableTarget.User);
+            return data ?? string.Empty;
         }
 
         /// <summary>
@@ -109,16 +131,21 @@ namespace zgcwkj.Util
         /// <returns></returns>
         public static bool SetEnvVar(string key, string data, bool lasting = false)
         {
-            if (lasting && (GlobalConstant.SystemType == PlatformID.Win32S || GlobalConstant.SystemType == PlatformID.Win32Windows || GlobalConstant.SystemType == PlatformID.Win32NT || GlobalConstant.SystemType == PlatformID.WinCE))
+            var isWindows = GlobalConstant.SystemType == PlatformID.Win32NT ||
+                            GlobalConstant.SystemType == PlatformID.Win32S ||
+                            GlobalConstant.SystemType == PlatformID.Win32Windows ||
+                            GlobalConstant.SystemType == PlatformID.WinCE;
+
+            if (lasting && isWindows)
             {
                 try
                 {
-                    //管理员权限
+                    // 管理员权限
                     Environment.SetEnvironmentVariable(key, data, EnvironmentVariableTarget.Machine);
                 }
                 catch (Exception)
                 {
-                    //无管理员权限
+                    // 无管理员权限
                     Environment.SetEnvironmentVariable(key, data, EnvironmentVariableTarget.User);
                 }
             }
@@ -126,8 +153,8 @@ namespace zgcwkj.Util
             {
                 Environment.SetEnvironmentVariable(key, data, EnvironmentVariableTarget.Process);
             }
-            var ok = GetEnvVar(key) == data;
-            return ok;
+            
+            return GetEnvVar(key) == data;
         }
 
         /// <summary>
@@ -136,9 +163,11 @@ namespace zgcwkj.Util
         /// <param name="context">静态文件响应上下文</param>
         public static void SetCacheControl(StaticFileResponseContext context)
         {
+            if (context?.Context?.Response?.Headers == null) return;
+
             var second = 365 * 24 * 60 * 60;
-            context?.Context?.Response?.Headers?.TryAdd("Cache-Control", new[] { "public,max-age=" + second });
-            context?.Context?.Response?.Headers?.TryAdd("Expires", new[] { DateTime.UtcNow.AddYears(1).ToString("R") }); // Format RFC1123
+            context.Context.Response.Headers.TryAdd("Cache-Control", new[] { "public,max-age=" + second });
+            context.Context.Response.Headers.TryAdd("Expires", new[] { DateTime.UtcNow.AddYears(1).ToString("R") }); // Format RFC1123
         }
     }
 }

@@ -1,8 +1,7 @@
 ﻿using System.Net;
 using System.Net.NetworkInformation;
+using System.Net.Http;
 using System.Text;
-
-#pragma warning disable SYSLIB0014
 
 namespace zgcwkj.Util.Common
 {
@@ -11,6 +10,16 @@ namespace zgcwkj.Util.Common
     /// </summary>
     public class HttpTool
     {
+        private static readonly Lazy<HttpClient> _sharedClient = new(() => new HttpClient(new HttpClientHandler
+        {
+            AutomaticDecompression = DecompressionMethods.All
+        }));
+
+        /// <summary>
+        /// 共享的HttpClient实例
+        /// </summary>
+        public static HttpClient SharedClient => _sharedClient.Value;
+
         /// <summary>
         /// Get 请求
         /// </summary>
@@ -30,10 +39,9 @@ namespace zgcwkj.Util.Common
         public static string Get(string url, out HttpTool httpTool)
         {
             httpTool = new HttpTool();
-            HttpWebRequest request = (HttpWebRequest)WebRequest.Create(url);
-            request.ContentType = "text/html;charset=UTF-8";
-            request.Referer = url;
-            request.Method = "GET";
+            var request = new HttpRequestMessage(HttpMethod.Get, url);
+            request.Headers.Add("ContentType", "text/html;charset=UTF-8");
+            request.Headers.Add("Referer", url);
 
             return httpTool.InitiateWeb(request);
         }
@@ -59,17 +67,13 @@ namespace zgcwkj.Util.Common
         public static string Post(string url, string data, out HttpTool httpTool)
         {
             httpTool = new HttpTool();
-            HttpWebRequest request = (HttpWebRequest)WebRequest.Create(url);
-            request.ContentType = "application/x-www-form-urlencoded;charset=UTF-8";
-            request.Referer = url;
-            request.Method = "POST";
+            var request = new HttpRequestMessage(HttpMethod.Post, url);
+            request.Headers.Add("ContentType", "application/x-www-form-urlencoded;charset=UTF-8");
+            request.Headers.Add("Referer", url);
 
             if (!data.IsNull())
             {
-                request.ContentLength = Encoding.UTF8.GetByteCount(data);
-                Stream myRequestStream = request.GetRequestStream();
-                byte[] postBytes = Encoding.UTF8.GetBytes(data);
-                myRequestStream.Write(postBytes, 0, postBytes.Length);
+                request.Content = new StringContent(data, Encoding.UTF8, "application/x-www-form-urlencoded");
             }
 
             return httpTool.InitiateWeb(request);
@@ -80,7 +84,7 @@ namespace zgcwkj.Util.Common
         /// </summary>
         /// <param name="request">请求对象</param>
         /// <returns>结果</returns>
-        public static string Initiate(HttpWebRequest request)
+        public static string Initiate(HttpRequestMessage request)
         {
             return HttpTool.Initiate(request, out _);
         }
@@ -91,7 +95,7 @@ namespace zgcwkj.Util.Common
         /// <param name="request">请求对象</param>
         /// <param name="httpTool">对象</param>
         /// <returns>结果</returns>
-        public static string Initiate(HttpWebRequest request, out HttpTool httpTool)
+        public static string Initiate(HttpRequestMessage request, out HttpTool httpTool)
         {
             httpTool = new HttpTool();
             return httpTool.InitiateWeb(request);
@@ -102,21 +106,20 @@ namespace zgcwkj.Util.Common
         /// </summary>
         /// <param name="url">请求地址</param>
         /// <param name="filePath">文件地址</param>
-        /// <param name="httpTool">对象</param>
-        public static void DownloadFile(string url, string filePath, out HttpTool httpTool)
+        /// <returns>HttpTool对象和成功状态</returns>
+        public static async Task<(HttpTool httpTool, bool success)> DownloadFileWithResultAsync(string url, string filePath)
         {
-            httpTool = new HttpTool();
-
-            HttpWebRequest request = (HttpWebRequest)WebRequest.Create(url);
-            request.Referer = url;
-
-            httpTool.DownloadFile(request, filePath);
+            var httpTool = new HttpTool();
+            try
+            {
+                await httpTool.DownloadFileCoreAsync(url, filePath);
+                return (httpTool, true);
+            }
+            catch
+            {
+                return (httpTool, false);
+            }
         }
-
-        /// <summary>
-        /// Cookie 对象
-        /// </summary>
-        public CookieContainer Cookie { get; set; } = new CookieContainer();
 
         /// <summary>
         /// Cookie 数据字符串
@@ -133,21 +136,18 @@ namespace zgcwkj.Util.Common
         /// </summary>
         /// <param name="request">请求对象</param>
         /// <returns>结果</returns>
-        public string InitiateWeb(HttpWebRequest request)
+        public string InitiateWeb(HttpRequestMessage request)
         {
             try
             {
-                if (CookieStr.IsNull()) request.CookieContainer = Cookie;
-                else request.Headers.Add("Cookie", CookieStr);
+                if (!CookieStr.IsNull())
+                {
+                    request.Headers.Add("Cookie", CookieStr);
+                }
 
-                HttpWebResponse response = (HttpWebResponse)request.GetResponse();
-                response.Cookies = Cookie.GetCookies(response.ResponseUri);
-
-                using Stream stream = response.GetResponseStream();
-                using StreamReader myStreamReader = new StreamReader(stream, Encoding);
-
-                string retString = myStreamReader.ReadToEnd();
-                return retString;
+                var response = SharedClient.Send(request);
+                var content = response.Content.ReadAsStringAsync().GetAwaiter().GetResult();
+                return content;
             }
             catch (Exception ex)
             {
@@ -159,44 +159,34 @@ namespace zgcwkj.Util.Common
         /// <summary>
         /// 下载文件请求（核心）
         /// </summary>
-        /// <param name="request">请求对象</param>
+        /// <param name="url">请求地址</param>
         /// <param name="filePath">文件地址</param>
-        public void DownloadFile(HttpWebRequest request, string filePath)
+        public async Task DownloadFileCoreAsync(string url, string filePath)
         {
-            //float percent = 0;//百分比
             try
             {
-                if (CookieStr.IsNull()) request.CookieContainer = Cookie;
-                else request.Headers.Add("Cookie", CookieStr);
-
-                HttpWebResponse response = (HttpWebResponse)request.GetResponse();
-                response.Cookies = Cookie.GetCookies(response.ResponseUri);
-
-                using Stream stream = response.GetResponseStream();
-                using Stream outStream = new FileStream(filePath, FileMode.Create);
-
-                byte[] by = new byte[1024];
-                int osize = stream.Read(by, 0, (int)by.Length);
-
-                //long totalDownloadedByte = 0;
-                //long totalBytes = response.ContentLength;
-                while (osize > 0)
+                var request = new HttpRequestMessage(HttpMethod.Get, url);
+                if (!CookieStr.IsNull())
                 {
-                    outStream.Write(by, 0, osize);
-                    osize = stream.Read(by, 0, (int)by.Length);
-
-                    //totalDownloadedByte = osize + totalDownloadedByte;
-                    //percent = (float)totalDownloadedByte / (float)totalBytes * 100;
-                    //Console.Write(percent.ToString("00") + " ");
+                    request.Headers.Add("Cookie", CookieStr);
                 }
-                response.Close();
-                stream.Close();
-                outStream.Close();
-                Logger.Info($"HttpTool Download(OK): {filePath} Url: {request.RequestUri}");
+
+                var response = await SharedClient.SendAsync(request);
+                var content = await response.Content.ReadAsByteArrayAsync();
+
+                // 确保目录存在
+                var directory = Path.GetDirectoryName(filePath);
+                if (!string.IsNullOrEmpty(directory) && !Directory.Exists(directory))
+                {
+                    Directory.CreateDirectory(directory);
+                }
+
+                await File.WriteAllBytesAsync(filePath, content);
+                Logger.Info($"HttpTool Download(OK): {filePath} Url: {url}");
             }
             catch (Exception ex)
             {
-                Logger.Error($"HttpTool Download(Error): {ex.Message} Url: {request.RequestUri}");
+                Logger.Error($"HttpTool Download(Error): {ex.Message} Url: {url}");
             }
         }
     }
@@ -250,10 +240,9 @@ namespace zgcwkj.Util.Common
         /// <returns>结果</returns>
         public static string Get(this HttpTool httpTool, string url)
         {
-            HttpWebRequest request = (HttpWebRequest)WebRequest.Create(url);
-            request.ContentType = "text/html;charset=UTF-8";
-            request.Referer = url;
-            request.Method = "GET";
+            var request = new HttpRequestMessage(HttpMethod.Get, url);
+            request.Headers.Add("ContentType", "text/html;charset=UTF-8");
+            request.Headers.Add("Referer", url);
 
             return httpTool.InitiateWeb(request);
         }
@@ -267,17 +256,13 @@ namespace zgcwkj.Util.Common
         /// <returns>结果</returns>
         public static string Post(this HttpTool httpTool, string url, string data)
         {
-            HttpWebRequest request = (HttpWebRequest)WebRequest.Create(url);
-            request.ContentType = "application/x-www-form-urlencoded;charset=UTF-8";
-            request.Referer = url;
-            request.Method = "POST";
+            var request = new HttpRequestMessage(HttpMethod.Post, url);
+            request.Headers.Add("ContentType", "application/x-www-form-urlencoded;charset=UTF-8");
+            request.Headers.Add("Referer", url);
 
             if (!data.IsNull())
             {
-                request.ContentLength = Encoding.UTF8.GetByteCount(data);
-                Stream myRequestStream = request.GetRequestStream();
-                byte[] postBytes = Encoding.UTF8.GetBytes(data);
-                myRequestStream.Write(postBytes, 0, postBytes.Length);
+                request.Content = new StringContent(data, Encoding.UTF8, "application/x-www-form-urlencoded");
             }
 
             return httpTool.InitiateWeb(request);
@@ -289,7 +274,7 @@ namespace zgcwkj.Util.Common
         /// <param name="httpTool">对象</param>
         /// <param name="request">请求对象</param>
         /// <returns>结果</returns>
-        public static string Initiate(this HttpTool httpTool, HttpWebRequest request)
+        public static string Initiate(this HttpTool httpTool, HttpRequestMessage request)
         {
             return httpTool.InitiateWeb(request);
         }
@@ -300,14 +285,9 @@ namespace zgcwkj.Util.Common
         /// <param name="httpTool">对象</param>
         /// <param name="url">请求地址</param>
         /// <param name="filePath">文件地址</param>
-        public static void DownloadFile(this HttpTool httpTool, string url, string filePath)
+        public static async Task DownloadFileAsync(this HttpTool httpTool, string url, string filePath)
         {
-            HttpWebRequest request = (HttpWebRequest)WebRequest.Create(url);
-            request.Referer = url;
-
-            httpTool.DownloadFile(request, filePath);
+            await httpTool.DownloadFileCoreAsync(url, filePath);
         }
     }
 }
-
-#pragma warning restore SYSLIB0014
